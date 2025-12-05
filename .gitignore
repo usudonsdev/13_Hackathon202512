@@ -1,0 +1,21 @@
+# --- .gitignore ---
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+media/
+
+# Docker / Environment Variables (重要！)
+.env
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
