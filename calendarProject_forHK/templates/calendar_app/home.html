@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Scheduler</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Navigation -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <h1>Scheduler</h1>
+            </div>
+            
+            <nav class="main-nav">
+                <button id="btn-today-todo" class="nav-btn">
+                    <span class="icon">📝</span> 今日やること
+                </button>
+                <button id="btn-friends" class="nav-btn">
+                    <span class="icon">👥</span> Friends
+                </button>
+                <button id="btn-llm" class="nav-btn special-btn">
+                    <span class="icon">✨</span> LLM Assist
+                </button>
+            </nav>
+
+            <div class="settings-area">
+                <button id="btn-settings" class="icon-btn" aria-label="Settings">⚙️ 設定</button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="calendar-controls">
+                    <button id="prev-period" class="control-btn">&lt;</button>
+                    <h2 id="current-period-display">2023年 10月</h2>
+                    <button id="next-period" class="control-btn">&gt;</button>
+                    <button id="btn-today" class="text-btn">今日</button>
+                </div>
+                
+                <div class="view-switcher">
+                    <select id="view-select">
+                        <option value="week">週</option>
+                        <option value="month">月</option>
+                        <option value="year">年</option>
+                        <option value="custom">カスタム</option>
+                    </select>
+                </div>
+            </header>
+
+            <div id="calendar-grid" class="calendar-view week-view">
+                <!-- Calendar content will be injected here by JS -->
+                <div class="time-column">
+                    <!-- Time slots -->
+                </div>
+                <div class="days-container">
+                    <!-- Days columns -->
+                </div>
+            </div>
+        </main>
+
+        <!-- Modals -->
+        <!-- Event Modal -->
+        <div id="event-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h3>予定の作成/編集</h3>
+                <form id="event-form">
+                    <div class="form-group">
+                        <label for="event-title">タイトル</label>
+                        <input type="text" id="event-title" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="event-start">開始</label>
+                            <input type="datetime-local" id="event-start" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="event-end">終了</label>
+                            <input type="datetime-local" id="event-end" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>公開設定</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="visibility" value="private" checked> Private</label>
+                            <label><input type="radio" name="visibility" value="public"> Public</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="event-memo">メモ</label>
+                        <textarea id="event-memo" rows="3"></textarea>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" id="btn-delete-event" class="btn-danger hidden">削除</button>
+                        <button type="submit" class="btn-primary">保存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Friend Modal -->
+        <div id="friend-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h3>Friends</h3>
+                <div class="friend-search">
+                    <input type="text" placeholder="IDで検索して追加...">
+                    <button>追加</button>
+                </div>
+                <ul class="friend-list">
+                    <!-- Friend items injected here -->
+                    <li class="friend-item">
+                        <div class="friend-info">
+                            <span class="friend-name">Friend A</span>
+                            <span class="friend-status">Online</span>
+                        </div>
+                        <button class="btn-small">予定を見る</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
