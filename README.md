@@ -138,3 +138,5 @@ https://zenn.dev/headwaters/articles/0ff2e65239546d
 TODO    データベースの構築手順<br>
 TODO    ブランチの切り方、マージのルール<br>
 TODO    HeidiSQLのインストールと初期設定方法
+
+TODO    wslのインストール
