@@ -6,4 +6,6 @@ urlpatterns=[
   path("",views.index , name="index"),
   path("account/create",views.account_create , name="account_create"),
   path("plan/create",views.plan_create , name="plan_create"),
+  path("routine/create",views.routine_create , name="routine_create"),
+
 ] 
