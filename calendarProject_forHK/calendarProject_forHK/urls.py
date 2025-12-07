@@ -21,5 +21,4 @@ urlpatterns = [
     path("", include("calendar_app.urls")),
     path("accounts/", include("accounts.urls")),
     path('', include("django.contrib.auth.urls")),
-
 ]

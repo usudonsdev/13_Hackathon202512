@@ -27,5 +27,22 @@ class AccountCreateView(View):
             return redirect("calendar_app:index")
         return render(request,"account/create/index.html",{"form":form})
         
+
+class PlanCreateView(View):
+    def get(self,request):
+        form=CreatePlanForm()
+        return render(request,"calendar_app/create_plan.html",{"form":form})
+    def post(self,request):
+        form=CreatePlanForm(request.POST)
+        if form.is_valid():
+            form.save()
+            latest_plan = Plan.objects.order_by('-updated_time')[0]
+            latest_plan.user=str(request.user)
+            latest_plan.save()
+            return redirect("calendar_app:index")
+        return render(request,"calendar_app/create_plan.html",{"form":form})
+
+
 index=IndexView.as_view()
 account_create=AccountCreateView.as_view()
+plan_create=PlanCreateView.as_view()

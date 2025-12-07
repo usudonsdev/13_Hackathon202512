@@ -5,4 +5,5 @@ app_name="calendar_app"
 urlpatterns=[
   path("",views.index , name="index"),
   path("account/create",views.account_create , name="account_create"),
+  path("plan/create",views.plan_create , name="plan_create"),
 ] 
