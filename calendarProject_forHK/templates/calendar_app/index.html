@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Scheduler</title>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap"
+        rel="stylesheet">
 
     <style>
         :root {
@@ -22,13 +25,13 @@
             --border-color: #e5e7eb;
             --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
             --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            
+
             /* Spacing */
             --spacing-xs: 0.25rem;
             --spacing-sm: 0.5rem;
             --spacing-md: 1rem;
             --spacing-lg: 1.5rem;
-            
+
             /* Layout */
             --sidebar-width: 250px;
             --header-height: 60px;
@@ -98,7 +101,8 @@
         }
 
         .nav-btn.special-btn {
-            background-color: #eff6ff; /* light blue */
+            background-color: #eff6ff;
+            /* light blue */
             color: var(--accent-color);
             font-weight: 500;
         }
@@ -183,8 +187,16 @@
             flex: 1;
             overflow: auto;
             background-color: var(--bg-secondary);
-            display: flex;
+            display: grid;
+            grid-template-columns: 40px repeat(7, 1fr);
             position: relative;
+        }
+
+        .week-header {
+            grid-column: 2 / span 7;
+            /* 2列目から7列分 */
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .week-view {
@@ -192,6 +204,46 @@
             padding: var(--spacing-md);
             color: var(--text-secondary);
         }
+
+        .day-header {
+            flex: 1;
+            padding: var(--spacing-sm);
+            text-align: center;
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .day-column {
+            position: relative;
+            border-right: 1px solid var(--border-color);
+
+            &:last-child {
+                border-right: none;
+            }
+        }
+
+        .day-cell {
+            height: 60px;
+            border-bottom: 1px solid var(--bg-secondary);
+        }
+
+        .time-slot {
+            height: 60px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-align: right;
+            padding-right: 4px;
+            margin-top: -8px;
+        }
+
+        .days-container {
+            grid-column: 2 / span 7;
+            grid-row: 2 / 3;
+            display: contents;
+        }
+
 
         /* Modals */
         .modal {
@@ -306,16 +358,16 @@
             padding: var(--spacing-sm) 0;
             border-bottom: 1px solid var(--border-color);
         }
-
     </style>
 </head>
+
 <body>
     <div class="app-container">
         <aside class="sidebar">
             <div class="logo-area">
                 <h1>Scheduler</h1>
             </div>
-            
+
             <nav class="main-nav">
                 <button id="btn-today-todo" class="nav-btn">
                     <span class="icon">📝</span> 今日やること
@@ -341,7 +393,7 @@
                     <button id="next-period" class="control-btn">&gt;</button>
                     <button id="btn-today" class="text-btn">今日</button>
                 </div>
-                
+
                 <div class="view-switcher">
                     <select id="view-select">
                         <option value="week">週</option>
@@ -353,10 +405,54 @@
             </header>
 
             <div id="calendar-grid" class="calendar-view week-view">
+
+                <div class="week-header">
+                    <div class="day-header">月</div>
+                    <div class="day-header">火</div>
+                    <div class="day-header">水</div>
+                    <div class="day-header">木</div>
+                    <div class="day-header">金</div>
+                    <div class="day-header">土</div>
+                    <div class="day-header">日</div>
+                </div>
+
                 <div class="time-column">
-                    </div>
+                    <div class="time-slot">0:00</div>
+                    <div class="time-slot">1:00</div>
+                    <div class="time-slot">2:00</div>
+                    <div class="time-slot">3:00</div>
+                    <div class="time-slot">4:00</div>
+                    <div class="time-slot">5:00</div>
+                    <div class="time-slot">6:00</div>
+                    <div class="time-slot">7:00</div>
+                    <div class="time-slot">8:00</div>
+                    <div class="time-slot">9:00</div>
+                    <div class="time-slot">10:00</div>
+                    <div class="time-slot">11:00</div>
+                    <div class="time-slot">12:00</div>
+                    <div class="time-slot">13:00</div>
+                    <div class="time-slot">14:00</div>
+                    <div class="time-slot">15:00</div>
+                    <div class="time-slot">16:00</div>
+                    <div class="time-slot">17:00</div>
+                    <div class="time-slot">18:00</div>
+                    <div class="time-slot">19:00</div>
+                    <div class="time-slot">20:00</div>
+                    <div class="time-slot">21:00</div>
+                    <div class="time-slot">22:00</div>
+                    <div class="time-slot">23:00</div>
+                </div>
+
                 <div class="days-container">
-                    </div>
+                    <div class="day-column" id="day-0">
+                        </div>
+                    <div class="day-column" id="day-1"></div>
+                    <div class="day-column" id="day-2"></div>
+                    <div class="day-column" id="day-3"></div>
+                    <div class="day-column" id="day-4"></div>
+                    <div class="day-column" id="day-5"></div>
+                    <div class="day-column" id="day-6"></div>
+                </div>
             </div>
         </main>
 
@@ -417,9 +513,9 @@
                 </ul>
             </div>
         </div>
-        
+
     </div>
-    
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             console.log('Smart Scheduler initialized');
@@ -428,12 +524,22 @@
             const btnTodayTodo = document.getElementById('btn-today-todo');
             const btnFriends = document.getElementById('btn-friends');
             const btnLlm = document.getElementById('btn-llm');
-            const calendarGrid = document.getElementById('calendar-grid');
             const eventModal = document.getElementById('event-modal');
             const friendModal = document.getElementById('friend-modal');
+            const dayHeaders = document.querySelectorAll('.day-header');
+            const dayColumns = document.querySelectorAll('.day-column');
+
+
+            // --- Current DispElement ---
+            const currentPeriodDisplay = document.getElementById('current-period-display');
+            const btnPrevPeriod = document.getElementById('prev-period');
+            const btnNextPeriod = document.getElementById('next-period');
+            const btnToday = document.getElementById('btn-today');
+            const calendarGrid = document.getElementById('calendar-grid');
 
             // --- State ---
             let currentDate = new Date();
+
 
             // --- Event Listeners ---
 
@@ -457,16 +563,16 @@
                 // In reality, check for specific cell target
                 // openModal(eventModal);
             });
-            
+
             // デモ用に予定追加テストボタンが機能するように、renderCalendarから呼ばれる onclick を実行する関数を定義
-            window.openEventModal = function() {
+            window.openEventModal = function () {
                 openModal(eventModal);
-                
+
                 // 予定開始/終了時刻を現在の時刻に設定 (デモ用)
                 const now = new Date();
                 const nowString = now.toISOString().substring(0, 16); // YYYY-MM-DDThh:mm
                 document.getElementById('event-start').value = nowString;
-                
+
                 // 1時間後を終了時刻に設定 (デモ用)
                 now.setHours(now.getHours() + 1);
                 const endString = now.toISOString().substring(0, 16);
@@ -501,7 +607,32 @@
                 alert(`予定「${title}」を保存しました`);
             });
 
+            // // --- Event Listeners ---
+            // btnPrevPeriod.addEventListener('click', () => {
+            //     currentDate.setMonth(currentDate.getMonth() - 1);
+            //     updatePeriodDisplay();
+            //     renderCalendar();
+            // });
+
+            // btnNextPeriod.addEventListener('click', () => {
+            //     currentDate.setMonth(currentDate.getMonth() + 1);
+            //     updatePeriodDisplay();
+            //     renderCalendar();
+            // });
+
+            // btnToday.addEventListener('click', () => {
+            //     currentDate = new Date();
+            //     updatePeriodDisplay();
+            //     renderCalendar();
+            // });
+
             // --- Functions ---
+
+            function updatePeriodDisplay() {
+                const year = currentDate.getFullYear();
+                const month = currentDate.getMonth() + 1;
+                currentPeriodDisplay.textContent = `${year}年 ${month}月`;
+            }
 
             function openModal(modal) {
                 modal.classList.remove('hidden');
@@ -515,22 +646,73 @@
                 }
             }
 
-            function renderCalendar() {
-                // Placeholder for calendar rendering logic
-                calendarGrid.innerHTML = `
-                    <div style="padding: 2rem; width: 100%; text-align: center;">
-                        <h3>${currentDate.toLocaleDateString()} の週（仮表示）</h3>
-                        <p>ここにカレンダーが描画されます</p>
-                        <button onclick="openEventModal()">
-                            予定追加テスト
-                        </button>
-                    </div>
-                `;
+            // function renderCalendar() {
+            //     // Placeholder for calendar rendering logic
+            //     calendarGrid.innerHTML = `
+            //         <div style="padding: 2rem; width: 100%; text-align: center;">
+            //             <h3>${currentDate.toLocaleDateString()} の週（仮表示）</h3>
+            //             <p>ここにカレンダーが描画されます</p>
+            //             <button onclick="openEventModal()">
+            //                 予定追加テスト
+            //             </button>
+            //         </div>
+            //     `;
+            //     console.log('Calendar rendered for:', currentDate.toDateString());
+            // }
+
+            function renderWeekView() {
+                const today = new Date();
+                const startOfWeek = new Date(currentDate);
+                const dayIndex = startOfWeek.getDay() === 0 ? 6 : startOfWeek.getDay() - 1;
+                startOfWeek.setDate(startOfWeek.getDate() - dayIndex);
+                for (let i = 0; i < 7; i++) {
+                    const day = new Date(startOfWeek);
+                    day.setDate(startOfWeek.getDate() + i);
+
+                    const dateNum = day.getDate();
+                    const dayHeader = dayHeaders[i];
+                    const dayName = ['月', '火', '水', '木', '金', '土', '日'][i];
+                    dayHeader.innerHTML = `${dayName}<br><span>${dateNum}</span>`;
+
+                    const dayColumn = dayColumns[i];
+                    dayColumn.innerHTML = '';
+                    for (let hour = 0; hour < 24; hour++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'day-cell';
+                        cell.onclick = window.openEventModal;
+                        dayColumn.appendChild(cell);
+                    }
+                }
             }
 
+            // --- Event Listeners ---
+            document.getElementById('btn-friends').addEventListener('click', () => {
+                openModal(friendModal);
+            })
+
+            btnPrevPeriod.addEventListener('click', () => {
+                currentDate.setDate(currentDate.getDate() - 7);
+                updatePeriodDisplay();
+                renderWeekView();
+            });
+
+            btnNextPeriod.addEventListener('click', () => {
+                currentDate.setDate(currentDate.getDate() + 7);
+                updatePeriodDisplay();
+                renderWeekView();
+            });
+
+            btnToday.addEventListener('click', () => {
+                currentDate = new Date();
+                updatePeriodDisplay();
+                renderWeekView();
+            });
+
             // Initialize
+            updatePeriodDisplay();
             renderCalendar();
         });
     </script>
 </body>
+
 </html>
