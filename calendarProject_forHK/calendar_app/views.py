@@ -4,6 +4,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from .models import *
 from .forms import *
+from datetime import datetime
+from time import time
 # Create your views here.
 
 class IndexView(LoginRequiredMixin,View):
@@ -35,10 +37,21 @@ class PlanCreateView(View):
     def post(self,request):
         form=CreatePlanForm(request.POST)
         if form.is_valid():
-            form.save()
-            latest_plan = Plan.objects.order_by('-updated_time')[0]
-            latest_plan.user=str(request.user)
-            latest_plan.save()
+            cd = form.cleaned_data
+            start_dt = datetime(
+                cd['year'], cd['month'], cd['day'], cd['start_hour'], cd['start_minute'],
+            )
+            end_dt = datetime(
+                cd['year'], cd['month'], cd['day'], cd['end_hour'], cd['end_minute'],
+            )
+            Plan.objects.create(
+                user=str(request.user),
+                name=cd['name'],
+                memo=cd['memo'],
+                private=cd['private'],
+                start_datetime=start_dt,
+                end_datetime=end_dt,
+            )
             return redirect("calendar_app:index")
         return render(request,"calendar_app/create_plan.html",{"form":form})
 
@@ -49,12 +62,25 @@ class RoutineCreateView(View):
     def post(self,request):
         form=CreateRoutineForm(request.POST)
         if form.is_valid():
-            form.save()
-            latest_routine = Routine.objects.order_by('-updated_time')[0]
-            latest_routine.user=str(request.user)
-            latest_routine.save()
+            cd = form.cleaned_data
+            start_t = time(
+                cd['start_hour'], cd['start_minute'],
+            )
+            end_t = time(
+                cd['end_hour'], cd['end_minute'],
+            )
+            Routine.object.create(
+                user = str(request.user),
+                name = cd['name'],
+                day_of_week = cd['day_of_week'],
+                private = cd['private'],
+                start_time = start_t,
+                end_time = end_t,
+            )
             return redirect("calendar_app:index")
         return render(request,"calendar_app/create_routine.html",{"form":form})
+    
+
 
 
 index=IndexView.as_view()
