@@ -344,22 +344,18 @@
                             <div class="form-group">
                                 <label>やりたい期間 (いつからいつまでで探すか)</label>
                                 <div class="date-time-group">
-                                    <input type="datetime-local" id="assist-start-datetime" class="datetime-input"
-                                        required step="600">
+                                    <input type="datetime-local" id="assist-start-datetime" class="datetime-input" required **step="600"**>
                                     <span class="separator">〜</span>
-                                    <input type="datetime-local" id="assist-end-datetime" class="datetime-input"
-                                        required step="600">
+                                    <input type="datetime-local" id="assist-end-datetime" class="datetime-input" required **step="600"**>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label>希望の時間帯 (何時から何時の間で予定を入れるか)</label>
                                 <div class="date-time-group">
-                                    <input type="time" id="assist-start-time" class="time-input" value="09:00" required
-                                        step="600">
+                                    <select type="time" id="assist-start-time" class="time-input" value="09:00" required **step="600"**></select>
                                     <span class="separator">〜</span>
-                                    <input type="time" id="assist-end-time" class="time-input" value="18:00" required
-                                        step="600">
+                                    <select type="time" id="assist-end-time" class="time-input" value="18:00" required **step="600"**></select>
                                 </div>
                             </div>
 
@@ -433,6 +429,7 @@
 </body>
 
 <script>
+
     document.addEventListener('DOMContentLoaded', () => {
         console.log('予定追加ページ initialized');
 
@@ -450,6 +447,11 @@
         now.setHours(now.getHours() + 1);
         const endString = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().substring(0, 16);
         eventEndInput.value = endString;
+
+
+        // --- LLM Assist ---
+        populateTimeSelect('assist-start-time', '9:00');
+        populateTimeSelect('assist-end-time', '18:00');
 
 
         // --- フォーム送信処理 ---
@@ -513,6 +515,38 @@
     });
 
 
+
+    /**
+     * 指定されたセレクトボックスに、00:00から23:50までの10分刻みの時間を生成して追加します。
+     * @param {string} elementId - セレクトボックスのID
+     * @param {string} defaultValue - 初期選択する時刻 (例: '09:00')
+     */
+    function populateTimeSelect(elementId, defaultValue) {
+        const selectElement = document.getElementById(elementId);
+        if (!selectElement) return;
+
+        selectElement.innerHTML = ''; // 既存のオプションをクリア
+
+        for (let h = 0; h < 24; h++) {
+            for (let m = 0; m < 60; m += 10) {
+                // 時間と分を2桁表示にフォーマット
+                const hour = String(h).padStart(2, '0');
+                const minute = String(m).padStart(2, '0');
+                const timeValue = `${hour}:${minute}`;
+
+                const option = document.createElement('option');
+                option.value = timeValue;
+                option.textContent = timeValue;
+
+                // 初期値を設定
+                if (timeValue === defaultValue) {
+                    option.selected = true;
+                }
+
+                selectElement.appendChild(option);
+            }
+        }
+    }
 
 
 
