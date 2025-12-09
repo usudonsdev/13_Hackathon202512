@@ -8,8 +8,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 
 
     <link
@@ -186,29 +185,13 @@
             text-align: center;
         }
 
-        .mini-cal-grid>.mini-cal-day-name:nth-child(6) {
-            color: #1e40af;
-        }
+        .mini-cal-grid > .mini-cal-day-name:nth-child(6) {color: #1e40af;}
+        .mini-cal-grid > .mini-cal-date:nth-child(7n-1) {color: #1e40af;}
+        .mini-cal-grid > .mini-cal-day-name:nth-child(7) {color: var(--danger-color);}
+        .mini-cal-grid > .mini-cal-date:nth-child(7n) {color: var(--danger-color);}
 
-        .mini-cal-grid>.mini-cal-date:nth-child(7n-1) {
-            color: #1e40af;
-        }
-
-        .mini-cal-grid>.mini-cal-day-name:nth-child(7) {
-            color: var(--danger-color);
-        }
-
-        .mini-cal-grid>.mini-cal-date:nth-child(7n) {
-            color: var(--danger-color);
-        }
-
-        .mini-cal-date.today.saturday {
-            color: white;
-        }
-
-        .mini-cal-date.today.sunday {
-            color: white;
-        }
+        .mini-cal-date.today.saturday { color: white; }
+        .mini-cal-date.today.sunday { color: white; }
 
         .mini-cal-day-name {
             font-size: 0.8rem;
@@ -226,7 +209,7 @@
             border-radius: 50%;
             cursor: pointer;
             font-size: 0.9rem;
-            font-weight: 500;
+            font-weight:  500;
             transition: background-color 0.1s;
         }
 
@@ -339,54 +322,6 @@
             }
         }
 
-        .event-block {
-            position: absolute;
-            width: calc(100% - 4px);
-            /* 親要素の幅いっぱいから少し内側に */
-            margin: 0 2px;
-            padding: 2px 5px;
-            border-radius: 4px;
-            color: white;
-            font-size: 0.7rem;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            z-index: 5;
-            cursor: pointer;
-            box-shadow: var(--shadow-sm);
-            box-sizing: border-box;
-            /* paddingを含めたサイズ計算 */
-            line-height: 1.2;
-        }
-
-        .event-block.category-work {
-            background-color: #f59e0b;
-        }
-
-        /* Amber */
-
-        .event-block.category-personal {
-            background-color: #10b981;
-        }
-
-        /* Emerald */
-
-        .event-block.category-meeting {
-            background-color: #3b82f6;
-        }
-
-        /* Blue */
-
-        .event-block.category-private {
-            background-color: #ef4444;
-        }
-
-        /* Red */
-
-        .event-title {
-            font-weight: 600;
-        }
-
         .day-cell {
             height: 60px;
             border-bottom: 1px solid var(--bg-secondary);
@@ -399,7 +334,7 @@
             color: var(--text-secondary);
             text-align: right;
             padding-right: 4px;
-            margin-top: 0px;
+            margin-top: -8px;
         }
 
         .days-container {
@@ -537,7 +472,7 @@
             </div>
 
             <nav class="main-nav">
-                <button class="nav-btn" onclick="location.href='/'">
+                <button  class="nav-btn" onclick="location.href='/'">
                     <span class="icon">📅</span> カレンダー
                 </button>
                 <button id="btn-today-todo" class="nav-btn">
@@ -639,7 +574,7 @@
 
                 <div class="days-container">
                     <div class="day-column" id="day-0">
-                    </div>
+                        </div>
                     <div class="day-column" id="day-1"></div>
                     <div class="day-column" id="day-2"></div>
                     <div class="day-column" id="day-3"></div>
@@ -654,8 +589,7 @@
             <div class="modal-content">
                 <span class="close-modal">&times;</span>
                 <h3>予定の作成/編集</h3>
-                <button type="button" class="btn btn-outline-secondary btn-sm" style="margin-bottom:10px"
-                    onclick="location.href='/routine/create'">ルーティーンを一括追加</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" style="margin-bottom:10px" onclick="location.href='/routine/create'">ルーティーンを一括追加</button>
                 <form id="event-form" method="Post">
                     {% csrf_token %}
                     <div class="form-group">
@@ -675,12 +609,11 @@
                     <div class="form-group">
                         <label>公開設定</label>
                         <div class="radio-group">
-                            <label><input type="radio" name="private" value="private" id="private" checked>
-                                Private</label>
-                            <label><input type="radio" name="private" value="public" id="private"> Public</label>
+                            <label><input type="radio" name="private" value="private" id="private" checked> Private</label>
+                            <label><input type="radio" name="private" value="public" id="private" > Public</label>
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" >
                         <label for="event-memo">メモ</label>
                         <textarea id="event-memo" name="event-memo" rows="3"></textarea>
                     </div>
@@ -744,40 +677,6 @@
             // --- State ---
             let currentDate = new Date();
             let miniCalendarDate = new Date();
-
-
-            // --- data input ---
-            const dummyEvents = [
-                {
-                    id: 1,
-                    title: 'クライアントMTG',
-                    start: '2025-12-08T10:00:00',
-                    end: '2025-12-08T11:30:00',
-                    category: 'work'
-                },
-                {
-                    id: 2,
-                    title: 'ジム',
-                    start: '2025-12-10T18:00:00',
-                    end: '2025-12-08T19:00:00',
-                    category: 'personal'
-                },
-                {
-                    id: 3,
-                    title: 'チームランチ',
-                    start: '2025-12-12T12:00:00',
-                    end: '2025-12-12T13:00:00',
-                    category: 'meeting'
-                },
-                {
-                    id: 4,
-                    title: 'チームうんち',
-                    start: '2025-12-24T23:00:00',
-                    end: '2025-12-24T23:30:00',
-                    category: 'work'
-                },
-            ]
-            // --- data input ---
 
 
             // --- Event Listeners ---
@@ -873,7 +772,7 @@
                 // const year = currentDate.getFullYear();
                 // const month = currentDate.getMonth() + 1;
                 // currentPeriodDisplay.textContent = `${year}年 ${month}月`;
-
+                
                 // miniCalendarDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
                 // renderMiniCalendar();
                 const startOfWeek = getStartOfWeek(currentDate);
@@ -923,10 +822,9 @@
 
             function renderWeekView() {
                 const today = new Date();
-                // 取得した日付(currentDate)が属する週の月曜日 (0:00) を計算
-                const startOfWeek = getStartOfWeek(currentDate);
-
-                // 既存のtime-columnはそのまま、曜日ヘッダーとday-columnに日付を表示/設定
+                const startOfWeek = new Date(currentDate);
+                const dayIndex = startOfWeek.getDay() === 0 ? 6 : startOfWeek.getDay() - 1;
+                startOfWeek.setDate(startOfWeek.getDate() - dayIndex);
                 for (let i = 0; i < 7; i++) {
                     const day = new Date(startOfWeek);
                     day.setDate(startOfWeek.getDate() + i);
@@ -935,78 +833,37 @@
                     const dayHeader = dayHeaders[i];
                     const dayName = ['月', '火', '水', '木', '金', '土', '日'][i];
 
-                    // 曜日ヘッダーの更新 (省略...)
-                    if (i === 5) { dayHeader.style.color = '#1e40af'; }
-                    else if (i === 6) { dayHeader.style.color = 'var(--danger-color)'; }
-                    else { dayHeader.style.color = 'var(--text-secondary)'; }
+                    let dateClass = '';
+                    let dateStyle = '';
+
+                    if (day.toDateString() === today.toDateString()) {
+                        dateClass = 'today-date';
+                        dateStyle = `style="background-color: var(--accent-color); color: white; border-radius: 50%; width: 28px; height: 28px; display: inline-flex; justify-content: center; align-items: center;"`;
+                    }
+
+                    if (i === 5) {
+                        dayHeader.style.color = '#1e40af';
+                    } else if (i === 6) {
+                        dayHeader.style.color = 'var(--danger-color)';
+                    } else {
+                        dayHeader.style.color = 'var(--text-secondary)';
+                    }
+
                     dayHeader.innerHTML = `${dayName}<br><span>${dateNum}</span>`;
 
-                    const dayMapping = [6, 0, 1, 2, 3, 4, 5];
-                    const mappedIndex = dayMapping[i];
-
-                    const dayColumn = dayColumns[mappedIndex];
-                    dayColumn.innerHTML = ''; // 既存のイベントとセルをクリア
-
-                    // // 24時間のセルを再描画（クリック可能にするため）
-                    // for (let hour = 0; hour < 24; hour++) {
-                    //     const cell = document.createElement('div');
-                    //     cell.className = 'day-cell';
-                    //     cell.setAttribute('data-date', day.toISOString().substring(0, 10));
-                    //     cell.setAttribute('data-hour', hour);
-                    //     cell.onclick = window.openEventModal;
-                    //     dayColumn.appendChild(cell);
-                    // }
-
-                    // --- Step 2B: 予定のフィルタリングと描画 ---
-                    // 描画対象の日付 (YYYY-MM-DD形式)
-                    const targetDate = day.toISOString().substring(0, 10);
-
-                    // 1. 該当日の予定のみをフィルタリング
-                    const dayEvents = dummyEvents.filter(event => {
-                        return event.start.substring(0, 10) === targetDate;
-                    });
-
-                    // 2. 予定の描画
-                    dayEvents.forEach(event => {
-                        const eventBlock = document.createElement('div');
-                        eventBlock.className = `event-block category-${event.category}`;
-                        eventBlock.title = event.title; // ホバーでタイトル全体を表示
-
-                        const startTime = new Date(event.start);
-                        const endTime = new Date(event.end);
-
-                        // --- Step 2B-3: 位置と高さの計算 ---
-                        const startHour = startTime.getHours();
-                        const startMinute = startTime.getMinutes();
-                        const endHour = endTime.getHours();
-                        const endMinute = endTime.getMinutes();
-
-                        // 1時間あたり60pxの高さがあるため、1分あたり1pxと見なす
-
-                        // top: (時間 * 60) + 分
-                        const topOffset = (startHour * 60) + startMinute;
-
-                        // height: 終了時刻と開始時刻の差を分で計算
-                        const durationMinutes = (endTime.getTime() - startTime.getTime()) / (1000 * 60);
-
-                        eventBlock.style.top = `${topOffset}px`;
-                        eventBlock.style.height = `${durationMinutes}px`;
-
-                        // 予定ブロックの内容
-                        eventBlock.innerHTML = `<div class="event-title">${event.title}</div>`;
-
-                        // イベントブロックをクリックしたときの動作を設定（詳細モーダル表示など）
-                        eventBlock.addEventListener('click', (e) => {
-                            e.stopPropagation(); // セル全体へのクリックイベントを停止
-                            // ここで詳細モーダルを開く処理を実装できます
-                            alert(`予定ID: ${event.id} - ${event.title}\n開始: ${event.start}\n終了: ${event.end}`);
-                        });
-
-                        // 3. カラムに挿入
-                        dayColumn.appendChild(eventBlock);
-                    });
+                    const dayColumn = dayColumns[i];
+                    dayColumn.innerHTML = '';
+                    for (let hour = 0; hour < 24; hour++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'day-cell';
+                        cell.setAttribute('data-date', day.toISOString().substring(0, 10));
+                        cell.setAttribute('data-hour', hour);
+                        cell.onclick = window.openEventModal;
+                        dayColumn.appendChild(cell);
+                    }
                 }
                 console.log('Week View rendered for:', startOfWeek.toDateString());
+                // miniCalendarContainer.classList.add('hidden');
             }
 
             // function renderMiniCalendar() {
@@ -1093,10 +950,10 @@
 
             function getStartOfWeek(date) {
                 const d = new Date(date);
-                d.setHours(0, 0, 0, 0);
                 const day = d.getDay();
-                const daysToSubtract = day === 0 ? 6 : day - 1;
-                d.setDate(d.getDate() - daysToSubtract);
+                const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+                d.setDate(diff);
+                d.setHours(0, 0, 0, 0);
                 return d;
             }
 
@@ -1147,6 +1004,7 @@
             //     miniCalendarDate.setMonth(miniCalendarDate.getMonth() + 1);
             //     renderMiniCalendar();
             // });
+
             // Initialize
             updatePeriodDisplay();
             renderWeekView();
