@@ -254,20 +254,20 @@
             </div>
             
             <nav class="main-nav">
-                <a href="index.html" class="nav-btn">
-                    <span class="icon">📅</span> カレンダー
+                <a href="add_event.html" class="nav-btn">
+                    <span class="icon">📅</span> 予定追加
                 </a>
                 <a href="#" class="nav-btn">
                     <span class="icon">📝</span> 今日やること
                 </a>
                 <a href="#" class="nav-btn">
-                    <span class="icon">👥</span> Friends
+                    <span class="icon">👥</span> ともだち
                 </a>
-                <a href="#" id="sidebar-account-btn" class="nav-btn active">
-                    <span class="icon">👤</span> アカウント
+                <a href="account.html" id="sidebar-account-btn" class="nav-btn active">
+                    <span class="icon">👤</span> プロフィール
                 </a>
-                <a href="#" class="nav-btn special-btn">
-                    <span class="icon">✨</span> LLM Assist
+                <a href="LLM_Assist_System.html" class="nav-btn special-btn">
+                    <span class="icon">✨</span> アシスト
                 </a>
             </nav>
 
@@ -347,9 +347,9 @@
             // サイドバーの「アカウント」ボタンのリンクを、自分のID付きURLに設定
             sidebarAccountBtn.href = `?id=${myUserId}`;
             if (isMyPage) {
-                sidebarAccountBtn.innerHTML = '<span class="icon">🏠</span> マイアカウント';
+                sidebarAccountBtn.innerHTML = '<span class="icon">👤</span> プロフィール';
             } else {
-                 sidebarAccountBtn.innerHTML = '<span class="icon">👤</span> アカウント';
+                sidebarAccountBtn.innerHTML = '<span class="icon">👥</span> アカウント';
             }
 
 
