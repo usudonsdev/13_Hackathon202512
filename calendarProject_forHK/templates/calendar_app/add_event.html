@@ -2,17 +2,22 @@
 <html lang="ja">
 
 <head>
+       
     <meta charset="UTF-8">
+       
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>予定を追加 - Smart Scheduler</title>
-
+        <title>予定を追加 - Smart Scheduler</title>
+       
+       
     <link rel="preconnect" href="https://fonts.googleapis.com">
+       
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+       
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap"
         rel="stylesheet">
 
-    <style>
+        <style>
         :root {
             /* Colors */
             --bg-primary: #f8f9fa;
@@ -271,17 +276,6 @@
             gap: 10px;
         }
 
-        .date-time-group .hour-input,
-        .date-time-group .minute-select {
-            width: 65px;
-            text-align: center;
-        }
-
-        .date-time-group .separator-time {
-            color: var(--text-primary);
-            font-weight: 500;
-        }
-
         .duration-group {
             display: flex;
             align-items: center;
@@ -340,85 +334,85 @@
 
                     <div class="form-section" id="llm-assist-block">
                         <h3>LLM Assist を利用する</h3>
-                        <button id="toggle-llm-assist" class="btn btn-secondary">LLM Assist を表示</button>
+                        <button id="toggle-llm-assist" class="btn btn-secondary">LLM Assistを表示</button>
 
                         <div id="llm-assist-form" class="hidden" style="margin-top: 20px;">
                             <div class="form-group">
                                 <label for="assist-title">やりたい予定の概要</label>
-                                <input type="text" id="assist-title" placeholder="例: 英語の論文執筆、ジムでの筋トレ" required>
+                                <input type="text" id="assist-title"
+                                    placeholder="例: 英語の論文執筆、ジムでの筋トレ" required>
                             </div>
-
-                            <!-- <div class="form-group">
-                                <label>やりたい期間 (いつからいつまでで探すか)</label>
-                                <div class="date-time-group">
-                                    <input type="date" id="assist-start-date" class="date-input" required>
-                                    <span class="separator">〜</span>
-                                    <input type="date" id="assist-end-date" class="date-input" required>
-                                </div>
-                            </div> -->
 
                             <div class="form-group">
                                 <label>やりたい期間 (いつからいつまでで探すか)</label>
                                 <div class="date-time-group">
-                                    <input type="date" id="assist-start-date" class="date-input" required>
-                                    <input type="number" id="assist-start-hour" class="hour-input" min="0" max="23"
-                                        value="09" required>
-                                    <span class="separator-time">:</span>
-                                    <select id="assist-start-minute" class="minute-select" required></select>
-                                    <span class="separator-time">〜</span>
-                                    <input type="date" id="assist-end-date" class="date-input" required>
-                                    <input type="number" id="assist-end-hour" class="hour-input" min="0" max="23"
-                                        value="18" required>
-                                    <span class="separator-time">:</span>
-                                    <select id="assist-end-minute" class="minute-select" required></select>
+                                    <input type="datetime-local"
+                                        id="assist-start-datetime" class="datetime-input" required step="600">
+                                    <span class="separator">〜</span>
+                                    <input type="datetime-local"
+                                        id="assist-end-datetime" class="datetime-input" required step="600">
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label>希望の時間帯 (何時から何時の間で予定を入れるか)</label>
                                 <div class="date-time-group">
-                                    <input type="number" id="assist-time-start-hour" class="hour-input" min="0" max="23"
-                                        value="09" required>
-                                    <span class="separator-time">:</span>
-                                    <select id="assist-time-start-minute" class="minute-select" required></select>
+                                    <input type="time" id="assist-start-time"
+                                        class="time-input" value="09:00" required step="600">
                                     <span class="separator">〜</span>
-                                    <input type="number" id="assist-time-end-hour" class="hour-input" min="0" max="23"
-                                        value="09" required>
-                                    <span class="separator-time">:</span>
-                                    <select id="assist-time-end-minute" class="minute-select" required></select>
+                                    <input type="time" id="assist-end-time"
+                                        class="time-input" value="18:00" required step="600">
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label>所要時間 (合計で必要な時間)</label>
                                 <div class="duration-group">
-                                    <input type="number" id="assist-duration-h" min="0" max="24" value="1" required>
+                                    <input type="number" id="assist-duration-h"
+                                        min="0" max="24" value="1" required>
                                     <span class="unit">時間</span>
-                                    <input type="number" id="assist-duration-m" min="0" max="59" value="0" required
-                                        step="10">
+                                    <input type="number" id="assist-duration-m"
+                                        min="0" max="59" value="0" required step="10">
                                     <span class="unit">分</span>
                                 </div>
                             </div>
 
-                            <button id="run-llm-assist" class="btn btn-accent" style="width: 100%; margin-top: 15px;">
+                            <button id="run-llm-assist" class="btn btn-accent"
+                                style="width: 100%; margin-top: 15px;">
                                 LLMに最適な期間を探させる
                             </button>
                         </div>
                     </div>
                     <form id="add-event-form">
                         <div class="form-group">
-                            <label for="event-title">タイトル <span style="color:var(--danger-color);">*</span></label>
-                            <input type="text" id="event-title" required placeholder="予定の名称を入力">
+                            <label for="event-title">タイトル <span
+                                    style="color:var(--danger-color);">*</span></label>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="form-page-container">
+                <div class="event-form-card">
+                    <form id="add-event-form">
+                        <div class="form-group">
+                            <label for="event-title">タイトル <span
+                                    style="color:var(--danger-color);">*</span></label>
+                            <input type="text" id="event-title" required
+                                placeholder="予定の名称を入力">
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="event-start">開始日時 <span style="color:var(--danger-color);">*</span></label>
-                                <input type="datetime-local" id="event-start" required>
+                                <label for="event-start">開始日時 <span
+                                        style="color:var(--danger-color);">*</span></label>
+                                <input type="datetime-local"
+                                    id="event-start" required>
                             </div>
                             <div class="form-group">
-                                <label for="event-end">終了日時 <span style="color:var(--danger-color);">*</span></label>
-                                <input type="datetime-local" id="event-end" required>
+                                <label for="event-end">終了日時 <span
+                                        style="color:var(--danger-color);">*</span></label>
+                                <input type="datetime-local"
+                                    id="event-end" required>
                             </div>
                         </div>
 
@@ -435,28 +429,31 @@
                         <div class="form-group">
                             <label>公開設定</label>
                             <div class="radio-group">
-                                <label><input type="radio" name="visibility" value="private" checked>
-                                    Private (非公開)</label>
-                                <label><input type="radio" name="visibility" value="public"> Public
-                                    (公開)</label>
+                                <label><input type="radio"
+                                        name="visibility" value="private" checked> Private (非公開)</label>
+                                <label><input type="radio"
+                                        name="visibility" value="public"> Public (公開)</label>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="event-memo">詳細/メモ</label>
-                            <textarea id="event-memo" rows="4" placeholder="場所、参加者、詳細などを入力"></textarea>
+                            <textarea id="event-memo" rows="4"
+                                placeholder="場所、参加者、詳細などを入力"></textarea>
                         </div>
 
                         <div class="form-actions">
                             <button type="button" class="btn-secondary"
                                 onclick="window.location.href='index.html';">キャンセル</button>
-                            <button type="submit" class="btn-primary">予定を保存</button>
+                            <button type="submit"
+                                class="btn-primary">予定を保存</button>
                         </div>
                     </form>
                 </div>
             </div>
         </main>
     </div>
+</body>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -466,61 +463,16 @@
             const eventStartInput = document.getElementById('event-start');
             const eventEndInput = document.getElementById('event-end');
 
-            // --- function ---
-            function populateMinuteSelects() {
-                const minuteSelects = document.querySelectorAll(".minute-select");
-                const minutes = ["00", "10", "20", "30", "40", "50"];
-
-                minuteSelects.forEach(select => {
-                    select.innerHTML = '';
-                    minutes.forEach(minute => {
-                        const option = document.createElement('option');
-                        option.value = minute;
-                        option.textContent = minute;
-                        select.appendChild(option);
-                    });
-                });
-            }
-
-            populateMinuteSelects();
-
             // --- 初期値設定 ---
             // 現在日時をデフォルト値として設定 (デモ用)
             const now = new Date();
-
-            // 10分単位に丸める
-            const roundedMinutes = Math.floor(now.getMinutes() / 10) * 10;
-            now.setMinutes(roundedMinutes);
-            now.setSeconds(0); // 秒をリセット
-
             const nowString = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().substring(0, 16);
             eventStartInput.value = nowString;
 
             // 1時間後を終了時刻に設定
             now.setHours(now.getHours() + 1);
-
-            now.setHours(now.getHours() + 1);
-            eventEndInput.value = toISOString(now);
-
-            const toISOString = (date) => new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
-
-            eventStartInput.value = toISOString(now);
-
-            now.setHours(now.getHours() + 1);
-
-            eventEndInput.value = toISOString(now);
-
-            const end = new Date(now);
-            end.setHours(end.getHours() + 1);
-            eventEndInput.value = toISOString(end);
-
-            // LLM Assist フォームの分にも初期値を設定 (オプション)
-            document.getElementById('assist-time-start-minute').value = '00';
-            document.getElementById('assist-time-end-minute').value = '50';
-
             const endString = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().substring(0, 16);
             eventEndInput.value = endString;
-
 
 
             // --- フォーム送信処理 ---
@@ -528,12 +480,8 @@
                 e.preventDefault();
 
                 const title = document.getElementById('event-title').value;
-                const start = document.getElementById('event-start').value;
-                const end = document.getElementById('event-end').value;
-                // const startHour = document.getElementById('event-start-hour').value.padStart(2, '0');
-                // const startMinute = document.getElementById('event-start-minute').value.padStart(2, '0');
-                // const endHour = document.getElementById('event-end-hour').value.padStart(2, '0');
-                // const endMinute = document.getElementById('event-end-minute').value.padStart(2, '0');
+                const start = eventStartInput.value;
+                const end = eventEndInput.value;
                 const category = document.getElementById('event-category').value;
                 const visibility = document.querySelector('input[name="visibility"]:checked').value;
                 const memo = document.getElementById('event-memo').value;
@@ -571,23 +519,20 @@
             const llmAssistForm = document.getElementById('llm-assist-form');
             const toggleAssistButton = document.getElementById('toggle-llm-assist');
 
-            // --- LLM Assist 機能のイベントリスナ
+            // --- LLM Assist 機能のイベントリスナ       
+            if (toggleAssistButton) {
+                toggleAssistButton.addEventListener('click', () => {
+                    // フォームの表示/非表示を切り替える
+                    llmAssistForm.classList.toggle('hidden');
 
-            if (llmAssistForm && toggleAssistButton) {
-                llmAssistForm.classList.add('hidden');
+                    // ボタンのテキストを切り替える
+                    if (llmAssistForm.classList.contains('hidden')) {
+                        toggleAssistButton.textContent = 'LLM Assist を表示';
+                    } else {
+                        toggleAssistButton.textContent = 'フォームを隠す';
+                    }
+                });
             }
-
-            toggleAssistButton.addEventListener('click', () => {
-                // フォームの表示/非表示を切り替える
-                llmAssistForm.classList.toggle('hidden');
-
-                // ボタンのテキストを切り替える
-                if (llmAssistForm.classList.contains('hidden')) {
-                    toggleAssistButton.textContent = 'LLM Assist を表示';
-                } else {
-                    toggleAssistButton.textContent = 'フォームを隠す';
-                }
-            });
         });
 
 
