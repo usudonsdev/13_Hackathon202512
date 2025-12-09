@@ -331,7 +331,6 @@
 
             <div class="form-page-container">
                 <div class="event-form-card">
-
                     <div class="form-section" id="llm-assist-block">
                         <h3>LLM Assist を利用する</h3>
                         <button id="toggle-llm-assist" class="btn btn-secondary">LLM Assistを表示</button>
@@ -339,80 +338,61 @@
                         <div id="llm-assist-form" class="hidden" style="margin-top: 20px;">
                             <div class="form-group">
                                 <label for="assist-title">やりたい予定の概要</label>
-                                <input type="text" id="assist-title"
-                                    placeholder="例: 英語の論文執筆、ジムでの筋トレ" required>
+                                <input type="text" id="assist-title" placeholder="例: 英語の論文執筆、ジムでの筋トレ" required>
                             </div>
 
                             <div class="form-group">
                                 <label>やりたい期間 (いつからいつまでで探すか)</label>
                                 <div class="date-time-group">
-                                    <input type="datetime-local"
-                                        id="assist-start-datetime" class="datetime-input" required step="600">
+                                    <input type="datetime-local" id="assist-start-datetime" class="datetime-input"
+                                        required step="600">
                                     <span class="separator">〜</span>
-                                    <input type="datetime-local"
-                                        id="assist-end-datetime" class="datetime-input" required step="600">
+                                    <input type="datetime-local" id="assist-end-datetime" class="datetime-input"
+                                        required step="600">
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label>希望の時間帯 (何時から何時の間で予定を入れるか)</label>
                                 <div class="date-time-group">
-                                    <input type="time" id="assist-start-time"
-                                        class="time-input" value="09:00" required step="600">
+                                    <input type="time" id="assist-start-time" class="time-input" value="09:00" required
+                                        step="600">
                                     <span class="separator">〜</span>
-                                    <input type="time" id="assist-end-time"
-                                        class="time-input" value="18:00" required step="600">
+                                    <input type="time" id="assist-end-time" class="time-input" value="18:00" required
+                                        step="600">
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label>所要時間 (合計で必要な時間)</label>
                                 <div class="duration-group">
-                                    <input type="number" id="assist-duration-h"
-                                        min="0" max="24" value="1" required>
+                                    <input type="number" id="assist-duration-h" min="0" max="24" value="1" required>
                                     <span class="unit">時間</span>
-                                    <input type="number" id="assist-duration-m"
-                                        min="0" max="59" value="0" required step="10">
+                                    <input type="number" id="assist-duration-m" min="0" max="59" value="0" required
+                                        step="10">
                                     <span class="unit">分</span>
                                 </div>
                             </div>
 
-                            <button id="run-llm-assist" class="btn btn-accent"
-                                style="width: 100%; margin-top: 15px;">
+                            <button id="run-llm-assist" class="btn btn-accent" style="width: 100%; margin-top: 15px;">
                                 LLMに最適な期間を探させる
                             </button>
                         </div>
                     </div>
                     <form id="add-event-form">
                         <div class="form-group">
-                            <label for="event-title">タイトル <span
-                                    style="color:var(--danger-color);">*</span></label>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="form-page-container">
-                <div class="event-form-card">
-                    <form id="add-event-form">
-                        <div class="form-group">
-                            <label for="event-title">タイトル <span
-                                    style="color:var(--danger-color);">*</span></label>
-                            <input type="text" id="event-title" required
-                                placeholder="予定の名称を入力">
+                            <label for="event-title">タイトル <span style="color:var(--danger-color);">*</span></label>
+                            <input type="text" id="event-title" required placeholder="予定の名称を入力">
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="event-start">開始日時 <span
-                                        style="color:var(--danger-color);">*</span></label>
-                                <input type="datetime-local"
-                                    id="event-start" required>
+                                <label for="event-start">開始日時 <span style="color:var(--danger-color);">*</span></label>
+                                <input type="datetime-local" id="event-start" required>
                             </div>
                             <div class="form-group">
-                                <label for="event-end">終了日時 <span
-                                        style="color:var(--danger-color);">*</span></label>
-                                <input type="datetime-local"
-                                    id="event-end" required>
+                                <label for="event-end">終了日時 <span style="color:var(--danger-color);">*</span></label>
+                                <input type="datetime-local" id="event-end" required>
                             </div>
                         </div>
 
@@ -429,24 +409,21 @@
                         <div class="form-group">
                             <label>公開設定</label>
                             <div class="radio-group">
-                                <label><input type="radio"
-                                        name="visibility" value="private" checked> Private (非公開)</label>
-                                <label><input type="radio"
-                                        name="visibility" value="public"> Public (公開)</label>
+                                <label><input type="radio" name="visibility" value="private" checked> Private
+                                    (非公開)</label>
+                                <label><input type="radio" name="visibility" value="public"> Public (公開)</label>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="event-memo">詳細/メモ</label>
-                            <textarea id="event-memo" rows="4"
-                                placeholder="場所、参加者、詳細などを入力"></textarea>
+                            <textarea id="event-memo" rows="4" placeholder="場所、参加者、詳細などを入力"></textarea>
                         </div>
 
                         <div class="form-actions">
                             <button type="button" class="btn-secondary"
                                 onclick="window.location.href='index.html';">キャンセル</button>
-                            <button type="submit"
-                                class="btn-primary">予定を保存</button>
+                            <button type="submit" class="btn-primary">予定を保存</button>
                         </div>
                     </form>
                 </div>
@@ -455,91 +432,91 @@
     </div>
 </body>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('予定追加ページ initialized');
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('予定追加ページ initialized');
 
-            const eventForm = document.getElementById('add-event-form');
-            const eventStartInput = document.getElementById('event-start');
-            const eventEndInput = document.getElementById('event-end');
+        const eventForm = document.getElementById('add-event-form');
+        const eventStartInput = document.getElementById('event-start');
+        const eventEndInput = document.getElementById('event-end');
 
-            // --- 初期値設定 ---
-            // 現在日時をデフォルト値として設定 (デモ用)
-            const now = new Date();
-            const nowString = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().substring(0, 16);
-            eventStartInput.value = nowString;
+        // --- 初期値設定 ---
+        // 現在日時をデフォルト値として設定 (デモ用)
+        const now = new Date();
+        const nowString = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().substring(0, 16);
+        eventStartInput.value = nowString;
 
-            // 1時間後を終了時刻に設定
-            now.setHours(now.getHours() + 1);
-            const endString = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().substring(0, 16);
-            eventEndInput.value = endString;
-
-
-            // --- フォーム送信処理 ---
-            eventForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-
-                const title = document.getElementById('event-title').value;
-                const start = eventStartInput.value;
-                const end = eventEndInput.value;
-                const category = document.getElementById('event-category').value;
-                const visibility = document.querySelector('input[name="visibility"]:checked').value;
-                const memo = document.getElementById('event-memo').value;
-
-                // バリデーションチェック (デモ用: 開始日時が終了日時より前か)
-                if (new Date(start) >= new Date(end)) {
-                    alert('エラー: 終了日時は開始日時より後の時刻を設定してください。');
-                    return;
-                }
-
-                const newEvent = { title, start, end, category, visibility, memo };
-                console.log('新規予定データ:', newEvent);
-
-                // --- データの保存処理（ダミー） ---
-                // 実際には、ここでサーバーへAPIリクエストを送信します。
-
-                alert(`予定「${title}」をカレンダーに保存しました。\nカレンダーに戻ります。`);
-
-                // 成功したらカレンダーページへリダイレクト
-                window.location.href = 'index.html';
-            });
-
-            // --- ナビゲーションリンク設定 (index.html, account.htmlへの導線) ---
-            const navButtons = document.querySelectorAll('.main-nav a');
-            navButtons.forEach(btn => {
-                // 予定追加ページでは「カレンダー」をアクティブに
-                if (btn.textContent.includes('カレンダー')) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
+        // 1時間後を終了時刻に設定
+        now.setHours(now.getHours() + 1);
+        const endString = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().substring(0, 16);
+        eventEndInput.value = endString;
 
 
-            const llmAssistForm = document.getElementById('llm-assist-form');
-            const toggleAssistButton = document.getElementById('toggle-llm-assist');
+        // --- フォーム送信処理 ---
+        eventForm.addEventListener('submit', (e) => {
+            e.preventDefault();
 
-            // --- LLM Assist 機能のイベントリスナ       
-            if (toggleAssistButton) {
-                toggleAssistButton.addEventListener('click', () => {
-                    // フォームの表示/非表示を切り替える
-                    llmAssistForm.classList.toggle('hidden');
+            const title = document.getElementById('event-title').value;
+            const start = eventStartInput.value;
+            const end = eventEndInput.value;
+            const category = document.getElementById('event-category').value;
+            const visibility = document.querySelector('input[name="visibility"]:checked').value;
+            const memo = document.getElementById('event-memo').value;
 
-                    // ボタンのテキストを切り替える
-                    if (llmAssistForm.classList.contains('hidden')) {
-                        toggleAssistButton.textContent = 'LLM Assist を表示';
-                    } else {
-                        toggleAssistButton.textContent = 'フォームを隠す';
-                    }
-                });
+            // バリデーションチェック (デモ用: 開始日時が終了日時より前か)
+            if (new Date(start) >= new Date(end)) {
+                alert('エラー: 終了日時は開始日時より後の時刻を設定してください。');
+                return;
+            }
+
+            const newEvent = { title, start, end, category, visibility, memo };
+            console.log('新規予定データ:', newEvent);
+
+            // --- データの保存処理（ダミー） ---
+            // 実際には、ここでサーバーへAPIリクエストを送信します。
+
+            alert(`予定「${title}」をカレンダーに保存しました。\nカレンダーに戻ります。`);
+
+            // 成功したらカレンダーページへリダイレクト
+            window.location.href = 'index.html';
+        });
+
+        // --- ナビゲーションリンク設定 (index.html, account.htmlへの導線) ---
+        const navButtons = document.querySelectorAll('.main-nav a');
+        navButtons.forEach(btn => {
+            // 予定追加ページでは「カレンダー」をアクティブに
+            if (btn.textContent.includes('カレンダー')) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
             }
         });
 
 
+        const llmAssistForm = document.getElementById('llm-assist-form');
+        const toggleAssistButton = document.getElementById('toggle-llm-assist');
+
+        // --- LLM Assist 機能のイベントリスナ       
+        if (toggleAssistButton) {
+            toggleAssistButton.addEventListener('click', () => {
+                // フォームの表示/非表示を切り替える
+                llmAssistForm.classList.toggle('hidden');
+
+                // ボタンのテキストを切り替える
+                if (llmAssistForm.classList.contains('hidden')) {
+                    toggleAssistButton.textContent = 'LLM Assist を表示';
+                } else {
+                    toggleAssistButton.textContent = 'フォームを隠す';
+                }
+            });
+        }
+    });
 
 
 
-    </script>
+
+
+</script>
 </body>
 
 </html>
