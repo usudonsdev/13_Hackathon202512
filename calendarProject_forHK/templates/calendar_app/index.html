@@ -8,6 +8,9 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+
+
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap"
         rel="stylesheet">
@@ -469,11 +472,17 @@
             </div>
 
             <nav class="main-nav">
+                <button  class="nav-btn" onclick="location.href='/'">
+                    <span class="icon">📅</span> カレンダー
+                </button>
                 <button id="btn-today-todo" class="nav-btn">
                     <span class="icon">📝</span> 今日やること
                 </button>
                 <button id="btn-friends" class="nav-btn">
                     <span class="icon">👥</span> Friends
+                </button>
+                <button id="btn-friends" class="nav-btn" onclick="location.href='/account/view'">
+                    <span class="icon">🏠</span> マイアカウント
                 </button>
                 <button id="btn-llm" class="nav-btn special-btn">
                     <span class="icon">✨</span> LLM Assist
@@ -580,31 +589,33 @@
             <div class="modal-content">
                 <span class="close-modal">&times;</span>
                 <h3>予定の作成/編集</h3>
-                <form id="event-form">
+                <button type="button" class="btn btn-outline-secondary btn-sm" style="margin-bottom:10px" onclick="location.href='/routine/create'">ルーティーンを一括追加</button>
+                <form id="event-form" method="Post">
+                    {% csrf_token %}
                     <div class="form-group">
                         <label for="event-title">タイトル</label>
-                        <input type="text" id="event-title" required>
+                        <input type="text" id="event-title" name="event-title" required>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label for="event-start">開始</label>
-                            <input type="datetime-local" id="event-start" required>
+                            <input type="datetime-local" id="event-start" name="event-start" required>
                         </div>
                         <div class="form-group">
                             <label for="event-end">終了</label>
-                            <input type="datetime-local" id="event-end" required>
+                            <input type="datetime-local" id="event-end" name="event-end" required>
                         </div>
                     </div>
                     <div class="form-group">
                         <label>公開設定</label>
                         <div class="radio-group">
-                            <label><input type="radio" name="visibility" value="private" checked> Private</label>
-                            <label><input type="radio" name="visibility" value="public"> Public</label>
+                            <label><input type="radio" name="private" value="private" id="private" checked> Private</label>
+                            <label><input type="radio" name="private" value="public" id="private" > Public</label>
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" >
                         <label for="event-memo">メモ</label>
-                        <textarea id="event-memo" rows="3"></textarea>
+                        <textarea id="event-memo" name="event-memo" rows="3"></textarea>
                     </div>
                     <div class="modal-actions">
                         <button type="button" id="btn-delete-event" class="btn-danger hidden">削除</button>
@@ -718,6 +729,7 @@
 
             // Quick Event Creation (Demo)
             // To demonstrate input specs
+            /**
             document.getElementById('event-form').addEventListener('submit', (e) => {
                 e.preventDefault();
                 const title = document.getElementById('event-title').value;
@@ -733,6 +745,7 @@
                 closeModal(eventModal);
                 alert(`予定「${title}」を保存しました`);
             });
+            **/
 
             // // --- Event Listeners ---
             // btnPrevPeriod.addEventListener('click', () => {
