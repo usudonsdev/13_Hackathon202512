@@ -19,3 +19,10 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+
+
+# Django関連
+
+*.pot
+*.pyc
+pycache/
