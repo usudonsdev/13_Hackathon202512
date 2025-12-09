@@ -29,3 +29,13 @@ class CreateRoutineForm(forms.Form):
     end_hour = forms.IntegerField()
     end_minute = forms.IntegerField()
     
+class SearchSlotForm(forms.Form):
+    names = forms.CharField(max_length=100)
+    period_start = forms.DateField()
+    period_end = forms.DateField()
+    desired_start = forms.TimeField()
+    desired_end = forms.TimeField()
+    duration_hours = forms.IntegerField()
+    duration_minutes = forms.IntegerField()
+    
+    
