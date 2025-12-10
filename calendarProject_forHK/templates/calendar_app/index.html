@@ -638,8 +638,7 @@
                 </div>
 
                 <div class="days-container">
-                    <div class="day-column" id="day-0">
-                    </div>
+                    <div class="day-column" id="day-0"></div>
                     <div class="day-column" id="day-1"></div>
                     <div class="day-column" id="day-2"></div>
                     <div class="day-column" id="day-3"></div>
@@ -748,34 +747,48 @@
 
             // --- data input ---
             const dummyEvents = [
-                {
-                    id: 1,
-                    title: 'クライアントMTG',
-                    start: '2025-12-08T10:00:00',
-                    end: '2025-12-08T11:30:00',
-                    category: 'work'
-                },
-                {
-                    id: 2,
-                    title: 'ジム',
-                    start: '2025-12-10T18:00:00',
-                    end: '2025-12-08T19:00:00',
-                    category: 'personal'
-                },
-                {
-                    id: 3,
-                    title: 'チームランチ',
-                    start: '2025-12-12T12:00:00',
-                    end: '2025-12-12T13:00:00',
-                    category: 'meeting'
-                },
-                {
-                    id: 4,
-                    title: 'チームうんち',
-                    start: '2025-12-24T23:00:00',
-                    end: '2025-12-24T23:30:00',
-                    category: 'work'
-                },
+            {  id: 1, title: '{{ event_name.0 }}', start: '{{ event_start.0 }}', end: '{{ event_end.0 }}', category: 'meeting'},
+            {  id: 2, title: '{{ event_name.1 }}', start: '{{ event_start.1 }}', end: '{{ event_end.1 }}', category: 'meeting'},
+            {  id: 3, title: '{{ event_name.2 }}', start: '{{ event_start.2 }}', end: '{{ event_end.2 }}', category: 'meeting'},
+            {  id: 4, title: '{{ event_name.3 }}', start: '{{ event_start.3 }}', end: '{{ event_end.3 }}', category: 'meeting'},
+            {  id: 5, title: '{{ event_name.4 }}', start: '{{ event_start.4 }}', end: '{{ event_end.4 }}', category: 'meeting'},
+            {  id: 6, title: '{{ event_name.5 }}', start: '{{ event_start.5 }}', end: '{{ event_end.5 }}', category: 'meeting'},
+            {  id: 7, title: '{{ event_name.6 }}', start: '{{ event_start.6 }}', end: '{{ event_end.6 }}', category: 'meeting'},
+            {  id: 8, title: '{{ event_name.7 }}', start: '{{ event_start.7 }}', end: '{{ event_end.7 }}', category: 'meeting'},
+            {  id: 9, title: '{{ event_name.8 }}', start: '{{ event_start.8 }}', end: '{{ event_end.8 }}', category: 'meeting'},
+            {  id: 10, title: '{{ event_name.9 }}', start: '{{ event_start.9 }}', end: '{{ event_end.9 }}', category: 'meeting'},
+            {  id: 11, title: '{{ event_name.10 }}', start: '{{ event_start.10 }}', end: '{{ event_end.10 }}', category: 'meeting'},
+            {  id: 12, title: '{{ event_name.11 }}', start: '{{ event_start.11 }}', end: '{{ event_end.11 }}', category: 'meeting'},
+            {  id: 13, title: '{{ event_name.12 }}', start: '{{ event_start.12 }}', end: '{{ event_end.12 }}', category: 'meeting'},
+            {  id: 14, title: '{{ event_name.13 }}', start: '{{ event_start.13 }}', end: '{{ event_end.13 }}', category: 'meeting'},
+            {  id: 15, title: '{{ event_name.14 }}', start: '{{ event_start.14 }}', end: '{{ event_end.14 }}', category: 'meeting'},
+            {  id: 16, title: '{{ event_name.15 }}', start: '{{ event_start.15 }}', end: '{{ event_end.15 }}', category: 'meeting'},
+            {  id: 17, title: '{{ event_name.16 }}', start: '{{ event_start.16 }}', end: '{{ event_end.16 }}', category: 'meeting'},
+            {  id: 18, title: '{{ event_name.17 }}', start: '{{ event_start.17 }}', end: '{{ event_end.17 }}', category: 'meeting'},
+            {  id: 19, title: '{{ event_name.18 }}', start: '{{ event_start.18 }}', end: '{{ event_end.18 }}', category: 'meeting'},
+            {  id: 20, title: '{{ event_name.19 }}', start: '{{ event_start.19 }}', end: '{{ event_end.19 }}', category: 'meeting'},
+            {  id: 21, title: '{{ event_name.20 }}', start: '{{ event_start.20 }}', end: '{{ event_end.20 }}', category: 'meeting'},
+            {  id: 22, title: '{{ event_name.21 }}', start: '{{ event_start.21 }}', end: '{{ event_end.21 }}', category: 'meeting'},
+            {  id: 23, title: '{{ event_name.22 }}', start: '{{ event_start.22 }}', end: '{{ event_end.22 }}', category: 'meeting'},
+            {  id: 24, title: '{{ event_name.23 }}', start: '{{ event_start.23 }}', end: '{{ event_end.23 }}', category: 'meeting'},
+            {  id: 25, title: '{{ event_name.24 }}', start: '{{ event_start.24 }}', end: '{{ event_end.24 }}', category: 'meeting'},
+            {  id: 26, title: '{{ event_name.25 }}', start: '{{ event_start.25 }}', end: '{{ event_end.25 }}', category: 'meeting'},
+            {  id: 27, title: '{{ event_name.26 }}', start: '{{ event_start.26 }}', end: '{{ event_end.26 }}', category: 'meeting'},
+            {  id: 28, title: '{{ event_name.27 }}', start: '{{ event_start.27 }}', end: '{{ event_end.27 }}', category: 'meeting'},
+            {  id: 29, title: '{{ event_name.28 }}', start: '{{ event_start.28 }}', end: '{{ event_end.28 }}', category: 'meeting'},
+            {  id: 30, title: '{{ event_name.29 }}', start: '{{ event_start.29 }}', end: '{{ event_end.29 }}', category: 'meeting'},
+            {  id: 31, title: '{{ event_name.30 }}', start: '{{ event_start.30 }}', end: '{{ event_end.30 }}', category: 'meeting'},
+            {  id: 32, title: '{{ event_name.31 }}', start: '{{ event_start.31 }}', end: '{{ event_end.31 }}', category: 'meeting'},
+            {  id: 33, title: '{{ event_name.32 }}', start: '{{ event_start.32 }}', end: '{{ event_end.32 }}', category: 'meeting'},
+            {  id: 34, title: '{{ event_name.33 }}', start: '{{ event_start.33 }}', end: '{{ event_end.33 }}', category: 'meeting'},
+            {  id: 35, title: '{{ event_name.34 }}', start: '{{ event_start.34 }}', end: '{{ event_end.34 }}', category: 'meeting'},
+            {  id: 36, title: '{{ event_name.35 }}', start: '{{ event_start.35 }}', end: '{{ event_end.35 }}', category: 'meeting'},
+            {  id: 37, title: '{{ event_name.36 }}', start: '{{ event_start.36 }}', end: '{{ event_end.36 }}', category: 'meeting'},
+            {  id: 38, title: '{{ event_name.37 }}', start: '{{ event_start.37 }}', end: '{{ event_end.37 }}', category: 'meeting'},
+            {  id: 39, title: '{{ event_name.38 }}', start: '{{ event_start.38 }}', end: '{{ event_end.38 }}', category: 'meeting'},
+            {  id: 40, title: '{{ event_name.39 }}', start: '{{ event_start.39 }}', end: '{{ event_end.39 }}', category: 'meeting'},
+
+                
             ]
             // --- data input ---
 

@@ -257,7 +257,7 @@
             </div>
 
             <nav class="main-nav">
-                <a href="add_event.html" class="nav-btn">
+                <a href="plan/create" class="nav-btn">
                     <span class="icon">📅</span> 予定追加
                 </a>
                 <a href="#" class="nav-btn">
@@ -266,10 +266,10 @@
                 <a href="#" class="nav-btn">
                     <span class="icon">👥</span> ともだち
                 </a>
-                <a href="account.html" id="sidebar-account-btn" class="nav-btn">
+                <a href="account/view" id="sidebar-account-btn" class="nav-btn">
                     <span class="icon">👤</span> プロフィール
                 </a>
-                <a href="Scheduling_Assist_System.html" class="nav-btn" style="background-color: #ecf0f1;">
+                <a href="assist" class="nav-btn" style="background-color: #ecf0f1;">
                     <span class="icon">✨</span> アシスト
                 </a>
             </nav>
@@ -290,8 +290,9 @@
                         <h3>Assist Boostを利用する</h3>
                         <button id="toggle-llm-assist" class="btn btn-secondary">フォームを表示</button>
 
-                        <form id="llm-assist-form" class="hidden" style="margin-top: 20px;">
-                            <div class="form-group">
+                        <form style="margin-top: 20px;"  method="Post">
+                        {% csrf_token %}
+                        <div class="form-group">
                                 <label for="assist-title">やりたい予定の概要</label>
                                 <input type="text" id="assist-title" name="assist-title" placeholder="例: 英語の論文執筆、ジムでの筋トレ" required>
                             </div>
@@ -299,9 +300,9 @@
                             <div class="form-group">
                                 <label>やりたい期間 (いつからいつまでで探すか)</label>
                                 <div class="date-time-group">
-                                    <input type="datetime-local" id="assist-start-datetime" name="assist-start-datetime" class="datetime-input" required step="600">
+                                    <input type="date" id="assist-start-datetime" name="assist-start-datetime" >
                                     <span class="separator">〜</span>
-                                    <input type="datetime-local" id="assist-end-datetime" name="assist-end-datetime" class="datetime-input" required step="600">
+                                    <input type="date" id="assist-end-datetime" name="assist-end-datetime">
                                 </div>
                             </div>
 
@@ -327,7 +328,7 @@
                             <div class="form-group">
                                 <label>考慮する他のユーザーID</label>
                                 <div id="users_list">
-                                    <input type="text" name="users[]" placeholder="ユーザーID (オプション)">
+                                    <input type="text" name="users" placeholder="ユーザーID (オプション)">
                                 </div>
                                 <div class="btn-flex-group">
                                     <button type="button" onclick="addUser()" class="btn btn-primary">
@@ -335,7 +336,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <button type="submit" id="run-llm-assist" class="btn btn-accent" style="width: 100%; margin-top: 15px;">
+                            <button type="submit" style="width: 100%; margin-top: 15px;">
                                 SEARCH
                             </button>
                         </form>
@@ -352,7 +353,7 @@
             let input = document.createElement("input");
             input.type = "text";
             // name="users[]"として、サーバー側で配列として受け取れるようにします
-            input.name = "users[]"; 
+            input.name = "users"; 
             input.placeholder = "ユーザーID";
             div.appendChild(input);
         }
@@ -403,7 +404,7 @@
                             data['users'] = [];
                         }
                         if (value) { // 空の入力は無視
-                           data['users'].push(value);
+                            data['users'].push(value);
                         }
                     } else {
                         data[key] = value;
@@ -411,7 +412,7 @@
                 }
 
                 console.log('検索データ:', data);
-                alert('SEARCH機能が実行されました！\nコンソールに送信データが出力されています。');
+                //alert('SEARCH機能が実行されました！\nコンソールに送信データが出力されています。');
                 // 実際にはここでデータをAPIに送信します。
             });
         });
