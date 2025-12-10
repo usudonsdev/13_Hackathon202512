@@ -104,7 +104,7 @@ class RoutineCreateView(View):
 class SearchView(View):
     def get(self, request):
         form = SearchSlotForm()
-        return render(request, "calendar_app/search_slot.html", {"form": form})
+        return render(request, "calendar_app/Scheduling_Assist_System.html", {"form": form})
     def post(self, request):
         form = SearchSlotForm(request.POST)
         if form.is_valid():
@@ -177,7 +177,7 @@ class SearchView(View):
                     t = t + timedelta(minutes=10)
                 current_date = current_date + timedelta(days=1)
             return redirect("calendar_app:index")
-        return render(request, "calendar_app/search_slot.html", {"form": form},{"results": results})
+        return render(request, "calendar_app/Scheduling_Assist_System.html", {"form": form},{"results": results})
             
 
             
