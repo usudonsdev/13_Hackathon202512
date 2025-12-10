@@ -1,7 +1,1171 @@
-    <h2>カレンダー</h2>
-    <p>ハッカソン用のカレンダーアプリ</p>
+<!DOCTYPE html>
+<html lang="ja">
 
-    <form action="{% url 'accounts:logout' %}" method="post"> 
-        {% csrf_token %}
-        <button type="submit">ログアウト</button>
-    </form>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Scheduler</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            /* Colors */
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #6e7c87;
+            --accent-color: #3b82f6;
+            --accent-hover: #2563eb;
+            --danger-color: #ef4444;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+
+            /* Spacing */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+
+            /* Layout */
+            --sidebar-width: 250px;
+            --header-height: 60px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100%;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: var(--spacing-md);
+        }
+
+        .logo-area h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-lg);
+            color: var(--text-primary);
+        }
+
+        .main-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .nav-btn:hover {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .nav-btn.special-btn {
+            background-color: #eff6ff;
+            /* light blue */
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
+        .nav-btn.special-btn:hover {
+            background-color: #dbeafe;
+        }
+
+        .icon-btn {
+            border: none;
+            background: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-primary);
+        }
+
+        .top-bar {
+            height: var(--header-height);
+            padding: 0 var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .calendar-controls {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            position: relative;
+        }
+
+        #mini-calendar-container {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+            padding: var(--spacing-md);
+        }
+
+        .mini-cal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .mini-cal-header h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .mini-cal-controls .control-btn {
+            width: 24px;
+            height: 24px;
+            font-size: 0.8rem;
+        }
+
+        .mini-cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            text-align: center;
+        }
+
+        .mini-cal-grid>.mini-cal-day-name:nth-child(6) {
+            color: #1e40af;
+        }
+
+        .mini-cal-grid>.mini-cal-date:nth-child(7n-1) {
+            color: #1e40af;
+        }
+
+        .mini-cal-grid>.mini-cal-day-name:nth-child(7) {
+            color: var(--danger-color);
+        }
+
+        .mini-cal-grid>.mini-cal-date:nth-child(7n) {
+            color: var(--danger-color);
+        }
+
+        .mini-cal-date.today.saturday {
+            color: white;
+        }
+
+        .mini-cal-date.today.sunday {
+            color: white;
+        }
+
+        .mini-cal-day-name {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            padding: 4px 0;
+        }
+
+        .mini-cal-date {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 30px;
+            height: 30px;
+            margin: 0 auto;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background-color 0.1s;
+        }
+
+        .mini-cal-date:hover {
+            background: var(--bg-primary);
+        }
+
+        .mini-cal-date.other-month {
+            color: var(--text-secondary);
+            opacity: 0.6;
+        }
+
+        .mini-cal-date.today {
+            background-color: var(--accent-color);
+            color: white;
+            font-weight: 700;
+        }
+
+        .mini-cal-date.selected-day {
+            border: 2px solid var(--accent-color);
+            background-color: #e0f2fe;
+        }
+
+        .control-btn {
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-btn:hover {
+            background-color: var(--bg-primary);
+        }
+
+        #current-period-display {
+            font-size: 1.25rem;
+            font-weight: 600;
+            min-width: 150px;
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+            padding: 0 5px;
+            border-radius: 4px;
+            transition: background-color 0.1s;
+        }
+
+        #current-period-display:hover {
+            background-color: var(--bg-primary);
+        }
+
+        .text-btn {
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #view-select {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Calendar Grid */
+        #calendar-grid {
+            flex: 1;
+            overflow: auto;
+            background-color: var(--bg-secondary);
+            display: grid;
+            grid-template-columns: 40px repeat(7, 1fr);
+            position: relative;
+        }
+
+        .week-header {
+            grid-column: 2 / span 7;
+            /* 2列目から7列分 */
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .week-view {
+            /* Temp styling for structure */
+            padding: var(--spacing-md);
+            color: var(--text-secondary);
+        }
+
+        .day-header {
+            flex: 1;
+            padding: var(--spacing-sm);
+            text-align: center;
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .day-column {
+            position: relative;
+            border-right: 1px solid var(--border-color);
+
+            &:last-child {
+                border-right: none;
+            }
+        }
+
+        .event-block {
+            position: absolute;
+            width: calc(100% - 4px);
+            /* 親要素の幅いっぱいから少し内側に */
+            margin: 0 2px;
+            padding: 2px 5px;
+            border-radius: 4px;
+            color: white;
+            font-size: 0.7rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            z-index: 5;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            box-sizing: border-box;
+            /* paddingを含めたサイズ計算 */
+            line-height: 1.2;
+        }
+
+        .event-block.category-work {
+            background-color: #f59e0b;
+        }
+
+        /* Amber */
+
+        .event-block.category-personal {
+            background-color: #10b981;
+        }
+
+        /* Emerald */
+
+        .event-block.category-meeting {
+            background-color: #3b82f6;
+        }
+
+        /* Blue */
+
+        .event-block.category-private {
+            background-color: #ef4444;
+        }
+
+        /* Red */
+
+        .event-title {
+            font-weight: 600;
+        }
+
+        .day-cell {
+            height: 60px;
+            border-bottom: 1px solid var(--bg-secondary);
+        }
+
+        .time-slot {
+            height: 60px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-align: right;
+            padding-right: 4px;
+            margin-top: 0px;
+        }
+
+        .days-container {
+            grid-column: 2 / span 7;
+            grid-row: 2 / 3;
+            display: contents;
+        }
+
+
+        /* Modals */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.hidden {
+            display: none !important;
+        }
+
+        .modal-content {
+            background-color: var(--bg-secondary);
+            padding: var(--spacing-lg);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--shadow-md);
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: var(--spacing-md);
+            right: var(--spacing-md);
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .form-row {
+            display: flex;
+            gap: var(--spacing-md);
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: var(--spacing-xs);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        input[type="text"],
+        input[type="datetime-local"],
+        textarea {
+            width: 100%;
+            padding: var(--spacing-sm);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: inherit;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: var(--spacing-md);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-danger {
+            background-color: transparent;
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-danger:hover {
+            background-color: #fef2f2;
+        }
+
+        .friend-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-sm) 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo-area">
+                <h1>Scheduler</h1>
+            </div>
+
+            <nav class="main-nav">
+                <button class="nav-btn" onclick="location.href='/'">
+                    <span class="icon">📅</span> カレンダー
+                </button>
+                <button id="btn-today-todo" class="nav-btn">
+                    <span class="icon">📝</span> 今日やること
+                </button>
+                <button id="btn-friends" class="nav-btn">
+                    <span class="icon">👥</span> Friends
+                </button>
+                <button id="btn-friends" class="nav-btn" onclick="location.href='/account/view'">
+                    <span class="icon">🏠</span> マイアカウント
+                </button>
+                <button id="btn-llm" class="nav-btn special-btn">
+                    <span class="icon">✨</span> LLM Assist
+                </button>
+            </nav>
+
+            <div class="settings-area">
+                <button id="btn-settings" class="icon-btn" aria-label="Settings">⚙️ 設定</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="calendar-controls">
+                    <button id="prev-period" class="control-btn">&lt;</button>
+                    <!-- <div>
+                        <div style="position: relative;"><h2 id="current-period-display">2023年 10月</h2>
+                        <div id="mini-calendar-container" class="hidden">
+                        </div>
+                            <div class="mini-cal-header">
+                                <button id="mini-cal-prev" class="control-btn">&lt;</button>
+                                <h4 id="mini-cal-month-display"></h4>
+                                <button id="mini-cal-next" class="control-btn">&gt;</button>
+                            </div>
+                            <div class="mini-cal-grid">
+                                <div class="mini-cal-day-name">月</div>
+                                <div class="mini-cal-day-name">火</div>
+                                <div class="mini-cal-day-name">水</div>
+                                <div class="mini-cal-day-name">木</div>
+                                <div class="mini-cal-day-name">金</div>
+                                <div class="mini-cal-day-name">土</div>
+                                <div class="mini-cal-day-name">日</div>
+                            </div>
+                        </div>
+                    </div> -->
+                    <h2 id="current-period-display"></h2>
+                    <button id="next-period" class="control-btn">&gt;</button>
+                    <button id="btn-today" class="text-btn">今日</button>
+                </div>
+
+                <div class="view-switcher">
+                    <select id="view-select">
+                        <option value="week">週</option>
+                        <option value="month">月</option>
+                        <option value="year">年</option>
+                        <option value="custom">カスタム</option>
+                    </select>
+                </div>
+            </header>
+
+            <div id="calendar-grid" class="calendar-view week-view">
+
+                <div class="week-header">
+                    <div class="day-header">月</div>
+                    <div class="day-header">火</div>
+                    <div class="day-header">水</div>
+                    <div class="day-header">木</div>
+                    <div class="day-header">金</div>
+                    <div class="day-header">土</div>
+                    <div class="day-header">日</div>
+                </div>
+
+                <div class="time-column">
+                    <div class="time-slot">0:00</div>
+                    <div class="time-slot">1:00</div>
+                    <div class="time-slot">2:00</div>
+                    <div class="time-slot">3:00</div>
+                    <div class="time-slot">4:00</div>
+                    <div class="time-slot">5:00</div>
+                    <div class="time-slot">6:00</div>
+                    <div class="time-slot">7:00</div>
+                    <div class="time-slot">8:00</div>
+                    <div class="time-slot">9:00</div>
+                    <div class="time-slot">10:00</div>
+                    <div class="time-slot">11:00</div>
+                    <div class="time-slot">12:00</div>
+                    <div class="time-slot">13:00</div>
+                    <div class="time-slot">14:00</div>
+                    <div class="time-slot">15:00</div>
+                    <div class="time-slot">16:00</div>
+                    <div class="time-slot">17:00</div>
+                    <div class="time-slot">18:00</div>
+                    <div class="time-slot">19:00</div>
+                    <div class="time-slot">20:00</div>
+                    <div class="time-slot">21:00</div>
+                    <div class="time-slot">22:00</div>
+                    <div class="time-slot">23:00</div>
+                </div>
+
+                <div class="days-container">
+                    <div class="day-column" id="day-0">
+                    </div>
+                    <div class="day-column" id="day-1"></div>
+                    <div class="day-column" id="day-2"></div>
+                    <div class="day-column" id="day-3"></div>
+                    <div class="day-column" id="day-4"></div>
+                    <div class="day-column" id="day-5"></div>
+                    <div class="day-column" id="day-6"></div>
+                </div>
+            </div>
+        </main>
+
+        <div id="event-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h3>予定の作成/編集</h3>
+                <button type="button" class="btn btn-outline-secondary btn-sm" style="margin-bottom:10px"
+                    onclick="location.href='/routine/create'">ルーティーンを一括追加</button>
+                <form id="event-form" method="Post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="event-title">タイトル</label>
+                        <input type="text" id="event-title" name="event-title" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="event-start">開始</label>
+                            <input type="datetime-local" id="event-start" name="event-start" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="event-end">終了</label>
+                            <input type="datetime-local" id="event-end" name="event-end" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>公開設定</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="private" value="private" id="private" checked>
+                                Private</label>
+                            <label><input type="radio" name="private" value="public" id="private"> Public</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="event-memo">メモ</label>
+                        <textarea id="event-memo" name="event-memo" rows="3"></textarea>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" id="btn-delete-event" class="btn-danger hidden">削除</button>
+                        <button type="submit" class="btn-primary">保存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="friend-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h3>Friends</h3>
+                <div class="friend-search">
+                    <input type="text" placeholder="IDで検索して追加...">
+                    <button>追加</button>
+                </div>
+                <ul class="friend-list">
+                    <li class="friend-item">
+                        <div class="friend-info">
+                            <span class="friend-name">Friend A</span>
+                            <span class="friend-status">Online</span>
+                        </div>
+                        <button class="btn-small">予定を見る</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Smart Scheduler initialized');
+
+            // --- DOM Elements ---
+            const btnTodayTodo = document.getElementById('btn-today-todo');
+            const btnFriends = document.getElementById('btn-friends');
+            const btnLlm = document.getElementById('btn-llm');
+            const eventModal = document.getElementById('event-modal');
+            const friendModal = document.getElementById('friend-modal');
+            const dayHeaders = document.querySelectorAll('.day-header');
+            const dayColumns = document.querySelectorAll('.day-column');
+
+            // --- Mini Calendar DOM Elements ---
+            const miniCalendarContainer = document.getElementById('mini-calendar-container');
+            const miniCalMonthDisplay = document.getElementById('mini-cal-month-display');
+            const miniCalPrev = document.getElementById('mini-cal-prev');
+            const miniCalNext = document.getElementById('mini-cal-next');
+            const miniCalGrid = document.querySelector('.mini-cal-grid');
+
+            // --- Current DispElement ---
+            const currentPeriodDisplay = document.getElementById('current-period-display');
+            const btnPrevPeriod = document.getElementById('prev-period');
+            const btnNextPeriod = document.getElementById('next-period');
+            const btnToday = document.getElementById('btn-today');
+            const calendarGrid = document.getElementById('calendar-grid');
+
+            // --- State ---
+            let currentDate = new Date();
+            let miniCalendarDate = new Date();
+
+
+            // --- data input ---
+            const dummyEvents = [
+            {  id: 1, title: '{{ event_name.0 }}', start: '{{ event_start.0 }}', end: '{{ event_end.0 }}', category: 'meeting'},
+            {  id: 2, title: '{{ event_name.1 }}', start: '{{ event_start.1 }}', end: '{{ event_end.1 }}', category: 'meeting'},
+            {  id: 3, title: '{{ event_name.2 }}', start: '{{ event_start.2 }}', end: '{{ event_end.2 }}', category: 'meeting'},
+            {  id: 4, title: '{{ event_name.3 }}', start: '{{ event_start.3 }}', end: '{{ event_end.3 }}', category: 'meeting'},
+            {  id: 5, title: '{{ event_name.4 }}', start: '{{ event_start.4 }}', end: '{{ event_end.4 }}', category: 'meeting'},
+            {  id: 6, title: '{{ event_name.5 }}', start: '{{ event_start.5 }}', end: '{{ event_end.5 }}', category: 'meeting'},
+            {  id: 7, title: '{{ event_name.6 }}', start: '{{ event_start.6 }}', end: '{{ event_end.6 }}', category: 'meeting'},
+            {  id: 8, title: '{{ event_name.7 }}', start: '{{ event_start.7 }}', end: '{{ event_end.7 }}', category: 'meeting'},
+            {  id: 9, title: '{{ event_name.8 }}', start: '{{ event_start.8 }}', end: '{{ event_end.8 }}', category: 'meeting'},
+            {  id: 10, title: '{{ event_name.9 }}', start: '{{ event_start.9 }}', end: '{{ event_end.9 }}', category: 'meeting'},
+            {  id: 11, title: '{{ event_name.10 }}', start: '{{ event_start.10 }}', end: '{{ event_end.10 }}', category: 'meeting'},
+            {  id: 12, title: '{{ event_name.11 }}', start: '{{ event_start.11 }}', end: '{{ event_end.11 }}', category: 'meeting'},
+            {  id: 13, title: '{{ event_name.12 }}', start: '{{ event_start.12 }}', end: '{{ event_end.12 }}', category: 'meeting'},
+            {  id: 14, title: '{{ event_name.13 }}', start: '{{ event_start.13 }}', end: '{{ event_end.13 }}', category: 'meeting'},
+            {  id: 15, title: '{{ event_name.14 }}', start: '{{ event_start.14 }}', end: '{{ event_end.14 }}', category: 'meeting'},
+            {  id: 16, title: '{{ event_name.15 }}', start: '{{ event_start.15 }}', end: '{{ event_end.15 }}', category: 'meeting'},
+            {  id: 17, title: '{{ event_name.16 }}', start: '{{ event_start.16 }}', end: '{{ event_end.16 }}', category: 'meeting'},
+            {  id: 18, title: '{{ event_name.17 }}', start: '{{ event_start.17 }}', end: '{{ event_end.17 }}', category: 'meeting'},
+            {  id: 19, title: '{{ event_name.18 }}', start: '{{ event_start.18 }}', end: '{{ event_end.18 }}', category: 'meeting'},
+            {  id: 20, title: '{{ event_name.19 }}', start: '{{ event_start.19 }}', end: '{{ event_end.19 }}', category: 'meeting'},
+            {  id: 21, title: '{{ event_name.20 }}', start: '{{ event_start.20 }}', end: '{{ event_end.20 }}', category: 'meeting'},
+            {  id: 22, title: '{{ event_name.21 }}', start: '{{ event_start.21 }}', end: '{{ event_end.21 }}', category: 'meeting'},
+            {  id: 23, title: '{{ event_name.22 }}', start: '{{ event_start.22 }}', end: '{{ event_end.22 }}', category: 'meeting'},
+            {  id: 24, title: '{{ event_name.23 }}', start: '{{ event_start.23 }}', end: '{{ event_end.23 }}', category: 'meeting'},
+            {  id: 25, title: '{{ event_name.24 }}', start: '{{ event_start.24 }}', end: '{{ event_end.24 }}', category: 'meeting'},
+            {  id: 26, title: '{{ event_name.25 }}', start: '{{ event_start.25 }}', end: '{{ event_end.25 }}', category: 'meeting'},
+            {  id: 27, title: '{{ event_name.26 }}', start: '{{ event_start.26 }}', end: '{{ event_end.26 }}', category: 'meeting'},
+            {  id: 28, title: '{{ event_name.27 }}', start: '{{ event_start.27 }}', end: '{{ event_end.27 }}', category: 'meeting'},
+            {  id: 29, title: '{{ event_name.28 }}', start: '{{ event_start.28 }}', end: '{{ event_end.28 }}', category: 'meeting'},
+            {  id: 30, title: '{{ event_name.29 }}', start: '{{ event_start.29 }}', end: '{{ event_end.29 }}', category: 'meeting'},
+            {  id: 31, title: '{{ event_name.30 }}', start: '{{ event_start.30 }}', end: '{{ event_end.30 }}', category: 'meeting'},
+            {  id: 32, title: '{{ event_name.31 }}', start: '{{ event_start.31 }}', end: '{{ event_end.31 }}', category: 'meeting'},
+            {  id: 33, title: '{{ event_name.32 }}', start: '{{ event_start.32 }}', end: '{{ event_end.32 }}', category: 'meeting'},
+            {  id: 34, title: '{{ event_name.33 }}', start: '{{ event_start.33 }}', end: '{{ event_end.33 }}', category: 'meeting'},
+            {  id: 35, title: '{{ event_name.34 }}', start: '{{ event_start.34 }}', end: '{{ event_end.34 }}', category: 'meeting'},
+            {  id: 36, title: '{{ event_name.35 }}', start: '{{ event_start.35 }}', end: '{{ event_end.35 }}', category: 'meeting'},
+            {  id: 37, title: '{{ event_name.36 }}', start: '{{ event_start.36 }}', end: '{{ event_end.36 }}', category: 'meeting'},
+            {  id: 38, title: '{{ event_name.37 }}', start: '{{ event_start.37 }}', end: '{{ event_end.37 }}', category: 'meeting'},
+            {  id: 39, title: '{{ event_name.38 }}', start: '{{ event_start.38 }}', end: '{{ event_end.38 }}', category: 'meeting'},
+            {  id: 40, title: '{{ event_name.39 }}', start: '{{ event_start.39 }}', end: '{{ event_end.39 }}', category: 'meeting'},
+
+                
+            ]
+            // --- data input ---
+
+
+            // --- Event Listeners ---
+
+            // Navigation interaction placeholders
+            btnTodayTodo.addEventListener('click', () => {
+                alert('今日やること機能は実装中です');
+            });
+
+            btnFriends.addEventListener('click', () => {
+                openModal(friendModal);
+            });
+
+            btnLlm.addEventListener('click', () => {
+                alert('LLM機能は実装中です');
+            });
+
+            // Calendar Interactions (Placeholder)
+            // In a real implementation, clicking a time slot would open the event modal
+            calendarGrid.addEventListener('click', () => {
+                // Only for demo purposes: if grid is clicked, show event modal
+                // In reality, check for specific cell target
+                // openModal(eventModal);
+            });
+
+            // デモ用に予定追加テストボタンが機能するように、renderCalendarから呼ばれる onclick を実行する関数を定義
+            window.openEventModal = function () {
+                openModal(eventModal);
+
+                // 予定開始/終了時刻を現在の時刻に設定 (デモ用)
+                const now = new Date();
+                const nowString = now.toISOString().substring(0, 16); // YYYY-MM-DDThh:mm
+                document.getElementById('event-start').value = nowString;
+
+                // 1時間後を終了時刻に設定 (デモ用)
+                now.setHours(now.getHours() + 1);
+                const endString = now.toISOString().substring(0, 16);
+                document.getElementById('event-end').value = endString;
+            }
+
+
+            // Modal Controls
+            const closeButtons = document.querySelectorAll('.close-modal');
+            closeButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const modal = e.target.closest('.modal');
+                    closeModal(modal);
+                });
+            });
+
+            // Quick Event Creation (Demo)
+            // To demonstrate input specs
+            /**
+            document.getElementById('event-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const title = document.getElementById('event-title').value;
+                const start = document.getElementById('event-start').value;
+                const end = document.getElementById('event-end').value;
+                const visibility = document.querySelector('input[name="visibility"]:checked').value;
+                const memo = document.getElementById('event-memo').value;
+
+                console.log('New Event:', { title, start, end, visibility, memo });
+
+                // Save to localStorage logic would go here
+
+                closeModal(eventModal);
+                alert(`予定「${title}」を保存しました`);
+            });
+            **/
+
+            // // --- Event Listeners ---
+            // btnPrevPeriod.addEventListener('click', () => {
+            //     currentDate.setMonth(currentDate.getMonth() - 1);
+            //     updatePeriodDisplay();
+            //     renderCalendar();
+            // });
+
+            // btnNextPeriod.addEventListener('click', () => {
+            //     currentDate.setMonth(currentDate.getMonth() + 1);
+            //     updatePeriodDisplay();
+            //     renderCalendar();
+            // });
+
+            // btnToday.addEventListener('click', () => {
+            //     currentDate = new Date();
+            //     updatePeriodDisplay();
+            //     renderCalendar();
+            // });
+
+            // --- Functions ---
+
+            function updatePeriodDisplay() {
+                // const year = currentDate.getFullYear();
+                // const month = currentDate.getMonth() + 1;
+                // currentPeriodDisplay.textContent = `${year}年 ${month}月`;
+
+                // miniCalendarDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+                // renderMiniCalendar();
+                const startOfWeek = getStartOfWeek(currentDate);
+                const endOfWeek = new Date(startOfWeek);
+                endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+                let displayText = `${startOfWeek.getFullYear()}年 ${startOfWeek.getMonth() + 1}月${startOfWeek.getDate()}日`;
+
+                if (startOfWeek.getMonth() !== endOfWeek.getMonth() || startOfWeek.getFullYear() !== endOfWeek.getFullYear()) {
+                    displayText += ` - ${endOfWeek.getFullYear()}年 ${endOfWeek.getMonth() + 1}月${endOfWeek.getDate()}日`;
+                } else {
+                    displayText += ` - ${endOfWeek.getDate()}日`;
+                }
+
+                currentPeriodDisplay.textContent = displayText;
+
+                // miniCalendarDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+                // renderMiniCalendar();
+                renderWeekView();
+            }
+
+            function openModal(modal) {
+                modal.classList.remove('hidden');
+            }
+
+            function closeModal(modal) {
+                modal.classList.add('hidden');
+                // モーダルを閉じたときにフォームをリセット（Event Modalのみ）
+                if (modal.id === 'event-modal') {
+                    document.getElementById('event-form').reset();
+                }
+            }
+
+            // function renderCalendar() {
+            //     // Placeholder for calendar rendering logic
+            //     calendarGrid.innerHTML = `
+            //         <div style="padding: 2rem; width: 100%; text-align: center;">
+            //             <h3>${currentDate.toLocaleDateString()} の週（仮表示）</h3>
+            //             <p>ここにカレンダーが描画されます</p>
+            //             <button onclick="openEventModal()">
+            //                 予定追加テスト
+            //             </button>
+            //         </div>
+            //     `;
+            //     console.log('Calendar rendered for:', currentDate.toDateString());
+            // }
+
+            function renderWeekView() {
+                const today = new Date();
+                // 取得した日付(currentDate)が属する週の月曜日 (0:00) を計算
+                const startOfWeek = getStartOfWeek(currentDate);
+
+                // 既存のtime-columnはそのまま、曜日ヘッダーとday-columnに日付を表示/設定
+                for (let i = 0; i < 7; i++) {
+                    const day = new Date(startOfWeek);
+                    day.setDate(startOfWeek.getDate() + i);
+
+                    const dateNum = day.getDate();
+                    const dayHeader = dayHeaders[i];
+                    const dayName = ['月', '火', '水', '木', '金', '土', '日'][i];
+
+                    // 曜日ヘッダーの更新 (省略...)
+                    if (i === 5) { dayHeader.style.color = '#1e40af'; }
+                    else if (i === 6) { dayHeader.style.color = 'var(--danger-color)'; }
+                    else { dayHeader.style.color = 'var(--text-secondary)'; }
+                    dayHeader.innerHTML = `${dayName}<br><span>${dateNum}</span>`;
+
+                    const dayMapping = [6, 0, 1, 2, 3, 4, 5];
+                    const mappedIndex = dayMapping[i];
+
+                    const dayColumn = dayColumns[mappedIndex];
+                    dayColumn.innerHTML = ''; // 既存のイベントとセルをクリア
+
+                    // // 24時間のセルを再描画（クリック可能にするため）
+                    // for (let hour = 0; hour < 24; hour++) {
+                    //     const cell = document.createElement('div');
+                    //     cell.className = 'day-cell';
+                    //     cell.setAttribute('data-date', day.toISOString().substring(0, 10));
+                    //     cell.setAttribute('data-hour', hour);
+                    //     cell.onclick = window.openEventModal;
+                    //     dayColumn.appendChild(cell);
+                    // }
+
+                    // --- Step 2B: 予定のフィルタリングと描画 ---
+                    // 描画対象の日付 (YYYY-MM-DD形式)
+                    const targetDate = day.toISOString().substring(0, 10);
+
+                    // 1. 該当日の予定のみをフィルタリング
+                    const dayEvents = dummyEvents.filter(event => {
+                        return event.start.substring(0, 10) === targetDate;
+                    });
+
+                    // 2. 予定の描画
+                    dayEvents.forEach(event => {
+                        const eventBlock = document.createElement('div');
+                        eventBlock.className = `event-block category-${event.category}`;
+                        eventBlock.title = event.title; // ホバーでタイトル全体を表示
+
+                        const startTime = new Date(event.start);
+                        const endTime = new Date(event.end);
+
+                        // --- Step 2B-3: 位置と高さの計算 ---
+                        const startHour = startTime.getHours();
+                        const startMinute = startTime.getMinutes();
+                        const endHour = endTime.getHours();
+                        const endMinute = endTime.getMinutes();
+
+                        // 1時間あたり60pxの高さがあるため、1分あたり1pxと見なす
+
+                        // top: (時間 * 60) + 分
+                        const topOffset = (startHour * 60) + startMinute;
+
+                        // height: 終了時刻と開始時刻の差を分で計算
+                        const durationMinutes = (endTime.getTime() - startTime.getTime()) / (1000 * 60);
+
+                        eventBlock.style.top = `${topOffset}px`;
+                        eventBlock.style.height = `${durationMinutes}px`;
+
+                        // 予定ブロックの内容
+                        eventBlock.innerHTML = `<div class="event-title">${event.title}</div>`;
+
+                        // イベントブロックをクリックしたときの動作を設定（詳細モーダル表示など）
+                        eventBlock.addEventListener('click', (e) => {
+                            e.stopPropagation(); // セル全体へのクリックイベントを停止
+                            // ここで詳細モーダルを開く処理を実装できます
+                            alert(`予定ID: ${event.id} - ${event.title}\n開始: ${event.start}\n終了: ${event.end}`);
+                        });
+
+                        // 3. カラムに挿入
+                        dayColumn.appendChild(eventBlock);
+                    });
+                }
+                console.log('Week View rendered for:', startOfWeek.toDateString());
+            }
+
+            // function renderMiniCalendar() {
+            //     miniCalGrid.innerHTML = `
+            //         <div class="mini-cal-day-name">月</div>
+            //         <div class="mini-cal-day-name">火</div>
+            //         <div class="mini-cal-day-name">水</div>
+            //         <div class="mini-cal-day-name">木</div>
+            //         <div class="mini-cal-day-name">金</div>
+            //         <div class="mini-cal-day-name">土</div>
+            //         <div class="mini-cal-day-name">日</div>
+            //     `;
+            //     const year = miniCalendarDate.getFullYear();
+            //     const month = miniCalendarDate.getMonth();
+            //     const today = new Date();
+
+            //     miniCalMonthDisplay.textContent = `${year}年 ${month + 1}月`;
+
+            //     const firstDayOfMonth = new Date(year, month, 1);
+
+            //     // 1. カレンダーの描画開始日を計算
+            //     // 月曜日を週の始まり(1)とするため、日曜日の場合(0)は6日戻す、それ以外は(day-1)日戻す
+            //     let startOffset = firstDayOfMonth.getDay() === 0 ? 6 : firstDayOfMonth.getDay() - 1;
+
+            //     // 2. 描画開始日 (前月の特定の日) を day 変数として初期化
+            //     let day = new Date(year, month, 1);
+            //     day.setDate(day.getDate() - startOffset);
+
+            //     // 描画ループ (最大6週分=42マス)
+            //     for (let i = 0; i < 42; i++) {
+            //         const dateCell = document.createElement('div');
+            //         dateCell.className = 'mini-cal-date';
+
+            //         const dayNumber = day.getDate();
+            //         const currentDisplayedMonth = day.getMonth();
+
+            //         // 3. 次月の日付が一定数を超えたら描画を終了（5週目以降、次月の10日を過ぎたらブレイク）
+            //         if (currentDisplayedMonth !== month && i >= 35 && dayNumber > 10) {
+            //             break;
+            //         }
+
+            //         dateCell.textContent = dayNumber;
+            //         dateCell.setAttribute('data-date', day.toISOString().substring(0, 10)); // 正しい日付をセット
+
+            //         // 4. 月の判定とスタイリング
+            //         if (currentDisplayedMonth !== month) {
+            //             dateCell.classList.add('other-month');
+            //         }
+
+            //         if (day.toDateString() === today.toDateString()) {
+            //             dateCell.classList.add('today');
+            //         }
+
+            //         // 5. メインカレンダーの表示週のハイライト
+            //         const mainCalStart = getStartOfWeek(currentDate);
+            //         const mainCalEnd = new Date(mainCalStart);
+            //         mainCalEnd.setDate(mainCalEnd.getDate() + 6);
+            //         // 時刻情報をクリアして比較 (day.setHours(0,0,0,0) を実行すると day が変わってしまうため、別の方法で比較)
+            //         const currentDayStr = day.toDateString();
+            //         const mainStartStr = mainCalStart.toDateString();
+            //         const mainEndStr = mainCalEnd.toDateString();
+
+            //         if (day >= mainCalStart && day <= mainCalEnd) {
+            //             dateCell.classList.add('selected-day');
+            //         }
+
+            //         // 6. クリックイベント（ジャンプ機能）の修正
+            //         dateCell.addEventListener('click', (e) => {
+            //             const selectedDateStr = e.target.getAttribute('data-date');
+            //             const selectedDate = new Date(selectedDateStr);
+
+            //             selectedDate.setHours(12, 0, 0, 0);
+
+            //             jumpToWeek(selectedDate);
+            //             miniCalendarContainer.classList.add('hidden'); // ★重要: クリック後カレンダーを閉じる
+            //         });
+
+            //         miniCalGrid.appendChild(dateCell);
+
+            //         // 7. 次の日に進める
+            //         day.setDate(day.getDate() + 1);
+            //     }
+            // }
+
+            function getStartOfWeek(date) {
+                const d = new Date(date);
+                d.setHours(0, 0, 0, 0);
+                const day = d.getDay();
+                const daysToSubtract = day === 0 ? 6 : day - 1;
+                d.setDate(d.getDate() - daysToSubtract);
+                return d;
+            }
+
+            function jumpToWeek(date) {
+                currentDate = date;
+                updatePeriodDisplay();
+                renderWeekView();
+            }
+
+            function toggleMiniCalendar() {
+                miniCalendarContainer.classList.toggle('hidden');
+                if (!miniCalendarContainer.classList.contains('hidden')) {
+                    miniCalendarDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+                    renderMiniCalendar();
+                }
+            }
+
+            // --- Event Listeners ---
+            document.getElementById('btn-friends').addEventListener('click', () => {
+                openModal(friendModal);
+            })
+
+            btnPrevPeriod.addEventListener('click', () => {
+                currentDate.setDate(currentDate.getDate() - 7);
+                updatePeriodDisplay();
+                renderWeekView();
+            });
+
+            btnNextPeriod.addEventListener('click', () => {
+                currentDate.setDate(currentDate.getDate() + 7);
+                updatePeriodDisplay();
+                renderWeekView();
+            });
+
+            btnToday.addEventListener('click', () => {
+                currentDate = new Date();
+                updatePeriodDisplay();
+                renderWeekView();
+            });
+
+            // currentPeriodDisplay.addEventListener('click', toggleMiniCalendar);
+
+            // miniCalPrev.addEventListener('click', () => {
+            //     miniCalendarDate.setMonth(miniCalendarDate.getMonth() - 1);
+            //     renderMiniCalendar();
+            // });
+            // miniCalNext.addEventListener('click', () => {
+            //     miniCalendarDate.setMonth(miniCalendarDate.getMonth() + 1);
+            //     renderMiniCalendar();
+            // });
+            // Initialize
+            updatePeriodDisplay();
+            renderWeekView();
+        });
+    </script>
+</body>
+
+</html>

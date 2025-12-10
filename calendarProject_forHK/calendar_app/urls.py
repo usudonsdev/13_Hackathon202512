@@ -7,5 +7,9 @@ urlpatterns=[
   path("account/create",views.account_create , name="account_create"),
   path("plan/create",views.plan_create , name="plan_create"),
   path("routine/create",views.routine_create , name="routine_create"),
+  #path("search/view",views.search_view , name="search_view"),
+  path("account/view",views.account_view , name="account_view"),
+  path("assist",views.search_view , name="search_view"),
+  
 
 ] 

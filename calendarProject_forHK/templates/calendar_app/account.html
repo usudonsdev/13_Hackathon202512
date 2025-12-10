@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">アカウントページ - Smart Scheduler</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* Colors */
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #6e7c87;
+            --accent-color: #3b82f6;
+            --accent-hover: #2563eb;
+            --danger-color: #ef4444;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            
+            /* Spacing */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            
+            /* Layout */
+            --sidebar-width: 250px;
+            --header-height: 60px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100%;
+        }
+
+        /* Sidebar - 既存のスタイルを流用 */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: var(--spacing-md);
+        }
+
+        .logo-area h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-lg);
+            color: var(--text-primary);
+        }
+
+        .main-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+            text-align: left;
+            text-decoration: none; /* aタグ向け */
+        }
+
+        .nav-btn:hover {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .nav-btn.active { /* アカウントページ専用のアクティブスタイル */
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .nav-btn.special-btn {
+            background-color: #eff6ff;
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
+        .nav-btn.special-btn:hover {
+            background-color: #dbeafe;
+        }
+
+        .icon-btn {
+            border: none;
+            background: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        /* End Sidebar Styles */
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-primary);
+            overflow-y: auto; /* コンテンツが溢れた場合にスクロール可能にする */
+        }
+
+        .top-bar {
+            height: var(--header-height);
+            padding: 0 var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* --- Account Specific Styles --- */
+        .account-page-container {
+            padding: var(--spacing-lg);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+            padding: var(--spacing-lg) 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .profile-avatar {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            background-color: #ccc; /* プレースホルダー */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--bg-secondary);
+            flex-shrink: 0;
+        }
+
+        .profile-info h2 {
+            font-size: 2rem;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .profile-info p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: var(--spacing-lg);
+            font-size: 0.9rem;
+        }
+
+        .stats-item strong {
+            display: block;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        .profile-section {
+            background-color: var(--bg-secondary);
+            padding: var(--spacing-lg);
+            border-radius: 8px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .profile-section h3 {
+            font-size: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-sm) 0;
+            border-bottom: 1px dotted var(--border-color);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+        /* End Account Specific Styles */
+
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo-area">
+                <h1>Scheduler</h1>
+            </div>
+            
+            <nav class="main-nav">
+                <a href="/" class="nav-btn">
+                    <span class="icon">📅</span> カレンダー
+                </a>
+                <a href="#" class="nav-btn">
+                    <span class="icon">📝</span> 今日やること
+                </a>
+                <a href="#" class="nav-btn">
+                    <span class="icon">👥</span> Friends
+                </a>
+                <a href="#" id="sidebar-account-btn" class="nav-btn active">
+                    <span class="icon">👤</span> アカウント
+                </a>
+                <a href="#" class="nav-btn special-btn">
+                    <span class="icon">✨</span> LLM Assist
+                </a>
+            </nav>
+
+            <div class="settings-area">
+                <button id="btn-settings" class="icon-btn" aria-label="Settings">⚙️ 設定</button>
+            </div>
+        </aside>
+        <main class="main-content">
+            <header class="top-bar">
+                <h2 class="page-title">アカウントプロフィール</h2>
+            </header>
+
+            <div class="account-page-container">
+                <div class="profile-header">
+                    <div id="profile-avatar" class="profile-avatar">U</div>
+                    <div class="profile-info">
+                        <h2 id="profile-name"></h2>
+                        <p id="profile-id"></p>
+                        <div class="profile-stats">
+                            <div class="stats-item">
+                                <span id="stat-friends-count"><strong>-</strong></span>
+                                <span>友達</span>
+                            </div>
+                            <div class="stats-item">
+                                <span id="stat-events-count"><strong>-</strong></span>
+                                <span>公開予定</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-section">
+                    <h3>📢 ステータス</h3>
+                    <p id="profile-status">...ロード中...</p>
+                </div>
+
+                <div class="profile-section">
+                    <h3>公開スケジュール</h3>
+                    <div id="public-schedule-list">
+                        <p class="text-secondary">公開されている予定はありません。</p>
+                        </div>
+                </div>
+
+                <div id="action-area" style="text-align: center;">
+                    </div>
+            </div>
+        </main>
+        </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- ユーザーIDの取得 ---
+            const urlParams = new URLSearchParams(window.location.search);
+            // URLから 'id' パラメータを取得 (例: ?id=user123)
+            const requestedId = urlParams.get('id');
+            // デモ用の自分のID（ログイン中のユーザー）を設定
+            const myUserId = 'user123'; 
+            
+            // 表示するユーザーIDを決定
+            const targetId = requestedId || myUserId;
+            // 自分のページかどうか
+            const isMyPage = targetId === myUserId;
+
+
+            // --- DOM要素 ---
+            const pageTitleEl = document.getElementById('page-title');
+            const profileNameEl = document.getElementById('profile-name');
+            const profileIdEl = document.getElementById('profile-id');
+            const profileAvatarEl = document.getElementById('profile-avatar');
+            const profileStatusEl = document.getElementById('profile-status');
+            const statFriendsCountEl = document.getElementById('stat-friends-count');
+            const statEventsCountEl = document.getElementById('stat-events-count');
+            const publicScheduleListEl = document.getElementById('public-schedule-list');
+            const actionAreaEl = document.getElementById('action-area');
+            const sidebarAccountBtn = document.getElementById('sidebar-account-btn');
+
+            // サイドバーの「アカウント」ボタンのリンクを、自分のID付きURLに設定
+            sidebarAccountBtn.href = `?id=${myUserId}`;
+            if (isMyPage) {
+                sidebarAccountBtn.innerHTML = '<span class="icon">🏠</span> マイアカウント';
+            } else {
+                 sidebarAccountBtn.innerHTML = '<span class="icon">👤</span> アカウント';
+            }
+
+
+            // --- データ取得とレンダリングの関数 (サーバーサイド連携の代わり) ---
+            function fetchUserData(userId) {
+                // ここで本来はサーバーからユーザーデータをフェッチします。
+                console.log(`Fetching data for ID: ${userId}`);
+                
+                // デモ用ダミーデータ
+                if (userId === 'user123') {
+                    return {
+                        id: 'user123',
+                        name: '{{ user_name }}',
+                        status: '今日から Smart Scheduler を使い始めました！',
+                        friends: 15,
+                        publicEvents: 3,
+                        publicSchedule: [
+                            { time: '2025/12/10 14:00', title: '打ち合わせ' },
+                            { time: '2025/12/11 10:00', title: 'プロジェクトレビュー' }
+                        ]
+                    };
+                } else if (userId === 'friend456') {
+                     return {
+                        id: 'friend456',
+                        name: '佐藤 次郎',
+                        status: '新しい趣味を見つけたい！',
+                        friends: 8,
+                        publicEvents: 5,
+                        publicSchedule: [
+                            { time: '2025/12/09 18:30', title: 'ジム' },
+                            { time: '2025/12/12 11:00', title: '休憩' }
+                        ]
+                    };
+                } else {
+                    return null; // ユーザーが見つからない場合
+                }
+            }
+
+            function renderAccountPage() {
+                const userData = fetchUserData(targetId);
+
+                if (!userData) {
+                    pageTitleEl.textContent = 'エラー - Smart Scheduler';
+                    profileNameEl.textContent = 'ユーザーが見つかりません';
+                    profileIdEl.textContent = 'ID: ' + targetId;
+                    profileStatusEl.textContent = '指定されたアカウントは存在しないか、非公開です。';
+                    profileAvatarEl.textContent = '❓';
+                    statFriendsCountEl.querySelector('strong').textContent = 'N/A';
+                    statEventsCountEl.querySelector('strong').textContent = 'N/A';
+                    publicScheduleListEl.innerHTML = '';
+                    return;
+                }
+
+                // ページの基本情報を設定
+                pageTitleEl.textContent = `${userData.name} のアカウント - Smart Scheduler`;
+                profileNameEl.textContent = userData.name;
+                //profileIdEl.textContent = 'ID: ' + userData.id;
+                profileStatusEl.textContent = userData.status;
+                
+                // アバターのイニシャルを設定
+                profileAvatarEl.textContent = userData.name.substring(0, 1) || userData.id.substring(0, 1).toUpperCase();
+
+                // 統計情報を設定
+                statFriendsCountEl.querySelector('strong').textContent = userData.friends;
+                statEventsCountEl.querySelector('strong').textContent = userData.publicEvents;
+
+                // スケジュールリストをレンダリング
+                renderPublicSchedule(userData.publicSchedule);
+
+                // アクションボタンを切り替え
+                renderActionButtons(isMyPage);
+            }
+
+            function renderPublicSchedule(schedule) {
+                publicScheduleListEl.innerHTML = ''; // リストをクリア
+
+                if (schedule && schedule.length > 0) {
+                    const ul = document.createElement('ul');
+                    schedule.forEach(item => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `
+                            <div class="setting-item">
+                                <span>${item.time}</span>
+                                <strong>${item.title}</strong>
+                            </div>
+                        `;
+                        ul.appendChild(li);
+                    });
+                    publicScheduleListEl.appendChild(ul);
+                } else {
+                    publicScheduleListEl.innerHTML = '<p class="text-secondary">公開されている予定はありません。</p>';
+                }
+            }
+
+            function renderActionButtons(isMyPage) {
+                actionAreaEl.innerHTML = ''; // アクションエリアをクリア
+                
+                if (isMyPage) {
+                    // 自分のページの場合: 設定ボタンなどを表示
+                    actionAreaEl.innerHTML = `
+                        <a href="#" class="btn-primary" style="margin-right: var(--spacing-md);">プロフィール編集</a>
+                        <a href="#" class="btn-primary">プライバシー設定</a>
+                    `;
+                } else {
+                    // 他人のページの場合: 友達追加ボタンなどを表示
+                    actionAreaEl.innerHTML = `
+                        <button class="btn-primary" onclick="alert('友達リクエストを送信しました！')">友達に追加</button>
+                    `;
+                }
+            }
+            
+            // --- 初期化 ---
+            renderAccountPage();
+        });
+    </script>
+</body>
+</html>
