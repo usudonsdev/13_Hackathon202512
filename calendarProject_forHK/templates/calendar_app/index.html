@@ -484,6 +484,9 @@
                 <button id="btn-friends" class="nav-btn" onclick="location.href='/account/view'">
                     <span class="icon">🏠</span> マイアカウント
                 </button>
+                <button class="nav-btn" onclick="location.href='{% url 'calendar_app:google_calendar_auth_start' %}'">
+                    <span class="icon">📥</span> Google Calendarからインポート
+                </button>
                 <button id="btn-llm" class="nav-btn special-btn">
                     <span class="icon">✨</span> LLM Assist
                 </button>
