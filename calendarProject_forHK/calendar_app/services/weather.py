@@ -62,6 +62,7 @@ class WeatherService:
                     valid_candidates.append(candidate)
             else:
                 # 予報データが見つからない場合（日付が遠すぎる等）はとりあえず通す
+                # TODO 本当にこれでいいか？
                 valid_candidates.append(candidate)
 
         return valid_candidates
