@@ -6,11 +6,45 @@ from .models import *
 from .forms import *
 from datetime import datetime, timedelta, timezone
 from time import time
+from django.utils import timezone
+#import datetime
 # Create your views here.
 
 class IndexView(LoginRequiredMixin,View):
     def get(self,request):
-        return render(request,"calendar_app/index.html")
+
+        now = timezone.now()
+        next_plan_queryset = Plan.objects.filter(start_datetime__gte=now, user=str(request.user)).order_by('start_datetime')[:20]
+        before_plan_queryset = Plan.objects.filter(start_datetime__lte=now, user=str(request.user)).order_by('-start_datetime')[:20]
+        #print(next_plan_queryset[0])
+        #print(len(before_plan_queryset))
+        events = [[0 for j in range(3)] for i in range(50)]
+        event_name=[0 for j in range(50)]
+        event_start=[0 for j in range(50)]
+        event_end=[0 for j in range(50)]
+
+        for i in range(20):
+            if(i<len(next_plan_queryset)):
+                event_name[i]=next_plan_queryset[i].name
+                event_start[i]=str(next_plan_queryset[i].start_datetime).replace(' ','T')[:-6]
+                event_end[i]=str(next_plan_queryset[i].end_datetime).replace(' ','T')[:-6]
+            else:
+                event_name[i]="null"
+                event_start[i]="2015-12-12T23:00:00"
+                event_end[i]="2015-12-12T23:30:00"
+
+        for i in range(20,40):
+            if(i<len(before_plan_queryset)):
+                event_name[i]=before_plan_queryset[i].name
+                event_start[i]=str(before_plan_queryset[i].start_datetime).replace(' ','T')[:-6]
+                event_end[i]=str(before_plan_queryset[i].end_datetime).replace(' ','T')[:-6]
+            else:
+                event_name[i]="null"
+                event_start[i]="2015-12-12T23:00:00"
+                event_end[i]="2015-12-12T23:30:00"
+
+        return render(request,"calendar_app/index.html",{"event_name":event_name,"event_start":event_start,"event_end":event_end})
+
     def post(self,request):
         name=request.POST['event-title']
         event_start=request.POST['event-start']+"+0900"
@@ -103,81 +137,88 @@ class RoutineCreateView(View):
     
 class SearchView(View):
     def get(self, request):
-        form = SearchSlotForm()
-        return render(request, "calendar_app/Scheduling_Assist_System.html", {"form": form})
+        #form = SearchSlotForm()
+
+        return render(request, "calendar_app/Scheduling_Assist_System.html")
     def post(self, request):
-        form = SearchSlotForm(request.POST)
-        if form.is_valid():
-            cd = form.cleaned_data
-            period_start = cd['period_start']
-            period_end = cd['period_end']
-            desired_start = cd['desired_start']
-            desired_end = cd['desired_end']
-            my_user = str(request.user)
-            target_users = request.POST.getlist('users')
-            
-            duration = timedelta(
-                hours = cd['duration_hours'], minutes = cd['duration_minutes'],
-            )
-            
-            results = []
-            current_date = period_start
-            while current_date <= period_end:
-                day_start = datetime.combine(current_date, desired_start)
-                day_end = datetime.combine(current_date, desired_end)
-                t = day_start
-                while t + duration <= day_end:
-                    conflict_self_plan = Plan.objects.filter(
+        #form = SearchSlotForm(request.POST)
+        #cd = form.cleaned_data
+        assist_title=request.POST['assist-title']
+        period_start = request.POST['assist-start-datetime']
+        period_start = datetime.strptime(period_start, "%Y-%m-%d").date()
+        period_end = request.POST['assist-end-datetime']
+        period_end = datetime.strptime(period_end, "%Y-%m-%d").date()
+        desired_start = request.POST['assist-start-time']
+        desired_start = datetime.strptime(desired_start, "%H:%M").time()
+        desired_end = request.POST['assist-end-time']
+        desired_end = datetime.strptime(desired_end, "%H:%M").time()
+        my_user = str(request.user)
+        target_users = request.POST.getlist('users')
+        duration = timedelta(
+            hours = int(request.POST['assist-duration-h']), minutes = int(request.POST['assist-duration-m']),
+        )
+        
+        results = []
+        current_date = period_start
+        while current_date <= period_end:
+            day_start = datetime.combine(current_date, desired_start)
+            day_end = datetime.combine(current_date, desired_end)
+            t = day_start
+            while t + duration <= day_end:
+                conflict_self_plan = Plan.objects.filter(
+                    start_datetime__lt = t + duration,
+                    end_datetime__gt = t,
+                    user = my_user,
+                ).exists()
+                
+                routine_self = Routine.objects.filter(user = my_user)
+                
+                conflict_self_routine = False
+                
+                for r in routine_self:
+                    if current_date.weekday() != ((r.day_of_week + 6) % 7):
+                        continue
+                    routine_start_self = datetime.combine(current_date, r.start_time)
+                    routine_end_self = datetime.combine(current_date, r.end_time)
+                    
+                    if not ((routine_start_self < t + duration) and (routine_end_self > t)):
+                        conflict_self_routine = False
+                    else:
+                        conflict_self_routine = True
+                        break
+                    
+                conflict_members_routine = False
+                    
+                if target_users:
+                    conflict_members_plan = Plan.objects.filter(
                         start_datetime__lt = t + duration,
                         end_datetime__gt = t,
-                        user = my_user,
+                        user__in = target_users,
+                        private = 0,
                     ).exists()
                     
-                    routine_self = Routine.objects.filter(user = my_user)
+                    routine_members = Routine.objects.filter(user__in=target_users)
                     
-                    for r in routine_self:
-                        if current_date.weekday() != ((r.day_of_week + 6) % 7):
+                    for others in routine_members:
+                        if current_date.weekday() != ((others.day_of_week + 6) % 7):
                             continue
-                        routine_start_self = datetime.combine(current_date, r.start_time)
-                        routine_end_self = datetime.combine(current_date, r.end_time)
+                        routine_start_members = datetime.combine(current_date, others.start_time)
+                        routine_end_members = datetime.combine(current_date, others.end_time)
                         
-                        if not ((routine_start_self < t + duration) and (routine_end_self > t)):
-                            conflict_self_routine = False
+                        if not ((routine_start_members < t + duration) and (routine_end_members > t)):
+                            conflict_members_routine = False
                         else:
-                            conflict_self_routine = True
+                            conflict_members_routine = True
                             break
                         
-                    if target_users:
-                        conflict_members_plan = Plan.objects.filter(
-                            start_datetime__lt = t + duration,
-                            end_datetime__gt = t,
-                            user__in = target_users,
-                            private = 0,
-                        ).exists()
-                        
-                        routine_members = Routine.objects.filter(user__in=target_users)
-                        
-                        for others in routine_members:
-                            if current_date.weekday() != ((others.day_of_week + 6) % 7):
-                                continue
-                            routine_start_members = datetime.combine(current_date, others.start_time)
-                            routine_end_members = datetime.combine(current_date, others.end_time)
-                            
-                            if not ((routine_start_members < t + duration) and (routine_end_members > t)):
-                                conflict_members_routine = False
-                            else:
-                                conflict_members_routine = True
-                                break
-                            
-                    else:
-                        conflict_members_plan = False
-                    
-                    if not ((conflict_self_plan) or (conflict_members_plan) or (conflict_self_routine) or (conflict_members_routine)):
-                        results.append([t,t+duration])
-                    t = t + timedelta(minutes=10)
-                current_date = current_date + timedelta(days=1)
-            return redirect("calendar_app:index")
-        return render(request, "calendar_app/Scheduling_Assist_System.html", {"form": form},{"results": results})
+                else:
+                    conflict_members_plan = False
+                
+                if not ((conflict_self_plan) or (conflict_members_plan) or (conflict_self_routine) or (conflict_members_routine)):
+                    results.append([t,t+duration])
+                t = t + timedelta(minutes=30)
+            current_date = current_date + timedelta(days=1)
+        return redirect("calendar_app:index")
             
 
             
@@ -188,6 +229,8 @@ class AccountViewView(View):
         user_name = str(request.user)
         return render(request,"calendar_app/account.html",{"user_name": user_name})
  
+
+
 
 
 index=IndexView.as_view()
