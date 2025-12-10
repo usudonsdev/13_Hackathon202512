@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>アシスト | Scheduler</title>
+    <style>
+        /* (CSS部分は前回の回答と同じなので省略します。ただし、以下のCSSルールが追加・関連します) */
+
+        /* 基本的なリセットとフォント */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* 全体コンテナ */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+            background-color: #f4f7f9;
+        }
+
+        /* サイドバー */
+        .sidebar {
+            width: 250px;
+            background-color: #ffffff;
+            border-right: 1px solid #e0e0e0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .logo-area h1 {
+            color: #34495e;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        /* ナビゲーション */
+        .main-nav {
+            flex-grow: 1;
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            text-decoration: none;
+            color: #34495e;
+            border-radius: 8px;
+            transition: background-color 0.2s, color 0.2s;
+            font-weight: 500;
+        }
+
+        .nav-btn:hover {
+            background-color: #ecf0f1;
+        }
+
+        .nav-btn .icon {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .settings-area {
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            text-align: left;
+            color: #7f8c8d;
+            cursor: pointer;
+            transition: color 0.2s;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .icon-btn:hover {
+            color: #34495e;
+            background-color: #ecf0f1;
+        }
+
+        /* メインコンテンツ */
+        .main-content {
+            flex-grow: 1;
+            padding: 30px;
+        }
+
+        .top-bar {
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 15px;
+        }
+
+        .page-title {
+            color: #2c3e50;
+            font-size: 2rem;
+            font-weight: 300;
+        }
+
+        /* フォームカード */
+        .form-page-container {
+            display: flex;
+            justify-content: center;
+            padding-top: 20px;
+        }
+
+        .event-form-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .form-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+
+        /* フォームグループ */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        input[type="text"],
+        input[type="datetime-local"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #bdc3c7;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+
+        .date-time-group,
+        .duration-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .date-time-group input,
+        .date-time-group select {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .separator {
+            font-weight: bold;
+            color: #7f8c8d;
+        }
+
+        .duration-group input[type="number"] {
+            width: 80px;
+            text-align: right;
+            padding-right: 5px;
+        }
+
+        .unit {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        /* ユーザーリスト関連のスタイル */
+        #users_list input[type="text"] {
+            margin-bottom: 10px;
+        }
+
+        /* ボタン */
+        .btn-flex-group {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end; /* 右寄せ */
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.2s, opacity 0.2s;
+        }
+
+        .btn-secondary {
+            background-color: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+
+        .btn-primary { /* 追加ボタン用 */
+            background-color: #2ecc71;
+            color: white;
+            padding: 8px 15px;
+        }
+
+        .btn-primary:hover {
+            background-color: #27ae60;
+        }
+
+        .btn-accent {
+            background-color: #3498db;
+            color: white;
+            letter-spacing: 1px;
+        }
+
+        .btn-accent:hover {
+            background-color: #2980b9;
+        }
+
+        /* 隠し要素 */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo-area">
+                <h1>Scheduler</h1>
+            </div>
+
+            <nav class="main-nav">
+                <a href="add_event.html" class="nav-btn">
+                    <span class="icon">📅</span> 予定追加
+                </a>
+                <a href="#" class="nav-btn">
+                    <span class="icon">📝</span> 今日やること
+                </a>
+                <a href="#" class="nav-btn">
+                    <span class="icon">👥</span> ともだち
+                </a>
+                <a href="account.html" id="sidebar-account-btn" class="nav-btn">
+                    <span class="icon">👤</span> プロフィール
+                </a>
+                <a href="Scheduling_Assist_System.html" class="nav-btn" style="background-color: #ecf0f1;">
+                    <span class="icon">✨</span> アシスト
+                </a>
+            </nav>
+
+            <div class="settings-area">
+                <button id="btn-settings" class="icon-btn" aria-label="Settings">⚙️ 設定</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <h2 class="page-title">Ask To Assistance</h2>
+            </header>
+
+            <div class="form-page-container">
+                <div class="event-form-card">
+                    <div class="form-section" id="llm-assist-block">
+                        <h3>Assist Boostを利用する</h3>
+                        <button id="toggle-llm-assist" class="btn btn-secondary">フォームを表示</button>
+
+                        <form id="llm-assist-form" class="hidden" style="margin-top: 20px;">
+                            <div class="form-group">
+                                <label for="assist-title">やりたい予定の概要</label>
+                                <input type="text" id="assist-title" name="assist-title" placeholder="例: 英語の論文執筆、ジムでの筋トレ" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>やりたい期間 (いつからいつまでで探すか)</label>
+                                <div class="date-time-group">
+                                    <input type="datetime-local" id="assist-start-datetime" name="assist-start-datetime" class="datetime-input" required step="600">
+                                    <span class="separator">〜</span>
+                                    <input type="datetime-local" id="assist-end-datetime" name="assist-end-datetime" class="datetime-input" required step="600">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>希望の時間帯 (何時から何時の間で予定を入れるか)</label>
+                                <div class="date-time-group">
+                                    <select id="assist-start-time" name="assist-start-time" class="time-input" required></select>
+                                    <span class="separator">〜</span>
+                                    <select id="assist-end-time" name="assist-end-time" class="time-input" required></select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>所要時間 (合計で必要な時間)</label>
+                                <div class="duration-group">
+                                    <input type="number" id="assist-duration-h" name="assist-duration-h" min="0" max="24" value="1" required>
+                                    <span class="unit">時間</span>
+                                    <input type="number" id="assist-duration-m" name="assist-duration-m" min="0" max="59" value="0" required step="10">
+                                    <span class="unit">分</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>考慮する他のユーザーID</label>
+                                <div id="users_list">
+                                    <input type="text" name="users[]" placeholder="ユーザーID (オプション)">
+                                </div>
+                                <div class="btn-flex-group">
+                                    <button type="button" onclick="addUser()" class="btn btn-primary">
+                                        <span class="icon">＋</span> 追加
+                                    </button>
+                                </div>
+                            </div>
+                            <button type="submit" id="run-llm-assist" class="btn btn-accent" style="width: 100%; margin-top: 15px;">
+                                SEARCH
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ユーザーID入力フィールドを追加する関数
+        function addUser() {
+            let div = document.getElementById("users_list");
+            let input = document.createElement("input");
+            input.type = "text";
+            // name="users[]"として、サーバー側で配列として受け取れるようにします
+            input.name = "users[]"; 
+            input.placeholder = "ユーザーID";
+            div.appendChild(input);
+        }
+    
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleButton = document.getElementById('toggle-llm-assist');
+            const assistForm = document.getElementById('llm-assist-form');
+            const startTimeSelect = document.getElementById('assist-start-time');
+            const endTimeSelect = document.getElementById('assist-end-time');
+
+            // フォームの表示切り替え機能
+            toggleButton.addEventListener('click', () => {
+                const isHidden = assistForm.classList.toggle('hidden');
+                toggleButton.textContent = isHidden ? 'フォームを表示' : 'フォームを非表示';
+            });
+
+            // 時間選択肢の生成
+            function generateTimeOptions(selectElement, defaultValue) {
+                for (let h = 0; h < 24; h++) {
+                    for (let m = 0; m < 60; m += 10) { // step="600"に対応し10分刻み
+                        const timeString = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+                        const option = document.createElement('option');
+                        option.value = timeString;
+                        option.textContent = timeString;
+                        if (timeString === defaultValue) {
+                            option.selected = true;
+                        }
+                        selectElement.appendChild(option);
+                    }
+                }
+            }
+
+            // 初期値の設定とオプションの生成
+            generateTimeOptions(startTimeSelect, '09:00');
+            generateTimeOptions(endTimeSelect, '18:00');
+
+            // フォーム送信（ダミー） - type="submit"になったため、submitイベントで処理
+            assistForm.addEventListener('submit', (event) => {
+                event.preventDefault(); // ページの再読み込みを防ぐ
+                
+                // フォームデータの収集（デモ用）
+                const formData = new FormData(assistForm);
+                const data = {};
+                for (let [key, value] of formData.entries()) {
+                    if (key === 'users[]') {
+                        // ユーザーIDは配列として処理
+                        if (!data['users']) {
+                            data['users'] = [];
+                        }
+                        if (value) { // 空の入力は無視
+                           data['users'].push(value);
+                        }
+                    } else {
+                        data[key] = value;
+                    }
+                }
+
+                console.log('検索データ:', data);
+                alert('SEARCH機能が実行されました！\nコンソールに送信データが出力されています。');
+                // 実際にはここでデータをAPIに送信します。
+            });
+        });
+    </script>
+</body>
+</html>
