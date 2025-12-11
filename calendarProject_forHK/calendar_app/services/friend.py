@@ -53,6 +53,14 @@ class FriendService(IFriendService):
             accept=self.STATUS_ACCEPTED
         ).exists()
 
+    def get_request_list(self, user_id) -> List[str]:
+        uid = str(user_id)
+        return Friend.objects.filter(
+            user2=uid,
+            accept=self.STATUS_PENDING
+        ).values_list('user1', flat=True)
+    
+    
     def create_request(self, from_user_id, to_user_id) -> bool:
         u1 = str(from_user_id)
         u2 = str(to_user_id)

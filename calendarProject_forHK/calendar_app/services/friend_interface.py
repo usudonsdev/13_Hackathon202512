@@ -46,3 +46,10 @@ class IFriendService(ABC):
         フレンド関係（または申請）を削除・解除する
         """
         pass
+
+    @abstractmethod
+    def get_request_list(self, user_id: UserID) -> List[str]:
+        """
+        フレンド申請一覧を取得する
+        """
+        pass
