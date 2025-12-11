@@ -8,7 +8,7 @@ from datetime import datetime, timedelta, timezone
 from time import time
 from django.utils import timezone
 #import datetime
-from .google_calendar import GoogleCalendarService
+from .services.googleCalendar_interface import CalendarService
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 import os
