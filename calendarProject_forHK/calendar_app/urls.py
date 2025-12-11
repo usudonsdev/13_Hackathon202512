@@ -9,7 +9,10 @@ urlpatterns=[
   path("routine/create",views.routine_create , name="routine_create"),
   #path("search/view",views.search_view , name="search_view"),
   path("account/view",views.account_view , name="account_view"),
+  path("account/edit",views.account_edit_view , name="account_edit_view"),
   path("assist",views.search_view , name="search_view"),
+  path("todo",views.todo_view , name="todo_view"),
+  path("todo/create",views.todo_create_view , name="todo_create_view"),
   
 
 ] 

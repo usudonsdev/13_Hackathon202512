@@ -250,7 +250,7 @@
     <div class="app-container">
         <aside class="sidebar">
             <div class="logo-area">
-                <h1>Scheduler</h1>
+                <h1><a href="/" style="color: inherit; text-decoration: none;">Scheduler</a></h1>
             </div>
             
             <nav class="main-nav">
@@ -450,7 +450,7 @@
                 if (isMyPage) {
                     // 自分のページの場合: 設定ボタンなどを表示
                     actionAreaEl.innerHTML = `
-                        <a href="#" class="btn-primary" style="margin-right: var(--spacing-md);">プロフィール編集</a>
+                        <a href="/account/edit" class="btn-primary" style="margin-right: var(--spacing-md);">プロフィール編集</a>
                         <a href="#" class="btn-primary">プライバシー設定</a>
                     `;
                 } else {

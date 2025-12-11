@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>プロフィール編集 - Smart Scheduler</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            /* Colors */
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #6e7c87;
+            --accent-color: #3b82f6;
+            --accent-hover: #2563eb;
+            --danger-color: #ef4444;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+
+            /* Spacing */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+
+            /* Layout */
+            --sidebar-width: 250px;
+            --header-height: 60px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100%;
+        }
+
+        /* Sidebar Styles (流用) */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: var(--spacing-md);
+        }
+
+        .logo-area h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-lg);
+            color: var(--text-primary);
+        }
+
+        .main-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+            text-align: left;
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        /* プロフィール編集画面なので「プロフィール」をアクティブに */
+        .nav-btn.active {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .settings-area {
+            padding-top: var(--spacing-md);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .icon-btn {
+            border: none;
+            background: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-primary);
+        }
+
+        .top-bar {
+            height: var(--header-height);
+            padding: 0 var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* Form Layout */
+        .form-page-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--spacing-lg);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .edit-form-card {
+            background-color: var(--bg-secondary);
+            padding: var(--spacing-lg);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 700px;
+            box-shadow: var(--shadow-md);
+            margin-top: var(--spacing-lg);
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        label {
+            display: block;
+            margin-bottom: var(--spacing-xs);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        textarea,
+        select {
+            width: 100%;
+            padding: var(--spacing-sm);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 1rem;
+            background-color: var(--bg-secondary); /* 背景色を白に統一 */
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        /* Profile Header Style */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            padding-bottom: var(--spacing-lg);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .avatar-area {
+            position: relative;
+            margin-right: var(--spacing-lg);
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--text-secondary);
+            overflow: hidden;
+            border: 2px solid var(--accent-color); /* アクセントカラーで縁取り */
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .upload-overlay {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 30px;
+            height: 30px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            transition: background-color 0.2s;
+        }
+        
+        .upload-overlay:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .upload-overlay span {
+            color: white;
+            font-size: 0.8rem;
+        }
+        
+        .upload-overlay input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        /* Save Button */
+        .form-actions {
+            padding-top: var(--spacing-md);
+            border-top: 1px solid var(--border-color);
+            margin-top: var(--spacing-lg);
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-primary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s;
+            margin-right: var(--spacing-md);
+        }
+        
+        /* Time Input Group (for Working Hours) */
+        .time-group {
+            display: flex;
+            gap: var(--spacing-md);
+            align-items: center;
+        }
+        
+        .time-group select {
+            flex: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo-area">
+                <h1>Scheduler</h1>
+            </div>
+
+            <nav class="main-nav">
+                <a href="add_event.html" class="nav-btn">
+                    <span class="icon">📅</span> 予定追加
+                </a>
+                <a href="#" class="nav-btn">
+                    <span class="icon">📝</span> 今日やること
+                </a>
+                <a href="#" class="nav-btn">
+                    <span class="icon">👥</span> ともだち
+                </a>
+                <a href="account.html" id="sidebar-account-btn" class="nav-btn active">
+                    <span class="icon">👤</span> プロフィール
+                </a>
+                <a href="LLM_Assist_System.html" class="nav-btn">
+                    <span class="icon">✨</span> アシスト
+                </a>
+            </nav>
+
+            <div class="settings-area">
+                <button id="btn-settings" class="icon-btn" aria-label="Settings">⚙️ 設定</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <h2 class="page-title">プロフィール編集</h2>
+            </header>
+
+            <div class="form-page-container">
+                <div class="edit-form-card">
+                    
+                    <form id="profile-edit-form">
+
+                        <div class="profile-header">
+                            <div class="avatar-area">
+                                <div class="avatar" id="current-avatar">
+                                    👤
+                                </div>
+                                <div class="upload-overlay" onclick="document.getElementById('avatar-upload').click()">
+                                    <span>+</span>
+                                    <input type="file" id="avatar-upload" accept="image/*" class="hidden">
+                                </div>
+                            </div>
+                            <div>
+                                <h3>ユーザー名太郎</h3>
+                                <p class="text-secondary">現在のユーザーID: @scheduler_taro</p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="display-name">表示名 <span style="color:var(--danger-color);">*</span></label>
+                            <input type="text" id="display-name" value="ユーザー名太郎" required
+                                placeholder="他のユーザーに表示される名前">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="user-id">ユーザーID</label>
+                            <input type="text" id="user-id" value="@scheduler_taro" readonly
+                                style="background-color: var(--bg-primary); color: var(--text-secondary);"
+                                placeholder="変更不可">
+                            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 5px;">
+                                ユーザーIDはシステム上、変更できません。</p>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">メールアドレス</label>
+                            <input type="email" id="email" value="user.taro@example.com"
+                                placeholder="連絡用のメールアドレス">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="bio">自己紹介</label>
+                            <textarea id="bio" placeholder="あなたの仕事、趣味、チームでの役割などを入力してください。">スケジュール管理とタスク処理を自動化するためのAIシステムの開発に携わっています。コーヒーと効率化が好きです。</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>デフォルト勤務時間 (LLM Assistの推奨時間)</label>
+                            <div class="time-group">
+                                <select id="default-start-time" value="09:00"></select>
+                                <span class="separator">〜</span>
+                                <select id="default-end-time" value="18:00"></select>
+                            </div>
+                            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 5px;">
+                                ここで設定した時間が、AIが予定を提案する際の基準になります。</p>
+                        </div>
+
+                        <div class="form-actions">
+                            <a href="account.html" class="btn-secondary">キャンセル</a>
+                            <button type="submit" class="btn-primary">変更を保存</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- フォームデータの初期値設定 ---
+            const initialStartTime = '09:00';
+            const initialEndTime = '18:00';
+
+            /**
+             * 指定されたセレクトボックスに、00:00から23:50までの10分刻みの時間を生成して追加します。
+             * @param {string} elementId - セレクトボックスのID
+             * @param {string} defaultValue - 初期選択する時刻 (例: '09:00')
+             */
+            function populateTimeSelect(elementId, defaultValue) {
+                const selectElement = document.getElementById(elementId);
+                if (!selectElement) return;
+
+                selectElement.innerHTML = ''; // 既存のオプションをクリア
+
+                for (let h = 0; h < 24; h++) {
+                    for (let m = 0; m < 60; m += 10) {
+                        // 時間と分を2桁表示にフォーマット
+                        const hour = String(h).padStart(2, '0');
+                        const minute = String(m).padStart(2, '0');
+                        const timeValue = `${hour}:${minute}`;
+
+                        const option = document.createElement('option');
+                        option.value = timeValue;
+                        option.textContent = timeValue;
+                        
+                        // 初期値を選択状態にする
+                        if (timeValue === defaultValue) {
+                            option.selected = true;
+                        }
+
+                        selectElement.appendChild(option);
+                    }
+                }
+            }
+            
+            // デフォルト勤務時間のセレクトボックスを生成
+            populateTimeSelect('default-start-time', initialStartTime);
+            populateTimeSelect('default-end-time', initialEndTime);
+
+
+            // --- 画像アップロードのプレビュー機能 ---
+            const avatarUpload = document.getElementById('avatar-upload');
+            const currentAvatar = document.getElementById('current-avatar');
+
+            if (avatarUpload && currentAvatar) {
+                avatarUpload.addEventListener('change', (event) => {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            // 新しい画像要素を作成し、既存のコンテンツを置き換える
+                            currentAvatar.innerHTML = `<img src="${e.target.result}" alt="プロフィール画像">`;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+
+            // --- フォーム送信処理（ダミー） ---
+            const profileForm = document.getElementById('profile-edit-form');
+            if (profileForm) {
+                profileForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    // 実際にはここでAPIを呼び出してデータを保存
+                    alert(`プロフィール情報を保存しました！\n表示名: ${document.getElementById('display-name').value}\n自己紹介: ${document.getElementById('bio').value.substring(0, 20)}...`);
+                    // 保存後に account.html に遷移など
+                    // window.location.href = 'account.html';
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
