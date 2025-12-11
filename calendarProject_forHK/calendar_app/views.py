@@ -8,7 +8,67 @@ from datetime import datetime, timedelta, timezone
 from time import time
 from django.utils import timezone
 #import datetime
+from .google_calendar import GoogleCalendarService
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect
+import os
+
 # Create your views here.
+
+@login_required
+def google_calendar_auth_start(request):
+    """
+    Starts the Google Calendar API authentication process.
+    """
+    calendar_service = GoogleCalendarService()
+    authorization_url, state = calendar_service.get_authorization_url()
+    request.session['oauth_state'] = state
+    return HttpResponseRedirect(authorization_url)
+
+@login_required
+def google_calendar_auth_callback(request):
+    """
+    Handles the callback from the Google Calendar API authentication.
+    """
+    state = request.session.pop('oauth_state', '')
+    if state != request.GET.get('state'):
+        return redirect("calendar_app:index")  # CSRF warning
+
+    calendar_service = GoogleCalendarService()
+    try:
+        credentials = calendar_service.fetch_token(request.build_absolute_uri(), state)
+    except Exception as e:
+        # Handle case where user denies access
+        return redirect("calendar_app:index")
+
+    request.session['google_oauth_credentials'] = credentials.to_json()
+
+    events = calendar_service.list_events(credentials)
+
+    for event in events:
+        summary = event.get('summary')
+        description = event.get('description', '')
+        start = event.get('start', {}).get('dateTime')
+        end = event.get('end', {}).get('dateTime')
+
+        if not all([summary, start, end]):
+            continue  # Skip events without a summary, start or end time
+
+        start_datetime = datetime.fromisoformat(start)
+        end_datetime = datetime.fromisoformat(end)
+
+        # Create a new Plan object
+        Plan.objects.create(
+            user=str(request.user),
+            name=summary,
+            memo=description,
+            private=1,  # Default to private
+            start_datetime=start_datetime,
+            end_datetime=end_datetime,
+        )
+
+    return redirect("calendar_app:index")
+
 
 class IndexView(LoginRequiredMixin,View):
     def get(self,request):

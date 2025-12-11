@@ -10,6 +10,8 @@ urlpatterns=[
   #path("search/view",views.search_view , name="search_view"),
   path("account/view",views.account_view , name="account_view"),
   path("assist",views.search_view , name="search_view"),
+  path("google-calendar/auth/", views.google_calendar_auth_start, name="google_calendar_auth_start"),
+  path("oauth2callback/", views.google_calendar_auth_callback, name="google_calendar_auth_callback"),
   
 
 ] 
