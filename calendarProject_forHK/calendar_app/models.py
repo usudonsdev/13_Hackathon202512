@@ -14,7 +14,7 @@ class Plan(models.Model):
     id=models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False,verbose_name="ID")
     user=models.CharField(max_length=30,verbose_name="ユーザーID")
     name=models.CharField(max_length=100,verbose_name="予定名")
-    memo=models.TextField(max_length=1000,verbose_name="メモ",null=True)
+    memo=models.TextField(max_length=1000,verbose_name="メモ",null=True,blank=True)
     private=models.IntegerField(verbose_name="プライバシー設定",choices=[(0,"公開"),(1,"非公開")])
     start_datetime = models.DateTimeField()
     end_datetime = models.DateTimeField()
@@ -31,6 +31,25 @@ class Routine(models.Model):
     private=models.IntegerField(verbose_name="プライバシー設定",choices=[(0,"公開"),(1,"非公開")])
     start_time = models.TimeField()
     end_time = models.TimeField()
+    updated_time=models.DateTimeField(auto_now=True,verbose_name="更新日時")
+
+    def __str__(self):
+        return self.name
+
+class friend:
+    id=models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False,verbose_name="ID")
+    user1=models.CharField(max_length=30,verbose_name="ユーザー1")
+    user2=models.CharField(max_length=30,verbose_name="ユーザー2")
+    accept=models.IntegerField(verbose_name="承認状態")
+
+    def __str__(self):
+        return self.user2
+
+class Todo(models.Model):
+    id=models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False,verbose_name="ID")
+    user=models.CharField(max_length=30,verbose_name="ユーザーID")
+    name=models.CharField(max_length=100,verbose_name="予定名")
+    end_datetime = models.DateTimeField()
     updated_time=models.DateTimeField(auto_now=True,verbose_name="更新日時")
 
     def __str__(self):

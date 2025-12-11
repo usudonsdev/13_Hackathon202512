@@ -77,7 +77,7 @@ class IndexView(LoginRequiredMixin,View):
         next_plan_queryset = Plan.objects.filter(start_datetime__gte=now, user=str(request.user)).order_by('start_datetime')[:20]
         before_plan_queryset = Plan.objects.filter(start_datetime__lte=now, user=str(request.user)).order_by('-start_datetime')[:20]
         #print(next_plan_queryset[0])
-        #print(len(before_plan_queryset))
+        print(len(before_plan_queryset))
         events = [[0 for j in range(3)] for i in range(50)]
         event_name=[0 for j in range(50)]
         event_start=[0 for j in range(50)]
@@ -86,22 +86,26 @@ class IndexView(LoginRequiredMixin,View):
         for i in range(20):
             if(i<len(next_plan_queryset)):
                 event_name[i]=next_plan_queryset[i].name
-                event_start[i]=str(next_plan_queryset[i].start_datetime).replace(' ','T')[:-6]
-                event_end[i]=str(next_plan_queryset[i].end_datetime).replace(' ','T')[:-6]
+                event_start[i]=str(next_plan_queryset[i].start_datetime+timedelta(hours=9)).replace(' ','T')[:-6]
+                event_end[i]=str(next_plan_queryset[i].end_datetime+timedelta(hours=9)).replace(' ','T')[:-6]
+                #print(next_plan_queryset[i].start_datetime)
+                #print(event_start[i])
             else:
                 event_name[i]="null"
                 event_start[i]="2015-12-12T23:00:00"
                 event_end[i]="2015-12-12T23:30:00"
 
         for i in range(20,40):
-            if(i<len(before_plan_queryset)):
-                event_name[i]=before_plan_queryset[i].name
-                event_start[i]=str(before_plan_queryset[i].start_datetime).replace(' ','T')[:-6]
-                event_end[i]=str(before_plan_queryset[i].end_datetime).replace(' ','T')[:-6]
+            if(i<len(before_plan_queryset)+20):
+                event_name[i]=before_plan_queryset[i-20].name
+                event_start[i]=str(before_plan_queryset[i-20].start_datetime+timedelta(hours=9)).replace(' ','T')[:-6]
+                event_end[i]=str(before_plan_queryset[i-20].end_datetime+timedelta(hours=9)).replace(' ','T')[:-6]
+                #print(event_name[i])
             else:
                 event_name[i]="null"
                 event_start[i]="2015-12-12T23:00:00"
                 event_end[i]="2015-12-12T23:30:00"
+
 
         return render(request,"calendar_app/index.html",{"event_name":event_name,"event_start":event_start,"event_end":event_end})
 
@@ -143,7 +147,7 @@ class AccountCreateView(View):
             record.password="password"
             record.save()
             return redirect("calendar_app:index")
-        return render(request,"account/create/index.html",{"form":form})
+        return render(request,"calendar_app/account_create.html",{"form":form})
         
 
 class PlanCreateView(View):
@@ -249,7 +253,7 @@ class SearchView(View):
                     
                 conflict_members_routine = False
                     
-                if target_users:
+                if any(target_users):
                     conflict_members_plan = Plan.objects.filter(
                         start_datetime__lt = t + duration,
                         end_datetime__gt = t,
@@ -278,6 +282,20 @@ class SearchView(View):
                     results.append([t,t+duration])
                 t = t + timedelta(minutes=30)
             current_date = current_date + timedelta(days=1)
+            if not any(target_users):
+                results_size = len(results)
+                if results_size >= 5:
+                    selected_results = []
+                    index_medium = int((results_size-1)/2)
+                    index_fq = int(index_medium/2)
+                    index_tq = int(((results_size-1)-index_medium)/2 + index_medium)
+                    selected_results.append(results[0])
+                    selected_results.append(results[index_fq])
+                    selected_results.append(results[index_medium])
+                    selected_results.append(results[index_tq])
+                    selected_results.append(results[results_size-1])
+                    results = selected_results
+
         return redirect("calendar_app:index")
             
 
@@ -289,6 +307,29 @@ class AccountViewView(View):
         user_name = str(request.user)
         return render(request,"calendar_app/account.html",{"user_name": user_name})
  
+class TodoView(View):
+    def get(self,request):
+        user_name = str(request.user)
+        return render(request,"calendar_app/todo.html")
+
+class TodoCreateView(View):
+    def get(self,request):
+        return render(request,"calendar_app/todo_create.html")
+    def post(self,request):
+        name=request.POST['event-title']
+        event_end=request.POST['event-end']+"+0900"
+        Todo.objects.create(
+            user=str(request.user),
+            name=name,
+            end_datetime=event_end,
+            )
+
+
+        return redirect("calendar_app:todo")
+
+class AccountEditView(View):
+    def get(self,request):
+        return render(request,"calendar_app/profile_edit.html")
 
 
 
@@ -299,3 +340,6 @@ plan_create=PlanCreateView.as_view()
 routine_create=RoutineCreateView.as_view()
 search_view=SearchView.as_view()
 account_view=AccountViewView.as_view()
+todo_view=TodoView.as_view()
+todo_create_view=TodoCreateView.as_view()
+account_edit_view=AccountEditView.as_view()
