@@ -222,19 +222,20 @@ class SearchView(View):
                     results.append([t,t+duration])
                 t = t + timedelta(minutes=30)
             current_date = current_date + timedelta(days=1)
-            if not any(target_users):
-                results_size = len(results)
-                if results_size >= 5:
-                    selected_results = []
-                    index_medium = int((results_size-1)/2)
-                    index_fq = int(index_medium/2)
-                    index_tq = int(((results_size-1)-index_medium)/2 + index_medium)
-                    selected_results.append(results[0])
-                    selected_results.append(results[index_fq])
-                    selected_results.append(results[index_medium])
-                    selected_results.append(results[index_tq])
-                    selected_results.append(results[results_size-1])
-                    results = selected_results
+            
+        if not any(target_users):
+            results_size = len(results)
+            if results_size >= 5:
+                selected_results = []
+                index_medium = int((results_size-1)/2)
+                index_fq = int(index_medium/2)
+                index_tq = int(((results_size-1)-index_medium)/2 + index_medium)
+                selected_results.append(results[0])
+                selected_results.append(results[index_fq])
+                selected_results.append(results[index_medium])
+                selected_results.append(results[index_tq])
+                selected_results.append(results[results_size-1])
+                results = selected_results
 
         return redirect("calendar_app:index")
             
