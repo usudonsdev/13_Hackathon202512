@@ -250,24 +250,24 @@
     <div class="app-container">
         <aside class="sidebar">
             <div class="logo-area">
-                <h1><a href="/" style="color: inherit; text-decoration: none;">Scheduler</a></h1>
+                <h1>Scheduler</h1>
             </div>
             
             <nav class="main-nav">
-                <a href="/" class="nav-btn">
-                    <span class="icon">📅</span> カレンダー
+                <a href="add_event.html" class="nav-btn">
+                    <span class="icon">📅</span> 予定追加
                 </a>
                 <a href="#" class="nav-btn">
                     <span class="icon">📝</span> 今日やること
                 </a>
                 <a href="#" class="nav-btn">
-                    <span class="icon">👥</span> Friends
+                    <span class="icon">👥</span> ともだち
                 </a>
-                <a href="#" id="sidebar-account-btn" class="nav-btn active">
-                    <span class="icon">👤</span> アカウント
+                <a href="account.html" id="sidebar-account-btn" class="nav-btn active">
+                    <span class="icon">👤</span> プロフィール
                 </a>
-                <a href="#" class="nav-btn special-btn">
-                    <span class="icon">✨</span> LLM Assist
+                <a href="Scheduling_Assist_System.html" class="nav-btn special-btn">
+                    <span class="icon">✨</span> アシスト
                 </a>
             </nav>
 
@@ -347,9 +347,9 @@
             // サイドバーの「アカウント」ボタンのリンクを、自分のID付きURLに設定
             sidebarAccountBtn.href = `?id=${myUserId}`;
             if (isMyPage) {
-                sidebarAccountBtn.innerHTML = '<span class="icon">🏠</span> マイアカウント';
+                sidebarAccountBtn.innerHTML = '<span class="icon">👤</span> プロフィール';
             } else {
-                sidebarAccountBtn.innerHTML = '<span class="icon">👤</span> アカウント';
+                sidebarAccountBtn.innerHTML = '<span class="icon">👥</span> アカウント';
             }
 
 
@@ -362,7 +362,7 @@
                 if (userId === 'user123') {
                     return {
                         id: 'user123',
-                        name: '{{ user_name }}',
+                        name: '山田 太郎 (あなた)',
                         status: '今日から Smart Scheduler を使い始めました！',
                         friends: 15,
                         publicEvents: 3,
@@ -372,7 +372,7 @@
                         ]
                     };
                 } else if (userId === 'friend456') {
-                    return {
+                     return {
                         id: 'friend456',
                         name: '佐藤 次郎',
                         status: '新しい趣味を見つけたい！',
@@ -406,7 +406,7 @@
                 // ページの基本情報を設定
                 pageTitleEl.textContent = `${userData.name} のアカウント - Smart Scheduler`;
                 profileNameEl.textContent = userData.name;
-                //profileIdEl.textContent = 'ID: ' + userData.id;
+                profileIdEl.textContent = 'ID: ' + userData.id;
                 profileStatusEl.textContent = userData.status;
                 
                 // アバターのイニシャルを設定
@@ -450,7 +450,8 @@
                 if (isMyPage) {
                     // 自分のページの場合: 設定ボタンなどを表示
                     actionAreaEl.innerHTML = `
-                        <a href="/account/edit" class="btn-primary" style="margin-right: var(--spacing-md);">プロフィール編集</a>
+                        <a href="#" class="btn-primary" style="margin-right: var(--spacing-md);">プロフィール編集</a>
+                        <a href="#" class="btn-primary">プライバシー設定</a>
                     `;
                 } else {
                     // 他人のページの場合: 友達追加ボタンなどを表示
