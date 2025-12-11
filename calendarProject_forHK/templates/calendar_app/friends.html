@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">ともだち - Smart Scheduler</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* Colors */
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #6e7c87;
+            --accent-color: #3b82f6;
+            --accent-hover: #2563eb;
+            --danger-color: #ef4444;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+
+            /* Spacing */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+
+            /* Layout */
+            --sidebar-width: 250px;
+            --header-height: 60px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100%;
+        }
+
+        /* Sidebar - 既存のスタイルを流用 */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: var(--spacing-md);
+        }
+
+        .logo-area h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-lg);
+            color: var(--text-primary);
+        }
+
+        .main-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+            text-align: left;
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .nav-btn.active {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .nav-btn.special-btn {
+            background-color: #eff6ff;
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
+        .nav-btn.special-btn:hover {
+            background-color: #dbeafe;
+        }
+
+        .icon-btn {
+            border: none;
+            background: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        /* End Sidebar Styles */
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-primary);
+            overflow-y: auto;
+        }
+
+        .top-bar {
+            height: var(--header-height);
+            padding: 0 var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* --- Friends Specific Styles --- */
+        .friends-page-container {
+            padding: var(--spacing-lg);
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .friends-section {
+            background-color: var(--bg-secondary);
+            padding: var(--spacing-lg);
+            border-radius: 8px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .friends-section h3 {
+            font-size: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .friend-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .friend-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-sm) 0;
+            border-bottom: 1px dotted var(--border-color);
+        }
+
+        .friend-item:last-child {
+            border-bottom: none;
+        }
+
+        .friend-info {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            cursor: pointer;
+        }
+
+        .friend-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #ccc; /* プレースホルダー */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--bg-secondary);
+            flex-shrink: 0;
+        }
+
+        .friend-name {
+            font-weight: 500;
+        }
+
+        .friend-id {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+        
+        .btn-secondary {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            margin-left: var(--spacing-sm);
+        }
+
+        .search-area {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .search-area input {
+            flex-grow: 1;
+            padding: var(--spacing-sm);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo-area">
+                <h1>Scheduler</h1>
+            </div>
+
+            <nav class="main-nav">
+                <a href="add_event.html" class="nav-btn">
+                    <span class="icon">📅</span> 予定追加
+                </a>
+                <a href="ToDo.html" class="nav-btn">
+                    <span class="icon">📝</span> 今日やること
+                </a>
+                <a href="friends.html" class="nav-btn active">
+                    <span class="icon">👥</span> ともだち
+                </a>
+                <a href="account.html?id=myUserId" id="sidebar-account-btn" class="nav-btn">
+                    <span class="icon">👤</span> プロフィール
+                </a>
+                <a href="Scheduling_Assist_System.html" class="nav-btn">
+                    <span class="icon">✨</span> アシスト
+                </a>
+            </nav>
+
+            <div class="settings-area">
+                <button id="btn-settings" class="icon-btn" aria-label="Settings">⚙️ 設定</button>
+            </div>
+        </aside>
+        <main class="main-content">
+            <header class="top-bar">
+                <h2 class="page-title">ともだち</h2>
+            </header>
+
+            <div class="friends-page-container">
+
+                <div class="friends-section">
+                    <h3>友達を検索</h3>
+                    <div class="search-area">
+                        <input type="text" id="friend-search-input" placeholder="名前またはIDで検索...">
+                        <button class="btn-primary" id="search-btn">検索</button>
+                    </div>
+                </div>
+
+                <div class="friends-section">
+                    <h3>友達リクエスト (<span id="request-count">2</span>)</h3>
+                    <ul class="friend-list" id="friend-requests-list">
+                        <li class="friend-item">
+                            <div class="friend-info" onclick="window.location.href='account.html?id=request001'">
+                                <div class="friend-avatar">K</div>
+                                <div>
+                                    <div class="friend-name">木村 花</div>
+                                    <div class="friend-id">ID: request001</div>
+                                </div>
+                            </div>
+                            <div>
+                                <button class="btn-primary">承認</button>
+                                <button class="btn-secondary">拒否</button>
+                            </div>
+                        </li>
+                        <li class="friend-item">
+                            <div class="friend-info" onclick="window.location.href='account.html?id=request002'">
+                                <div class="friend-avatar">T</div>
+                                <div>
+                                    <div class="friend-name">田中 健太</div>
+                                    <div class="friend-id">ID: request002</div>
+                                </div>
+                            </div>
+                            <div>
+                                <button class="btn-primary">承認</button>
+                                <button class="btn-secondary">拒否</button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="friends-section">
+                    <h3>友達リスト (<span id="friends-count">3</span>)</h3>
+                    <ul class="friend-list" id="my-friends-list">
+                        <li class="friend-item">
+                            <div class="friend-info" onclick="window.location.href='account.html?id=friend456'">
+                                <div class="friend-avatar">佐</div>
+                                <div>
+                                    <div class="friend-name">佐藤 次郎</div>
+                                    <div class="friend-id">ID: friend456</div>
+                                </div>
+                            </div>
+                            <span class="icon">💬</span> </li>
+                        <li class="friend-item">
+                            <div class="friend-info" onclick="window.location.href='account.html?id=friend789'">
+                                <div class="friend-avatar">E</div>
+                                <div>
+                                    <div class="friend-name">Emily Clark</div>
+                                    <div class="friend-id">ID: friend789</div>
+                                </div>
+                            </div>
+                            <span class="icon">💬</span>
+                        </li>
+                        <li class="friend-item">
+                            <div class="friend-info" onclick="window.location.href='account.html?id=friend999'">
+                                <div class="friend-avatar">山</div>
+                                <div>
+                                    <div class="friend-name">山口 葵</div>
+                                    <div class="friend-id">ID: friend999</div>
+                                </div>
+                            </div>
+                            <span class="icon">💬</span>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const myUserId = 'user123';
+            
+            // サイドバーのプロフィールリンクを自分のID付きに設定
+            document.getElementById('sidebar-account-btn').href = `account.html?id=${myUserId}`;
+            
+            // 友達リストのデータ取得やリクエスト処理は未実装
+            // 友達アイテムのクリックでアカウントページへ遷移するよう設定済み
+        });
+    </script>
+</body>
+</html>

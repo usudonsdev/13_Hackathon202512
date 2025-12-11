@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">今日やること - Smart Scheduler</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* Colors */
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #6e7c87;
+            --accent-color: #3b82f6;
+            --accent-hover: #2563eb;
+            --danger-color: #ef4444;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+
+            /* Spacing */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+
+            /* Layout */
+            --sidebar-width: 250px;
+            --header-height: 60px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100%;
+        }
+
+        /* Sidebar - 既存のスタイルを流用 */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: var(--spacing-md);
+        }
+
+        .logo-area h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-lg);
+            color: var(--text-primary);
+        }
+
+        .main-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+            text-align: left;
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .nav-btn.active {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .nav-btn.special-btn {
+            background-color: #eff6ff;
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
+        .nav-btn.special-btn:hover {
+            background-color: #dbeafe;
+        }
+
+        .icon-btn {
+            border: none;
+            background: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        /* End Sidebar Styles */
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-primary);
+            overflow-y: auto;
+        }
+
+        .top-bar {
+            height: var(--header-height);
+            padding: 0 var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* --- ToDo Specific Styles --- */
+        .todo-page-container {
+            padding: var(--spacing-lg);
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .todo-section {
+            background-color: var(--bg-secondary);
+            padding: var(--spacing-lg);
+            border-radius: 8px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .todo-section h3 {
+            font-size: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-sm) 0;
+            border-bottom: 1px dotted var(--border-color);
+            cursor: pointer;
+        }
+
+        .todo-item:last-child {
+            border-bottom: none;
+        }
+
+        .todo-item input[type="checkbox"] {
+            margin-right: var(--spacing-md);
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .todo-item-content {
+            flex-grow: 1;
+        }
+
+        .todo-item-content strong {
+            display: block;
+            font-weight: 500;
+        }
+
+        .todo-item-content span {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .todo-item.completed .todo-item-content strong {
+            text-decoration: line-through;
+            color: var(--text-secondary);
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo-area">
+                <h1>Scheduler</h1>
+            </div>
+
+            <nav class="main-nav">
+                <a href="add_event.html" class="nav-btn">
+                    <span class="icon">📅</span> 予定追加
+                </a>
+                <a href="ToDo.html" class="nav-btn active">
+                    <span class="icon">📝</span> 今日やること
+                </a>
+                <a href="friends.html" class="nav-btn">
+                    <span class="icon">👥</span> ともだち
+                </a>
+                <a href="account.html?id=myUserId" id="sidebar-account-btn" class="nav-btn">
+                    <span class="icon">👤</span> プロフィール
+                </a>
+                <a href="Scheduling_Assist_System.html" class="nav-btn">
+                    <span class="icon">✨</span> アシスト
+                </a>
+            </nav>
+
+            <div class="settings-area">
+                <button id="btn-settings" class="icon-btn" aria-label="Settings">⚙️ 設定</button>
+            </div>
+        </aside>
+        <main class="main-content">
+            <header class="top-bar">
+                <h2 class="page-title">今日やることリスト</h2>
+                <div>
+                    <button class="btn-primary" id="add-todo-btn">＋ タスク追加</button>
+                </div>
+            </header>
+
+            <div class="todo-page-container">
+
+                <div class="todo-section">
+                    <h3>未完了タスク (<span id="pending-count">0</span>)</h3>
+                    <div id="pending-todo-list">
+                        <p class="text-secondary">未完了のタスクはありません。</p>
+                    </div>
+                </div>
+
+                <div class="todo-section">
+                    <h3>完了済みタスク (<span id="completed-count">0</span>)</h3>
+                    <div id="completed-todo-list">
+                        <p class="text-secondary">完了済みのタスクはありません。</p>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // ダミーデータ
+            const myUserId = 'user123';
+            const todoData = [
+                { id: 1, title: 'クライアントへ報告メール', due: '本日 15:00', completed: false },
+                { id: 2, title: '企画書レビュー', due: '本日中', completed: false },
+                { id: 3, title: '昼食の準備', due: '本日 12:00', completed: true },
+                { id: 4, title: '来週のMTG資料作成', due: '明日 10:00', completed: false }
+            ];
+
+            const pendingListEl = document.getElementById('pending-todo-list');
+            const completedListEl = document.getElementById('completed-todo-list');
+            const pendingCountEl = document.getElementById('pending-count');
+            const completedCountEl = document.getElementById('completed-count');
+            
+            // サイドバーのプロフィールリンクを自分のID付きに設定
+            document.getElementById('sidebar-account-btn').href = `account.html?id=${myUserId}`;
+
+
+            function renderTodoItems() {
+                pendingListEl.innerHTML = '';
+                completedListEl.innerHTML = '';
+
+                let pendingCount = 0;
+                let completedCount = 0;
+
+                todoData.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = `todo-item ${item.completed ? 'completed' : ''}`;
+                    div.dataset.id = item.id;
+                    div.innerHTML = `
+                        <input type="checkbox" ${item.completed ? 'checked' : ''} onchange="toggleTodoCompletion(${item.id}, this.checked)">
+                        <div class="todo-item-content">
+                            <strong>${item.title}</strong>
+                            <span>期限: ${item.due}</span>
+                        </div>
+                    `;
+
+                    if (item.completed) {
+                        completedListEl.appendChild(div);
+                        completedCount++;
+                    } else {
+                        pendingListEl.appendChild(div);
+                        pendingCount++;
+                    }
+                });
+
+                if (pendingCount === 0) {
+                    pendingListEl.innerHTML = '<p class="text-secondary">未完了のタスクはありません。</p>';
+                }
+                if (completedCount === 0) {
+                    completedListEl.innerHTML = '<p class="text-secondary">完了済みのタスクはありません。</p>';
+                }
+
+                pendingCountEl.textContent = pendingCount;
+                completedCountEl.textContent = completedCount;
+            }
+
+            // グローバル関数として定義して、onchangeから呼び出せるようにする（デモ用）
+            window.toggleTodoCompletion = (id, isCompleted) => {
+                const item = todoData.find(t => t.id === id);
+                if (item) {
+                    item.completed = isCompleted;
+                    renderTodoItems(); // 再描画
+                }
+            };
+
+            // 初期化
+            renderTodoItems();
+            
+            // タスク追加ボタンの動作（デモ用）
+            document.getElementById('add-todo-btn').addEventListener('click', () => {
+                alert('タスク追加フォームへ遷移します（未実装）');
+            });
+        });
+    </script>
+</body>
+</html>
