@@ -12,6 +12,7 @@ from .services.googleCalendar_interface import CalendarService
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 import os
+#import .services/friend
 
 # Create your views here.
 
@@ -150,7 +151,9 @@ class AccountCreateView(LoginRequiredMixin,View):
         
 class PlanCreateView(LoginRequiredMixin,View):
     def get(self,request):
-        return render(request,"calendar_app/create_plan.html",)
+        start = request.GET.get("start")
+        end = request.GET.get("end")
+        return render(request,"calendar_app/create_plan.html",{"start_init":start, "end_init":end})
     def post(self,request):
         name=request.POST['event-title']
         datetime_start=request.POST['event-start']
@@ -204,7 +207,6 @@ class SearchView(LoginRequiredMixin,View):
     def post(self, request):
         #form = SearchSlotForm(request.POST)
         #cd = form.cleaned_data
-        assist_title=request.POST['assist-title']
         period_start = request.POST['assist-start-datetime']
         period_start = datetime.strptime(period_start, "%Y-%m-%d").date()
         period_end = request.POST['assist-end-datetime']
@@ -292,7 +294,8 @@ class SearchView(LoginRequiredMixin,View):
                 selected_results.append(results[index_tq])
                 selected_results.append(results[results_size-1])
                 results = selected_results
-
+                
+            return render(request, "calendar_app/Scheduling_Assist_System.html", {"results":results})
         return redirect("calendar_app:index")
             
 
@@ -302,23 +305,48 @@ class AccountViewView(LoginRequiredMixin,View):
     def get(self,request):
         user_name = str(request.user)
         User=UserID.objects.get(id=str(request.user))
-        bio=User.introduce
+        bio=str(User.introduce)
         now = timezone.now()
         next_plan_queryset = Plan.objects.filter(start_datetime__gte=now, user=str(request.user)).order_by('start_datetime')[:2]
         Plans=[0]*4
-        Plans[0]=next_plan_queryset[0].start_datetime
-        Plans[1]=next_plan_queryset[0].name
-        Plans[2]=next_plan_queryset[1].start_datetime
-        Plans[3]=next_plan_queryset[1].name
+        if(len(next_plan_queryset)>=1):
+            Plans[0]=next_plan_queryset[0].start_datetime
+            Plans[1]=next_plan_queryset[0].name
+        else:
+            Plans[0]=""
+            Plans[1]=""
 
-        if(len(bio)==0):
+        if(len(next_plan_queryset)>=2):
+            Plans[2]=next_plan_queryset[1].start_datetime
+            Plans[3]=next_plan_queryset[1].name
+        else:
+            Plans[2]=""
+            Plans[3]=""
+
+        if(bio==None):
             bio="設定されていません"
         return render(request,"calendar_app/account.html",{"user_name": user_name,"bio":bio,"Plans":Plans})
 
 class TodoView(LoginRequiredMixin,View):
     def get(self,request):
         user_name = str(request.user)
-        return render(request,"calendar_app/todo.html")
+        now = timezone.now()
+        next_todo_queryset = Todo.objects.filter(end_datetime__gte=now, user=str(request.user)).order_by('end_datetime')[:10]
+        Todos=[0]*30
+        for i in range(10):
+            if(i<len(next_todo_queryset)):
+                Todos[i*3]=next_todo_queryset[i].name
+                Todos[i*3+1]=next_todo_queryset[i].end_datetime
+                if(next_todo_queryset[i].complete==0):
+                    Todos[i*3+2]="false"
+                else:
+                    Todos[i*3+2]="true"
+
+            else:
+                Todos[i*3]="null"
+                Todos[i*3+1]="0"
+                Todos[i*3+2]="false"
+        return render(request,"calendar_app/todo.html",{"Todos": Todos})
 
 class TodoCreateView(LoginRequiredMixin,View):
     def get(self,request):

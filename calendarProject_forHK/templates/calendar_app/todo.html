@@ -290,11 +290,17 @@
             // ダミーデータ
             const myUserId = 'user123';
             const todoData = [
-                { id: 1, title: 'クライアントへ報告メール', due: '本日 15:00', completed: false },
-                { id: 2, title: '企画書レビュー', due: '本日中', completed: false },
-                { id: 3, title: '昼食の準備', due: '本日 12:00', completed: true },
-                { id: 4, title: '来週のMTG資料作成', due: '明日 10:00', completed: false },
-                { id: 5, title: 'null', due: '本日中', completed: false}
+                { id: 1, title: '{{ Todos.0 }}', due: '{{ Todos.1 }}', completed: '{{ Todos.2 }}' },
+                { id: 2, title: '{{ Todos.3 }}', due: '{{ Todos.4 }}', completed: '{{ Todos.5 }}' },
+                { id: 3, title: '{{ Todos.6 }}', due: '{{ Todos.7 }}', completed: '{{ Todos.8 }}' },
+                { id: 4, title: '{{ Todos.9 }}', due: '{{ Todos.10 }}', completed: '{{ Todos.11 }}' },
+                { id: 5, title: '{{ Todos.12 }}', due: '{{ Todos.13 }}', completed: '{{ Todos.14 }}' },
+                { id: 6, title: '{{ Todos.15 }}', due: '{{ Todos.16 }}', completed: '{{ Todos.17 }}' },
+                { id: 7, title: '{{ Todos.18 }}', due: '{{ Todos.19 }}', completed: '{{ Todos.20 }}' },
+                { id: 8, title: '{{ Todos.21 }}', due: '{{ Todos.22 }}', completed: '{{ Todos.23 }}' },
+                { id: 9, title: '{{ Todos.24 }}', due: '{{ Todos.25 }}', completed: '{{ Todos.26 }}' },
+                { id: 10, title: '{{ Todos.27 }}', due: '{{ Todos.28 }}', completed: '{{ Todos.29 }}' },
+
             ];
 
             const pendingListEl = document.getElementById('pending-todo-list');
@@ -315,20 +321,20 @@
                         return;
                     }
                     const div = document.createElement('div');
-                    div.className = `todo-item ${item.completed ? 'completed' : ''}`;
+                    div.className = `todo-item ${item.completed =='true' ? 'completed' : ''}`;
                     div.dataset.id = item.id;
                     div.innerHTML = `
-                        <input type="checkbox" ${item.completed ? 'checked' : ''} onchange="toggleTodoCompletion(${item.id}, this.checked)">
+                        <input type="checkbox" ${item.completed == 'true' ? 'checked' : ''} onchange="toggleTodoCompletion(${item.id}, this.checked)">
                         <div class="todo-item-content">
                             <strong>${item.title}</strong>
                             <span>期限: ${item.due}</span>
                         </div>
                     `;
 
-                    if (item.completed) {
+                    if (item.completed == 'true') {
                         completedListEl.appendChild(div);
                         completedCount++;
-                    } else {
+                    } else if (item.completed == 'false') {
                         pendingListEl.appendChild(div);
                         pendingCount++;
                     }
@@ -349,7 +355,7 @@
             window.toggleTodoCompletion = (id, isCompleted) => {
                 const item = todoData.find(t => t.id === id);
                 if (item) {
-                    item.completed = isCompleted;
+                    item.completed = isCompleted ? 'true' : 'false';
                     renderTodoItems(); // 再描画
                 }
             };

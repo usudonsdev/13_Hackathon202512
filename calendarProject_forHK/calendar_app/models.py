@@ -55,6 +55,8 @@ class Todo(models.Model):
     name=models.CharField(max_length=101,verbose_name="予定名")
     end_datetime = models.DateTimeField(verbose_name="締め切り")
     updated_time=models.DateTimeField(auto_now=True,verbose_name="更新日時")
+    complete=models.IntegerField(default=0,verbose_name="完了")
+
 
     def __str__(self):
         return self.name

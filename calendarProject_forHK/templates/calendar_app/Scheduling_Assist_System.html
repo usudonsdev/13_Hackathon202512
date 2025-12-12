@@ -10,164 +10,191 @@
         /* (CSS部分は前回の回答と同じなので省略します。ただし、以下のCSSルールが追加・関連します) */
 
         /* 基本的なリセットとフォント */
+        :root {
+            /* Colors */
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #6e7c87;
+            --accent-color: #3b82f6;
+            --accent-hover: #2563eb;
+            --danger-color: #ef4444;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+
+            /* Spacing */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+
+            /* Layout */
+            --sidebar-width: 250px;
+            --header-height: 60px;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Arial', sans-serif;
         }
 
-        /* 全体コンテナ */
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+        }
+
         .app-container {
             display: flex;
-            min-height: 100vh;
-            background-color: #f4f7f9;
+            height: 100%;
         }
 
-        /* サイドバー */
+        /* Sidebar Styles */
         .sidebar {
-            width: 250px;
-            background-color: #ffffff;
-            border-right: 1px solid #e0e0e0;
-            padding: 20px;
+            width: var(--sidebar-width);
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            padding: var(--spacing-md);
         }
 
         .logo-area h1 {
-            color: #34495e;
-            font-size: 1.8rem;
-            margin-bottom: 30px;
-            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-lg);
+            color: var(--text-primary);
         }
 
-        /* ナビゲーション */
+        .logo-area a {
+            color: inherit;
+            text-decoration: none;
+        }
+
         .main-nav {
-            flex-grow: 1;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
         }
 
         .nav-btn {
             display: flex;
             align-items: center;
-            padding: 12px 15px;
-            margin-bottom: 8px;
-            text-decoration: none;
-            color: #34495e;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: none;
+            background: transparent;
             border-radius: 8px;
-            transition: background-color 0.2s, color 0.2s;
-            font-weight: 500;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+            text-align: left;
+            text-decoration: none;
         }
 
         .nav-btn:hover {
-            background-color: #ecf0f1;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
         }
 
-        .nav-btn .icon {
-            margin-right: 10px;
-            font-size: 1.2rem;
-        }
-
-        .settings-area {
-            padding-top: 20px;
-            border-top: 1px solid #ecf0f1;
+        .nav-btn.active {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-weight: 500;
         }
 
         .icon-btn {
-            background: none;
             border: none;
-            padding: 10px;
-            width: 100%;
-            text-align: left;
-            color: #7f8c8d;
+            background: none;
+            color: var(--text-secondary);
             cursor: pointer;
-            transition: color 0.2s;
-            border-radius: 8px;
-            font-size: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .settings-area {
+            padding-top: var(--spacing-md);
         }
 
-        .icon-btn:hover {
-            color: #34495e;
-            background-color: #ecf0f1;
-        }
-
-        /* メインコンテンツ */
+        /* Main Content */
         .main-content {
-            flex-grow: 1;
-            padding: 30px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-primary);
+            overflow-y: auto; /* スクロール可能に */
         }
 
         .top-bar {
-            margin-bottom: 10px;
-            border-bottom: 2px solid #e0e0e0;
-            padding-bottom: 10px;
+            height: var(--header-height);
+            padding: 0 var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
         }
 
         .page-title {
-            color: #2c3e50;
-            font-size: 2rem;
-            font-weight: 300;
+            font-size: 1.5rem;
+            font-weight: 700;
         }
 
-        /* フォームカード */
+        /* --- Assist Form Styles (test2.html のフォームスタイルをベースに) --- */
         .form-page-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--spacing-lg);
             display: flex;
             justify-content: center;
-            padding-top: 20px;
+            align-items: flex-start;
         }
 
         .event-form-card {
-            background-color: #ffffff;
+            background-color: var(--bg-secondary);
+            padding: var(--spacing-lg);
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            padding: 30px;
             width: 100%;
             max-width: 600px;
+            box-shadow: var(--shadow-md);
+            margin-top: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg); /* 下部にも余白を追加 */
         }
 
-        .form-section h3 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #ecf0f1;
-            padding-bottom: 10px;
-        }
-
-        /* フォームグループ */
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: var(--spacing-md);
         }
 
-        .form-group label {
+        label {
             display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #34495e;
+            margin-bottom: var(--spacing-xs);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
         }
 
         input[type="text"],
-        input[type="datetime-local"],
+        input[type="date"],
         input[type="number"],
         select {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #bdc3c7;
+            padding: var(--spacing-sm);
+            border: 1px solid var(--border-color);
             border-radius: 6px;
+            font-family: inherit;
             font-size: 1rem;
-            transition: border-color 0.2s, box-shadow 0.2s;
         }
-
-        input:focus,
-        select:focus {
-            border-color: #3498db;
-            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
-            outline: none;
-        }
-
-        .date-time-group,
-        .duration-group {
+        
+        /* 日付/時刻グループのレイアウト */
+        .date-time-group {
             display: flex;
-            gap: 10px;
             align-items: center;
+            gap: 10px;
         }
 
         .date-time-group input,
@@ -177,77 +204,111 @@
         }
 
         .separator {
-            font-weight: bold;
-            color: #7f8c8d;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        /* 所要時間グループのレイアウト */
+        .duration-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .duration-group input[type="number"] {
             width: 80px;
             text-align: right;
-            padding-right: 5px;
         }
 
-        .unit {
-            color: #7f8c8d;
-            font-size: 0.9rem;
+        .duration-group .unit {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-right: 5px;
             white-space: nowrap;
         }
 
-        /* ユーザーリスト関連のスタイル */
-        #users_list input[type="text"] {
-            margin-bottom: 10px;
-        }
-
-        /* ボタン */
-        .btn-flex-group {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end; /* 右寄せ */
-            margin-top: 15px;
-        }
-
-        .btn {
-            padding: 12px 20px;
+        /* ボタンのスタイル (test2.html 準拠) */
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: white;
             border: none;
+            padding: var(--spacing-sm) var(--spacing-lg);
             border-radius: 6px;
             cursor: pointer;
-            font-size: 1rem;
-            font-weight: bold;
-            transition: background-color 0.2s, opacity 0.2s;
-        }
-
-        .btn-secondary {
-            background-color: #95a5a6;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background-color: #7f8c8d;
-        }
-
-        .btn-primary { /* 追加ボタン用 */
-            background-color: #2ecc71;
-            color: white;
-            padding: 8px 15px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color 0.2s;
+            display: inline-block;
         }
 
         .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* フォーム内の小さな追加ボタン */
+        .btn-small-add {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .btn-small-add:hover {
             background-color: #27ae60;
         }
 
-        .btn-accent {
-            background-color: #3498db;
+        .btn-flex-group {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+        /* 検索結果ボックスのスタイル */
+        #results-box {
+            border: 1px solid var(--border-color);
+            padding: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+            border-radius: 8px;
+            background-color: var(--bg-primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        #results-box h3 {
+            font-size: 1.25rem;
+            margin-bottom: var(--spacing-md);
+            color: var(--accent-color);
+        }
+
+        #results-box .slot-item {
+            border-bottom: 1px dotted var(--border-color);
+            padding: var(--spacing-sm) 0;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        #results-box .slot-item:last-child {
+            border-bottom: none;
+        }
+
+        .btn-slot-create {
+            background-color: var(--accent-color);
             color: white;
-            letter-spacing: 1px;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            display: inline-block;
+            margin-top: var(--spacing-sm);
+            font-size: 0.9rem;
+            text-decoration: none;
         }
 
-        .btn-accent:hover {
-            background-color: #2980b9;
-        }
-
-        /* 隠し要素 */
-        .hidden {
-            display: none !important;
+        .btn-slot-create:hover {
+            background-color: var(--accent-hover);
         }
     </style>
 </head>
@@ -393,6 +454,26 @@
                                 SEARCH
                             </button>
                         </form>
+
+                        {% if results %}
+                        <div id="results-box"
+                            style="border:1px solid #ccc; padding:15px; margin-top:20px; border-radius:10px; background:#fafafa;">
+
+                            <h3>✨ 見つかった空き時間</h3>
+
+                            {% for slot in results %}
+                                <div style="border:1px solid #aaa; padding:10px; margin:10px 0; border-radius:6px;">
+                                    <strong>{{ slot.0 }} ～ {{ slot.1 }}</strong><br>
+
+                                    <a class="btn btn-primary"
+                                        href="{% url 'calendar_app:plan_create' %}?start={{ slot.0 }}&end={{ slot.1 }}"
+                                        style="margin-top:8px; display:inline-block;">
+                                        この時間で予定を作成する
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
