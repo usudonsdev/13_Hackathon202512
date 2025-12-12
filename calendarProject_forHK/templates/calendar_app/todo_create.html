@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    
+    <meta charset="UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>予定を追加 - Smart Scheduler</title>
+    
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            /* Colors */
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #6e7c87;
+            --accent-color: #3b82f6;
+            --accent-hover: #2563eb;
+            --danger-color: #ef4444;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+
+            /* Spacing */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+
+            /* Layout */
+            --sidebar-width: 250px;
+            --header-height: 60px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100%;
+        }
+
+        /* Sidebar Styles (流用) */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: var(--spacing-md);
+        }
+
+        .logo-area h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-lg);
+            color: var(--text-primary);
+        }
+
+        .main-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+            text-align: left;
+            text-decoration: none;
+            /* aタグ向け */
+        }
+
+        .nav-btn:hover {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .nav-btn.active {
+            /* 予定追加ページ専用のアクティブスタイル */
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .nav-btn.special-btn {
+            background-color: #eff6ff;
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
+        .icon-btn {
+            border: none;
+            background: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        /* End Sidebar Styles */
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-primary);
+        }
+
+        .top-bar {
+            height: var(--header-height);
+            padding: 0 var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* --- Event Form Styles (index.htmlのモーダルスタイルを流用・調整) --- */
+        .form-page-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--spacing-lg);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            /* フォームを上部に寄せる */
+        }
+
+        .event-form-card {
+            background-color: var(--bg-secondary);
+            padding: var(--spacing-lg);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 600px;
+            /* フォームの最大幅を設定 */
+            box-shadow: var(--shadow-md);
+            margin-top: var(--spacing-lg);
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .form-row {
+            display: flex;
+            gap: var(--spacing-md);
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: var(--spacing-xs);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="datetime-local"],
+        textarea,
+        select {
+            width: 100%;
+            padding: var(--spacing-sm);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: var(--spacing-lg);
+            padding: var(--spacing-sm) 0;
+        }
+
+        .radio-group label {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            cursor: pointer;
+        }
+
+        .radio-group input[type="radio"] {
+            width: auto;
+        }
+
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+            padding-top: var(--spacing-md);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-primary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e9ecef;
+        }
+
+        .date-time-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .duration-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .duration-group input[type="number"] {
+            width: 70px;
+            text-align: right;
+        }
+
+        .duration-group .unit {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-right: 10px;
+        }
+
+        /* hidden クラスの定義（重要） */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo-area">
+                <h1><a href="/" style="color: inherit; text-decoration: none;">Scheduler</a></h1>
+            </div>
+
+            <nav class="main-nav">
+                <a href="/plan/create" class="nav-btn">
+                    <span class="icon">📅</span> 予定追加
+                </a>
+                <a href="/todo" class="nav-btn">
+                    <span class="icon">📝</span> 今日やること
+                </a>
+                <a href="#" class="nav-btn">
+                    <span class="icon">👥</span> ともだち
+                </a>
+                <a href="/account/view" id="sidebar-account-btn" class="nav-btn active">
+                    <span class="icon">👤</span> プロフィール
+                </a>
+                <a href="/assist" class="nav-btn">
+                    <span class="icon">✨</span> アシスト
+                </a>
+            </nav>
+
+            <div class="settings-area">
+                <button id="btn-settings" class="icon-btn" aria-label="Settings">⚙️ 設定</button>
+            </div>
+        </aside>
+        <main class="main-content">
+            <header class="top-bar">
+                <h2 class="page-title">タスクの作成</h2>
+            </header>
+
+            <div class="form-page-container">
+                <div class="event-form-card">
+                    <form id="add-event-form" method="Post">
+                        {% csrf_token %}
+
+                        <div class="form-group">
+                            <label for="event-title">タイトル <span style="color:var(--danger-color);">*</span></label>
+                            <input type="text" id="event-title" name="event-title" required placeholder="予定の名称を入力">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="event-end">終了日時 <span style="color:var(--danger-color);">*</span></label>
+                                <input type="datetime-local" id="event-end" name="event-end" required>
+                            </div>
+                        </div>
+
+                        <!--
+                        <div class="form-group">
+                            <label>公開設定</label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="visibility" value="private" checked> Private
+                                    (非公開)</label>
+                                <label><input type="radio" name="visibility" value="public"> Public (公開)</label>
+                            </div>
+                        </div>
+
+                         <div class="form-group">
+                            <label for="event-memo">詳細/メモ</label>
+                            <textarea id="event-memo" rows="4" placeholder="場所、参加者、詳細などを入力"></textarea>
+                        </div> -->
+
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary"
+                                onclick="window.location.href='index.html';">キャンセル</button>
+                            <button type="submit" class="btn-primary">予定を保存</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('予定追加ページ initialized');
+
+        const eventForm = document.getElementById('add-event-form');
+        const eventStartInput = document.getElementById('event-start');
+        const eventEndInput = document.getElementById('event-end');
+
+        // --- 初期値設定 ---
+        // 現在日時をデフォルト値として設定 (デモ用)
+        const now = new Date();
+        const nowString = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().substring(0, 16);
+        eventStartInput.value = nowString;
+
+        // 1時間後を終了時刻に設定
+        now.setHours(now.getHours() + 1);
+        const endString = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().substring(0, 16);
+        eventEndInput.value = endString;
+
+
+        // --- LLM Assist ---
+        populateTimeSelect('assist-start-time', '9:00');
+        populateTimeSelect('assist-end-time', '18:00');
+
+
+        // --- フォーム送信処理 ---
+        eventForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const title = document.getElementById('event-title').value;
+            const start = eventStartInput.value;
+            const end = eventEndInput.value;
+            const category = document.getElementById('event-category').value;
+            const visibility = document.querySelector('input[name="visibility"]:checked').value;
+            const memo = document.getElementById('event-memo').value;
+
+            // バリデーションチェック (デモ用: 開始日時が終了日時より前か)
+            if (new Date(start) >= new Date(end)) {
+                alert('エラー: 終了日時は開始日時より後の時刻を設定してください。');
+                return;
+            }
+
+            const newEvent = { title, start, end, category, visibility, memo };
+            console.log('新規予定データ:', newEvent);
+
+            // --- データの保存処理（ダミー） ---
+            // 実際には、ここでサーバーへAPIリクエストを送信します。
+
+            alert(`予定「${title}」をカレンダーに保存しました。\nカレンダーに戻ります。`);
+
+            // 成功したらカレンダーページへリダイレクト
+            window.location.href = 'index.html';
+        });
+
+        // --- ナビゲーションリンク設定 (index.html, account.htmlへの導線) ---
+        const navButtons = document.querySelectorAll('.main-nav a');
+        navButtons.forEach(btn => {
+            // 予定追加ページでは「カレンダー」をアクティブに
+            if (btn.textContent.includes('カレンダー')) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+
+
+        const llmAssistForm = document.getElementById('llm-assist-form');
+        const toggleAssistButton = document.getElementById('toggle-llm-assist');
+
+        // --- LLM Assist 機能のイベントリスナ       
+        if (toggleAssistButton) {
+            toggleAssistButton.addEventListener('click', () => {
+                // フォームの表示/非表示を切り替える
+                llmAssistForm.classList.toggle('hidden');
+
+                // ボタンのテキストを切り替える
+                if (llmAssistForm.classList.contains('hidden')) {
+                    toggleAssistButton.textContent = 'LLM Assist を表示';
+                } else {
+                    toggleAssistButton.textContent = 'フォームを隠す';
+                }
+            });
+        }
+    });
+
+
+
+    /**
+     * 指定されたセレクトボックスに、00:00から23:50までの10分刻みの時間を生成して追加します。
+     * @param {string} elementId - セレクトボックスのID
+     * @param {string} defaultValue - 初期選択する時刻 (例: '09:00')
+     */
+    function populateTimeSelect(elementId, defaultValue) {
+        const selectElement = document.getElementById(elementId);
+        if (!selectElement) return;
+
+        selectElement.innerHTML = ''; // 既存のオプションをクリア
+
+        for (let h = 0; h < 24; h++) {
+            for (let m = 0; m < 60; m += 10) {
+                // 時間と分を2桁表示にフォーマット
+                const hour = String(h).padStart(2, '0');
+                const minute = String(m).padStart(2, '0');
+                const timeValue = `${hour}:${minute}`;
+
+                const option = document.createElement('option');
+                option.value = timeValue;
+                option.textContent = timeValue;
+
+                // 初期値を設定
+                if (timeValue === defaultValue) {
+                    option.selected = true;
+                }
+
+                selectElement.appendChild(option);
+            }
+        }
+    }
+
+
+
+</script>
+</html>

@@ -533,23 +533,23 @@
     <div class="app-container">
         <aside class="sidebar">
             <div class="logo-area">
-                <h1>Scheduler</h1>
+                <h1><a href="/" style="color: inherit; text-decoration: none;">Scheduler</a></h1>
             </div>
 
             <nav class="main-nav">
-                <button class="nav-btn" onclick="location.href='add_event.html'">
+                <button class="nav-btn" onclick="location.href='plan/create'">
                     <span class="icon">📅</span> 予定追加
                 </button>
-                <button id="btn-today-todo" class="nav-btn">
+                <button id="btn-today-todo" class="nav-btn" onclick="location.href='todo'">
                     <span class="icon">📝</span> 今日やること
                 </button>
-                <button id="btn-friends" class="nav-btn">
+                <button id="btn-friends" class="nav-btn" onclick="location.href=''">
                     <span class="icon">👥</span> ともだち
                 </button>
-                <button id="btn-friends" class="nav-btn" onclick="location.href='account.html'">
+                <button id="btn-friends" class="nav-btn" onclick="location.href='account/view'">
                     <span class="icon">👤</span> プロフィール
                 </button>
-                <button id="btn-llm" class="nav-btn" onclick="location.href='Scheduling_Assist_System.html'">
+                <button id="btn-llm" class="nav-btn" onclick="location.href='assist'">
                     <span class="icon">✨</span> アシスト
                 </button>
             </nav>
@@ -638,7 +638,8 @@
                 </div>
 
                 <div class="days-container">
-                    <div class="day-column" id="day-0"></div>
+                    <div class="day-column" id="day-0">
+                    </div>
                     <div class="day-column" id="day-1"></div>
                     <div class="day-column" id="day-2"></div>
                     <div class="day-column" id="day-3"></div>
@@ -796,17 +797,10 @@
             // --- Event Listeners ---
 
             // Navigation interaction placeholders
-            btnTodayTodo.addEventListener('click', () => {
-                alert('今日やること機能は実装中です');
-            });
-
             btnFriends.addEventListener('click', () => {
                 openModal(friendModal);
             });
 
-            btnLlm.addEventListener('click', () => {
-                alert('LLM機能は実装中です');
-            });
 
             // Calendar Interactions (Placeholder)
             // In a real implementation, clicking a time slot would open the event modal
