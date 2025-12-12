@@ -297,72 +297,53 @@
             <div class="friends-page-container">
 
                 <div class="friends-section">
-                    <h3>友達を検索</h3>
+                    <h3>リクエストを送信</h3>
                     <div class="search-area">
-                        <input type="text" id="friend-search-input" placeholder="ID追加...">
-                        <button class="btn-primary" id="search-btn">追加</button>
+                        <form method="Post">
+                        {% csrf_token %}
+                            <input type="text" id="friend-search-input" name="request-id" placeholder="ID追加...">
+                            <button class="btn-primary" id="search-btn" type="submit">送信</button>
+                        </form>
                     </div>
                 </div>
 
                 <div class="friends-section">
-                    <h3>友達リクエスト (<span id="request-count">2</span>)</h3>
+                    <h3>友達リクエスト (<span id="request-count">{{ requests_len }}</span>)</h3>
                     <ul class="friend-list" id="friend-requests-list">
+
+                        {% for user in requests %}
                         <li class="friend-item">
-                            <div class="friend-info" onclick="window.location.href='account.html?id=request001'">
-                                <div class="friend-avatar">K</div>
+                            <div class="friend-info">
+                                <div class="friend-avatar"> </div>
                                 <div>
-                                    <div class="friend-id">ID: request001</div>
+                                    <div class="friend-id">ID: {{ user }}</div>
                                 </div>
                             </div>
                             <div>
-                                <button class="btn-primary">承認</button>
-                                <button class="btn-secondary">拒否</button>
+                                <button class="btn-primary" onclick="location.href='/friend/accept/{{user}}'">承認</button>
+                                <button class="btn-secondary" onclick="location.href='/friend/delete/{{user}}'">拒否</button>
                             </div>
                         </li>
-                        <li class="friend-item">
-                            <div class="friend-info" onclick="window.location.href='account.html?id=request002'">
-                                <div class="friend-avatar">T</div>
-                                <div>
-                                    <div class="friend-id">ID: request002</div>
-                                </div>
-                            </div>
-                            <div>
-                                <button class="btn-primary">承認</button>
-                                <button class="btn-secondary">拒否</button>
-                            </div>
-                        </li>
+                        {% endfor %}
+
+
+
                     </ul>
                 </div>
 
                 <div class="friends-section">
-                    <h3>友達リスト (<span id="friends-count">3</span>)</h3>
+                    <h3>友達リスト (<span id="friends-count">{{ friends_len }}</span>)</h3>
                     <ul class="friend-list" id="my-friends-list">
+                        {% for user in friends %}
                         <li class="friend-item">
                             <div class="friend-info" onclick="window.location.href='account.html?id=friend456'">
-                                <div class="friend-avatar">佐</div>
+                                <div class="friend-avatar"> </div>
                                 <div>
-                                    <div class="friend-id">ID: friend456</div>
+                                    <div class="friend-id">ID: {{ user }}</div>
                                 </div>
                             </div>
-                            <span class="icon">💬</span> </li>
-                        <li class="friend-item">
-                            <div class="friend-info" onclick="window.location.href='account.html?id=friend789'">
-                                <div class="friend-avatar">E</div>
-                                <div>
-                                    <div class="friend-id">ID: friend789</div>
-                                </div>
-                            </div>
-                            <span class="icon">💬</span>
-                        </li>
-                        <li class="friend-item">
-                            <div class="friend-info" onclick="window.location.href='account.html?id=friend999'">
-                                <div class="friend-avatar">山</div>
-                                <div>
-                                    <div class="friend-id">ID: friend999</div>
-                                </div>
-                            </div>
-                            <span class="icon">💬</span>
-                        </li>
+                            <span class="icon"><a href="/friend/delete/{{user}}" style="  color: inherit; text-decoration: none;">×</a></span> </li>
+                        {% endfor %}
                     </ul>
                 </div>
 

@@ -324,12 +324,24 @@
                     div.className = `todo-item ${item.completed =='true' ? 'completed' : ''}`;
                     div.dataset.id = item.id;
                     div.innerHTML = `
+                        <input type="checkbox" 
+                            ${item.completed == 'true' ? 'checked' : ''} 
+                            onchange="toggleTodoCompletion(${item.id}, this.checked)">
+
+                        <a href="${detailUrl}" class="todo-item-link"> 
+                            <div class="todo-item-content">
+                                <strong>${item.title}</strong>
+                                <span>期限: ${item.due}</span>
+                            </div>
+                        </a>
+                    `;
+                    /*div.innerHTML = `
                         <input type="checkbox" ${item.completed == 'true' ? 'checked' : ''} onchange="toggleTodoCompletion(${item.id}, this.checked)">
                         <div class="todo-item-content">
                             <strong>${item.title}</strong>
                             <span>期限: ${item.due}</span>
                         </div>
-                    `;
+                    `;*/
 
                     if (item.completed == 'true') {
                         completedListEl.appendChild(div);

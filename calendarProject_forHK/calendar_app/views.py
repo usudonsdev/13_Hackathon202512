@@ -12,7 +12,7 @@ from .services.googleCalendar_interface import CalendarService
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 import os
-from .services import friend
+from calendar_app.services import friend
 
 
 # Create your views here.
@@ -133,7 +133,7 @@ class IndexView(LoginRequiredMixin,View):
 
         return redirect("calendar_app:index")
 
-class AccountCreateView(LoginRequiredMixin,View):
+class AccountCreateView(View):
     def get(self,request):
         form=CreateAccountForm()
         return render(request,"calendar_app/account_create.html",{"form":form})
@@ -152,9 +152,14 @@ class AccountCreateView(LoginRequiredMixin,View):
         
 class PlanCreateView(LoginRequiredMixin,View):
     def get(self,request):
+        title = request.GET.get("title")
         start = request.GET.get("start")
         end = request.GET.get("end")
-        return render(request,"calendar_app/create_plan.html",{"start_init":start, "end_init":end})
+        start = datetime.strptime(start, "%Y年%m月%d日%H:%M")
+        end = datetime.strptime(end, "%Y年%m月%d日%H:%M")
+        change_start = start.strftime("%Y-%m-%dT%H:%M")
+        change_end = start.strftime("%Y-%m-%dT%H:%M")
+        return render(request,"calendar_app/create_plan.html",{"start_init":change_start, "end_init":change_end, "title_init":title})
     def post(self,request):
         name=request.POST['event-title']
         datetime_start=request.POST['event-start']
@@ -208,6 +213,7 @@ class SearchView(LoginRequiredMixin,View):
     def post(self, request):
         #form = SearchSlotForm(request.POST)
         #cd = form.cleaned_data
+        assist_name = request.POST['assist-title']
         period_start = request.POST['assist-start-datetime']
         period_start = datetime.strptime(period_start, "%Y-%m-%d").date()
         period_end = request.POST['assist-end-datetime']
@@ -295,8 +301,7 @@ class SearchView(LoginRequiredMixin,View):
                 selected_results.append(results[index_tq])
                 selected_results.append(results[results_size-1])
                 results = selected_results
-                
-            return render(request, "calendar_app/Scheduling_Assist_System.html", {"results":results})
+            return render(request, "calendar_app/Scheduling_Assist_System.html", {"results":results, "assist_name":assist_name})
         return redirect("calendar_app:index")
             
 
@@ -308,6 +313,8 @@ class AccountViewView(LoginRequiredMixin,View):
         User=UserID.objects.get(id=str(request.user))
         bio=str(User.introduce)
         now = timezone.now()
+        service = friend.friendService()
+        friends=service.get_friend_list(str(request.user))
         next_plan_queryset = Plan.objects.filter(start_datetime__gte=now, user=str(request.user)).order_by('start_datetime')[:2]
         Plans=[0]*4
         if(len(next_plan_queryset)>=1):
@@ -324,9 +331,10 @@ class AccountViewView(LoginRequiredMixin,View):
             Plans[2]=""
             Plans[3]=""
 
-        if(bio==None):
+
+        if(len(bio)==0):
             bio="設定されていません"
-        return render(request,"calendar_app/account.html",{"user_name": user_name,"bio":bio,"Plans":Plans})
+        return render(request,"calendar_app/account.html",{"User":User,"user_name": user_name,"bio":bio,"Plans":Plans,"friends_len":str(len(friends))})
 
 class TodoView(LoginRequiredMixin,View):
     def get(self,request):
@@ -376,10 +384,13 @@ class AccountEditView(LoginRequiredMixin,View):
         display_name=request.POST['display-name']
         email=request.POST['email']
         bio=request.POST['bio']
+        avatar_upload=request.FILES.get('avatar-upload')
+        #print("画像:"+str(avatar_upload))
         User = get_object_or_404(UserID, id=id)
         User.name=display_name
         User.email=email
         User.introduce=bio
+        User.icon=avatar_upload
         User.save()
         return redirect("calendar_app:account_view")
 
@@ -387,7 +398,30 @@ class AccountEditView(LoginRequiredMixin,View):
 
 class FriendView(LoginRequiredMixin,View):
     def get(self,request):
-        return render(request,"calendar_app/friend.html")
+        service = friend.friendService()
+        requests=service.get_request_list(str(request.user))
+        friends=service.get_friend_list(str(request.user))
+        return render(request,"calendar_app/friend.html",{"requests":requests,"friends":friends,"requests_len":str(len(requests)),"friends_len":str(len(friends))})
+    def post(self,request):
+        request_id=request.POST['request-id']
+        service = friend.friendService()
+        print(str(request.user)+"から"+request_id)
+        service.create_request(str(request.user),request_id)
+        return redirect("calendar_app:friend_view")
+
+
+class AcceptRequestView(LoginRequiredMixin,View):
+    def get(self,request,id):
+        service = friend.friendService()
+        service.accept_request(id,str(request.user))
+        return redirect("calendar_app:friend_view")
+
+class FriendDeleteView(LoginRequiredMixin,View):
+    def get(self,request,id):
+        service = friend.friendService()
+        service.delete_friend(id,str(request.user))
+        return redirect("calendar_app:friend_view")
+
 
 
 index=IndexView.as_view()
@@ -400,5 +434,5 @@ todo_view=TodoView.as_view()
 todo_create_view=TodoCreateView.as_view()
 account_edit_view=AccountEditView.as_view()
 friend_view=FriendView.as_view()
-
-
+accept_request=AcceptRequestView.as_view()
+friend_delete=FriendDeleteView.as_view()

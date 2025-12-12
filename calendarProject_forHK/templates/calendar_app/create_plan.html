@@ -110,7 +110,6 @@
         }
 
         .nav-btn.active {
-            /* 予定追加ページ専用のアクティブスタイル */
             background-color: var(--bg-primary);
             color: var(--text-primary);
             font-weight: 500;
@@ -343,7 +342,7 @@
                         {% csrf_token %}
                         <div class="form-group">
                             <label for="event-title">タイトル <span style="color:var(--danger-color);">*</span></label>
-                            <input type="text" id="event-title" name="event-title" required placeholder="予定の名称を入力">
+                            <input type="text" id="event-title" name="event-title" value="{{title_init}}" required placeholder="予定の名称を入力">
                         </div>
 
                         <div class="form-row">
@@ -403,33 +402,20 @@
         const eventEndInput = document.getElementById('event-end');
 
         // --- 初期値設定 ---
-        // 現在日時をデフォルト値として設定 (デモ用)
-        const now = new Date();
-        const nowString = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().substring(0, 16);
-        eventStartInput.value = nowString;
+        // // 現在日時をデフォルト値として設定 (デモ用)
+        // const now = new Date();
+        // const nowString = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().substring(0, 16);
+        // eventStartInput.value = nowString;
 
-        // 1時間後を終了時刻に設定
-        now.setHours(now.getHours() + 1);
-        const endString = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().substring(0, 16);
-        eventEndInput.value = endString;
+        // // 1時間後を終了時刻に設定
+        // now.setHours(now.getHours() + 1);
+        // const endString = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().substring(0, 16);
+        // eventEndInput.value = endString;
 
 
         // --- LLM Assist ---
-        populateTimeSelect('assist-start-time', '9:00');
-        populateTimeSelect('assist-end-time', '18:00');
-
-
-
-        // --- ナビゲーションリンク設定 (index.html, account.htmlへの導線) ---
-        const navButtons = document.querySelectorAll('.main-nav a');
-        navButtons.forEach(btn => {
-            // 予定追加ページでは「カレンダー」をアクティブに
-            if (btn.textContent.includes('カレンダー')) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
-        });
+        // populateTimeSelect('assist-start-time', '9:00');
+        // populateTimeSelect('assist-end-time', '18:00');
 
 
         const llmAssistForm = document.getElementById('llm-assist-form');

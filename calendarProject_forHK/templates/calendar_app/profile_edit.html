@@ -315,11 +315,11 @@
     <div class="app-container">
         <aside class="sidebar">
             <div class="logo-area">
-                <h1>Scheduler</h1>
+                <h1><a href="/" style="color: inherit; text-decoration: none;">Scheduler</a></h1>
             </div>
 
             <nav class="main-nav">
-                <a href="/plan/create" class="nav-btn">
+                <a href="/plan/create" class="nav-btn active">
                     <span class="icon">📅</span> 予定を追加
                 </a>
                 <a href="/todo" class="nav-btn">
@@ -349,7 +349,7 @@
             <div class="form-page-container">
                 <div class="edit-form-card">
                     
-                    <form id="profile-edit-form" method="Post">
+                    <form id="profile-edit-form" method="Post" enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="profile-header">
                             <div class="avatar-area">
@@ -358,7 +358,7 @@
                                 </div>
                                 <div class="upload-overlay" onclick="document.getElementById('avatar-upload').click()">
                                     <span>+</span>
-                                    <input type="file" id="avatar-upload" accept="image/*" class="hidden" disabled>
+                                    <input type="file" id="avatar-upload" name="avatar-upload" >
                                 </div>
                             </div>
                             <div>

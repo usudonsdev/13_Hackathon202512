@@ -16,5 +16,7 @@ urlpatterns=[
   path("todo",views.todo_view , name="todo_view"),
   path("todo/create",views.todo_create_view , name="todo_create_view"),
   path("friend",views.friend_view,name="friend_view"),
+  path("friend/accept/<str:id>",views.accept_request,name="accept_request"),
+  path("friend/delete/<str:id>",views.friend_delete,name="friend_delete"),
 
 ] 

@@ -7,6 +7,7 @@ class UserID(models.Model):
     id=models.CharField(max_length=30,verbose_name="ユーザー名",primary_key=True)
     password=models.CharField(max_length=100,verbose_name="パスワード",null=True)
     name=models.CharField(max_length=100,verbose_name="名前",null=True,blank=True)
+    icon=models.ImageField(upload_to="calendar_app/picture/",verbose_name="アイコン",null=True,blank=True)
     email=models.CharField(max_length=100,verbose_name="メールアドレス",null=True,blank=True)
     introduce=models.TextField(max_length=1000,verbose_name="自己紹介",null=True,blank=True)
 

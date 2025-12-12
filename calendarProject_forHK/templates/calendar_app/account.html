@@ -291,10 +291,10 @@
                                 <span id="stat-friends-count"><strong>-</strong></span>
                                 <span>友達</span>
                             </div>
-                            <div class="stats-item">
+                            <!-- <div class="stats-item">
                                 <span id="stat-events-count"><strong>-</strong></span>
                                 <span>公開予定</span>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>
@@ -312,7 +312,8 @@
                 </div>
 
                 <div id="action-area" style="text-align: center;">
-                    </div>
+                <a href="/account/edit" class="btn-primary" style="margin-right: var(--spacing-md);">プロフィール編集</a>    
+                </div>
             </div>
         </main>
         </div>
@@ -364,7 +365,7 @@
                         id: 'user123',
                         name: '{{ user_name }}',
                         status: '{{ bio }}',
-                        friends: 15,
+                        friends: '{{ friends_len }}',
                         publicEvents: 3,
                         publicSchedule: [
                             { time: '{{ Plans.0 }}', title: '{{ Plans.1 }}' },
@@ -449,9 +450,9 @@
                 
                 if (isMyPage) {
                     // 自分のページの場合: 設定ボタンなどを表示
-                    actionAreaEl.innerHTML = `
-                        <a href="/account/edit" class="btn-primary" style="margin-right: var(--spacing-md);">プロフィール編集</a>
-                    `;
+                    //actionAreaEl.innerHTML = `
+                    //    <a href="/account/edit" class="btn-primary" style="margin-right: var(--spacing-md);">プロフィール編集</a>
+                    //`;
                 } else {
                     // 他人のページの場合: 友達追加ボタンなどを表示
                     actionAreaEl.innerHTML = `
