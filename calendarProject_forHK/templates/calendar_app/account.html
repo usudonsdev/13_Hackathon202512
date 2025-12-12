@@ -254,20 +254,20 @@
             </div>
             
             <nav class="main-nav">
-                <a href="/" class="nav-btn">
-                    <span class="icon">📅</span> カレンダー
+                <a href="/plan/create" class="nav-btn">
+                    <span class="icon">📅</span> 予定を追加
                 </a>
-                <a href="#" class="nav-btn">
+                <a href="/todo" class="nav-btn">
                     <span class="icon">📝</span> 今日やること
                 </a>
-                <a href="#" class="nav-btn">
-                    <span class="icon">👥</span> Friends
+                <a href="/friend" class="nav-btn">
+                    <span class="icon">👥</span> ともだち
                 </a>
-                <a href="#" id="sidebar-account-btn" class="nav-btn active">
-                    <span class="icon">👤</span> アカウント
+                <a href="/account/view" id="sidebar-account-btn" class="nav-btn active">
+                    <span class="icon">👤</span> プロフィール
                 </a>
-                <a href="#" class="nav-btn special-btn">
-                    <span class="icon">✨</span> LLM Assist
+                <a href="/assist" class="nav-btn">
+                    <span class="icon">✨</span> アシスト
                 </a>
             </nav>
 
@@ -347,9 +347,9 @@
             // サイドバーの「アカウント」ボタンのリンクを、自分のID付きURLに設定
             sidebarAccountBtn.href = `?id=${myUserId}`;
             if (isMyPage) {
-                sidebarAccountBtn.innerHTML = '<span class="icon">🏠</span> マイアカウント';
+                sidebarAccountBtn.innerHTML = '<span class="icon">👤</span> プロフィール';
             } else {
-                 sidebarAccountBtn.innerHTML = '<span class="icon">👤</span> アカウント';
+                sidebarAccountBtn.innerHTML = '<span class="icon">👥</span> ともだち';
             }
 
 
@@ -363,16 +363,16 @@
                     return {
                         id: 'user123',
                         name: '{{ user_name }}',
-                        status: '今日から Smart Scheduler を使い始めました！',
+                        status: '{{ bio }}',
                         friends: 15,
                         publicEvents: 3,
                         publicSchedule: [
-                            { time: '2025/12/10 14:00', title: '打ち合わせ' },
-                            { time: '2025/12/11 10:00', title: 'プロジェクトレビュー' }
+                            { time: '{{ Plans.0 }}', title: '{{ Plans.1 }}' },
+                            { time: '{{ Plans.2 }}', title: '{{ Plans.3 }}' }
                         ]
                     };
                 } else if (userId === 'friend456') {
-                     return {
+                    return {
                         id: 'friend456',
                         name: '佐藤 次郎',
                         status: '新しい趣味を見つけたい！',
@@ -451,7 +451,6 @@
                     // 自分のページの場合: 設定ボタンなどを表示
                     actionAreaEl.innerHTML = `
                         <a href="/account/edit" class="btn-primary" style="margin-right: var(--spacing-md);">プロフィール編集</a>
-                        <a href="#" class="btn-primary">プライバシー設定</a>
                     `;
                 } else {
                     // 他人のページの場合: 友達追加ボタンなどを表示

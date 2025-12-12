@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="page-title">今日やること - Smart Scheduler</title>
+    <title id="page-title">ともだち - Smart Scheduler</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -147,15 +147,15 @@
             font-weight: 700;
         }
 
-        /* --- ToDo Specific Styles --- */
-        .todo-page-container {
+        /* --- Friends Specific Styles --- */
+        .friends-page-container {
             padding: var(--spacing-lg);
-            max-width: 900px;
+            max-width: 800px;
             margin: 0 auto;
             width: 100%;
         }
 
-        .todo-section {
+        .friends-section {
             background-color: var(--bg-secondary);
             padding: var(--spacing-lg);
             border-radius: 8px;
@@ -163,50 +163,56 @@
             margin-bottom: var(--spacing-lg);
         }
 
-        .todo-section h3 {
+        .friends-section h3 {
             font-size: 1.25rem;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: var(--spacing-sm);
             margin-bottom: var(--spacing-md);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
-        .todo-item {
+        .friend-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .friend-item {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             padding: var(--spacing-sm) 0;
             border-bottom: 1px dotted var(--border-color);
-            cursor: pointer;
         }
 
-        .todo-item:last-child {
+        .friend-item:last-child {
             border-bottom: none;
         }
 
-        .todo-item input[type="checkbox"] {
-            margin-right: var(--spacing-md);
-            width: 1.25rem;
-            height: 1.25rem;
+        .friend-info {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            cursor: pointer;
         }
 
-        .todo-item-content {
-            flex-grow: 1;
+        .friend-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #ccc; /* プレースホルダー */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--bg-secondary);
+            flex-shrink: 0;
         }
 
-        .todo-item-content strong {
-            display: block;
+        .friend-name {
             font-weight: 500;
         }
 
-        .todo-item-content span {
+        .friend-id {
             font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-        
-        .todo-item.completed .todo-item-content strong {
-            text-decoration: line-through;
             color: var(--text-secondary);
         }
 
@@ -225,6 +231,32 @@
         .btn-primary:hover {
             background-color: var(--accent-hover);
         }
+        
+        .btn-secondary {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            margin-left: var(--spacing-sm);
+        }
+
+        .search-area {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .search-area input {
+            flex-grow: 1;
+            padding: var(--spacing-sm);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+        }
 
     </style>
 </head>
@@ -236,19 +268,19 @@
             </div>
 
             <nav class="main-nav">
-                <a href="plan/create" class="nav-btn">
+                <a href="/plan/create" class="nav-btn">
                     <span class="icon">📅</span> 予定を追加
                 </a>
-                <a href="todo" class="nav-btn active">
+                <a href="/todo" class="nav-btn">
                     <span class="icon">📝</span> 今日やること
                 </a>
-                <a href="friend" class="nav-btn">
+                <a href="/friend" class="nav-btn active">
                     <span class="icon">👥</span> ともだち
                 </a>
-                <a href="account/view" id="sidebar-account-btn" class="nav-btn">
+                <a href="/account/view" id="sidebar-account-btn" class="nav-btn">
                     <span class="icon">👤</span> プロフィール
                 </a>
-                <a href="assist" class="nav-btn">
+                <a href="/assist" class="nav-btn">
                     <span class="icon">✨</span> アシスト
                 </a>
             </nav>
@@ -259,26 +291,79 @@
         </aside>
         <main class="main-content">
             <header class="top-bar">
-                <h2 class="page-title">今日やることリスト</h2>
-                <div>
-                    <button class="btn-primary" id="add-todo-btn" onclick="location.href='todo/create'">＋ タスク追加</button>
-                </div>
+                <h2 class="page-title">ともだち</h2>
             </header>
 
-            <div class="todo-page-container">
+            <div class="friends-page-container">
 
-                <div class="todo-section">
-                    <h3>未完了タスク</h3>
-                    <div id="pending-todo-list">
-                        <p class="text-secondary">未完了のタスクはありません。</p>
+                <div class="friends-section">
+                    <h3>友達を検索</h3>
+                    <div class="search-area">
+                        <input type="text" id="friend-search-input" placeholder="ID追加...">
+                        <button class="btn-primary" id="search-btn">追加</button>
                     </div>
                 </div>
 
-                <div class="todo-section">
-                    <h3>完了済みタスク </h3>
-                    <div id="completed-todo-list">
-                        <p class="text-secondary">完了済みのタスクはありません。</p>
-                    </div>
+                <div class="friends-section">
+                    <h3>友達リクエスト (<span id="request-count">2</span>)</h3>
+                    <ul class="friend-list" id="friend-requests-list">
+                        <li class="friend-item">
+                            <div class="friend-info" onclick="window.location.href='account.html?id=request001'">
+                                <div class="friend-avatar">K</div>
+                                <div>
+                                    <div class="friend-id">ID: request001</div>
+                                </div>
+                            </div>
+                            <div>
+                                <button class="btn-primary">承認</button>
+                                <button class="btn-secondary">拒否</button>
+                            </div>
+                        </li>
+                        <li class="friend-item">
+                            <div class="friend-info" onclick="window.location.href='account.html?id=request002'">
+                                <div class="friend-avatar">T</div>
+                                <div>
+                                    <div class="friend-id">ID: request002</div>
+                                </div>
+                            </div>
+                            <div>
+                                <button class="btn-primary">承認</button>
+                                <button class="btn-secondary">拒否</button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="friends-section">
+                    <h3>友達リスト (<span id="friends-count">3</span>)</h3>
+                    <ul class="friend-list" id="my-friends-list">
+                        <li class="friend-item">
+                            <div class="friend-info" onclick="window.location.href='account.html?id=friend456'">
+                                <div class="friend-avatar">佐</div>
+                                <div>
+                                    <div class="friend-id">ID: friend456</div>
+                                </div>
+                            </div>
+                            <span class="icon">💬</span> </li>
+                        <li class="friend-item">
+                            <div class="friend-info" onclick="window.location.href='account.html?id=friend789'">
+                                <div class="friend-avatar">E</div>
+                                <div>
+                                    <div class="friend-id">ID: friend789</div>
+                                </div>
+                            </div>
+                            <span class="icon">💬</span>
+                        </li>
+                        <li class="friend-item">
+                            <div class="friend-info" onclick="window.location.href='account.html?id=friend999'">
+                                <div class="friend-avatar">山</div>
+                                <div>
+                                    <div class="friend-id">ID: friend999</div>
+                                </div>
+                            </div>
+                            <span class="icon">💬</span>
+                        </li>
+                    </ul>
                 </div>
 
             </div>
@@ -286,79 +371,6 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // ダミーデータ
-            const myUserId = 'user123';
-            const todoData = [
-                { id: 1, title: 'クライアントへ報告メール', due: '本日 15:00', completed: false },
-                { id: 2, title: '企画書レビュー', due: '本日中', completed: false },
-                { id: 3, title: '昼食の準備', due: '本日 12:00', completed: true },
-                { id: 4, title: '来週のMTG資料作成', due: '明日 10:00', completed: false },
-                { id: 5, title: 'null', due: '本日中', completed: false}
-            ];
-
-            const pendingListEl = document.getElementById('pending-todo-list');
-            const completedListEl = document.getElementById('completed-todo-list');
-            const pendingCountEl = document.getElementById('pending-count');
-            const completedCountEl = document.getElementById('completed-count');
-
-
-            function renderTodoItems() {
-                pendingListEl.innerHTML = '';
-                completedListEl.innerHTML = '';
-
-                let pendingCount = 0;
-                let completedCount = 0;
-
-                todoData.forEach(item => {
-                    if (!item.title || item.title.trim() === 'null') {
-                        return;
-                    }
-                    const div = document.createElement('div');
-                    div.className = `todo-item ${item.completed ? 'completed' : ''}`;
-                    div.dataset.id = item.id;
-                    div.innerHTML = `
-                        <input type="checkbox" ${item.completed ? 'checked' : ''} onchange="toggleTodoCompletion(${item.id}, this.checked)">
-                        <div class="todo-item-content">
-                            <strong>${item.title}</strong>
-                            <span>期限: ${item.due}</span>
-                        </div>
-                    `;
-
-                    if (item.completed) {
-                        completedListEl.appendChild(div);
-                        completedCount++;
-                    } else {
-                        pendingListEl.appendChild(div);
-                        pendingCount++;
-                    }
-                });
-
-                if (pendingCount === 0) {
-                    pendingListEl.innerHTML = '<p class="text-secondary">未完了のタスクはありません。</p>';
-                }
-                if (completedCount === 0) {
-                    completedListEl.innerHTML = '<p class="text-secondary">完了済みのタスクはありません。</p>';
-                }
-
-                pendingCountEl.textContent = pendingCount;
-                completedCountEl.textContent = completedCount;
-            }
-
-            // グローバル関数として定義して、onchangeから呼び出せるようにする（デモ用）
-            window.toggleTodoCompletion = (id, isCompleted) => {
-                const item = todoData.find(t => t.id === id);
-                if (item) {
-                    item.completed = isCompleted;
-                    renderTodoItems(); // 再描画
-                }
-            };
-
-            // 初期化
-            renderTodoItems();
-            
-
-        });
     </script>
 </body>
 </html>

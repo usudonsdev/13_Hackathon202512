@@ -2,7 +2,7 @@ from django.db.models import Q
 #TODO: ↑のフォルダ構成に合わせて修正
 from typing import List
 from .friend_interface import IFriendService
-from ..models import Friend  # モデル名はUser定義に合わせて適宜修正してください
+from ..models import friend  # モデル名はUser定義に合わせて適宜修正してください
 
 class FriendService(IFriendService):
     """

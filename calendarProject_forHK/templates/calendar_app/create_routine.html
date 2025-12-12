@@ -314,20 +314,20 @@
             </div>
 
             <nav class="main-nav">
-                <a href="/" class="nav-btn">
-                    <span class="icon">📅</span> カレンダー
+                <a href="/plan/create" class="nav-btn active">
+                    <span class="icon">📅</span> 予定を追加
                 </a>
-                <a href="#" class="nav-btn">
+                <a href="/todo" class="nav-btn">
                     <span class="icon">📝</span> 今日やること
                 </a>
-                <a href="#" class="nav-btn">
-                    <span class="icon">👥</span> Friends
+                <a href="/friend" class="nav-btn">
+                    <span class="icon">👥</span> ともだち
                 </a>
-                <a href="#" id="sidebar-account-btn" class="nav-btn active">
-                    <span class="icon">👤</span> アカウント
+                <a href="/account/view" id="sidebar-account-btn" class="nav-btn">
+                    <span class="icon">👤</span> プロフィール
                 </a>
-                <a href="#" class="nav-btn special-btn">
-                    <span class="icon">✨</span> LLM Assist
+                <a href="/assist" class="nav-btn">
+                    <span class="icon">✨</span> アシスト
                 </a>
             </nav>
 
@@ -508,7 +508,7 @@
 
                         <div class="form-actions">
                             <button type="button" class="btn-secondary"
-                                onclick="window.location.href='index.html';">キャンセル</button>
+                                onclick="window.location.href='/';">キャンセル</button>
                             <button type="submit" class="btn-primary">予定を保存</button>
                         </div>
                     </form>

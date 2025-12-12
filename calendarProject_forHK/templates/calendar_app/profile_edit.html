@@ -319,19 +319,19 @@
             </div>
 
             <nav class="main-nav">
-                <a href="add_event.html" class="nav-btn">
-                    <span class="icon">📅</span> 予定追加
+                <a href="/plan/create" class="nav-btn">
+                    <span class="icon">📅</span> 予定を追加
                 </a>
-                <a href="#" class="nav-btn">
+                <a href="/todo" class="nav-btn">
                     <span class="icon">📝</span> 今日やること
                 </a>
-                <a href="#" class="nav-btn">
+                <a href="/friend" class="nav-btn">
                     <span class="icon">👥</span> ともだち
                 </a>
-                <a href="account.html" id="sidebar-account-btn" class="nav-btn active">
+                <a href="/account/view" class="nav-btn active">
                     <span class="icon">👤</span> プロフィール
                 </a>
-                <a href="LLM_Assist_System.html" class="nav-btn">
+                <a href="/assist" class="nav-btn">
                     <span class="icon">✨</span> アシスト
                 </a>
             </nav>
@@ -349,8 +349,8 @@
             <div class="form-page-container">
                 <div class="edit-form-card">
                     
-                    <form id="profile-edit-form">
-
+                    <form id="profile-edit-form" method="Post">
+                        {% csrf_token %}
                         <div class="profile-header">
                             <div class="avatar-area">
                                 <div class="avatar" id="current-avatar">
@@ -358,24 +358,24 @@
                                 </div>
                                 <div class="upload-overlay" onclick="document.getElementById('avatar-upload').click()">
                                     <span>+</span>
-                                    <input type="file" id="avatar-upload" accept="image/*" class="hidden">
+                                    <input type="file" id="avatar-upload" accept="image/*" class="hidden" disabled>
                                 </div>
                             </div>
                             <div>
-                                <h3>ユーザー名太郎</h3>
-                                <p class="text-secondary">現在のユーザーID: @scheduler_taro</p>
+                                <h3>{{ User_data.1 }}</h3>
+                                <p class="text-secondary">現在のユーザーID: @{{ User_data.0 }}</p>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="display-name">表示名 <span style="color:var(--danger-color);">*</span></label>
-                            <input type="text" id="display-name" value="ユーザー名太郎" required
+                            <input type="text" id="display-name" name="display-name" required
                                 placeholder="他のユーザーに表示される名前">
                         </div>
 
                         <div class="form-group">
                             <label for="user-id">ユーザーID</label>
-                            <input type="text" id="user-id" value="@scheduler_taro" readonly
+                            <input type="text" id="user-id" value="@{{ User_data.0 }}" readonly
                                 style="background-color: var(--bg-primary); color: var(--text-secondary);"
                                 placeholder="変更不可">
                             <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 5px;">
@@ -384,16 +384,16 @@
                         
                         <div class="form-group">
                             <label for="email">メールアドレス</label>
-                            <input type="email" id="email" value="user.taro@example.com"
+                            <input type="email" id="email" name="email"
                                 placeholder="連絡用のメールアドレス">
                         </div>
                         
                         <div class="form-group">
                             <label for="bio">自己紹介</label>
-                            <textarea id="bio" placeholder="あなたの仕事、趣味、チームでの役割などを入力してください。">スケジュール管理とタスク処理を自動化するためのAIシステムの開発に携わっています。コーヒーと効率化が好きです。</textarea>
+                            <textarea id="bio" name="bio"></textarea>
                         </div>
 
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <label>デフォルト勤務時間 (LLM Assistの推奨時間)</label>
                             <div class="time-group">
                                 <select id="default-start-time" value="09:00"></select>
@@ -402,10 +402,10 @@
                             </div>
                             <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 5px;">
                                 ここで設定した時間が、AIが予定を提案する際の基準になります。</p>
-                        </div>
+                        </div> -->
 
                         <div class="form-actions">
-                            <a href="account.html" class="btn-secondary">キャンセル</a>
+                            <a href="/account/view" class="btn-secondary">キャンセル</a>
                             <button type="submit" class="btn-primary">変更を保存</button>
                         </div>
                     </form>
@@ -477,16 +477,7 @@
             }
 
             // --- フォーム送信処理（ダミー） ---
-            const profileForm = document.getElementById('profile-edit-form');
-            if (profileForm) {
-                profileForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    // 実際にはここでAPIを呼び出してデータを保存
-                    alert(`プロフィール情報を保存しました！\n表示名: ${document.getElementById('display-name').value}\n自己紹介: ${document.getElementById('bio').value.substring(0, 20)}...`);
-                    // 保存後に account.html に遷移など
-                    // window.location.href = 'account.html';
-                });
-            }
+
         });
     </script>
 </body>

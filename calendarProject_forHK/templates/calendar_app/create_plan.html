@@ -310,16 +310,16 @@
             </div>
 
             <nav class="main-nav">
-                <a href="/plan/create" class="nav-btn">
-                    <span class="icon">📅</span> 予定追加
+                <a href="/plan/create" class="nav-btn active">
+                    <span class="icon">📅</span> 予定を追加
                 </a>
                 <a href="/todo" class="nav-btn">
                     <span class="icon">📝</span> 今日やること
                 </a>
-                <a href="#" class="nav-btn">
+                <a href="/friend" class="nav-btn">
                     <span class="icon">👥</span> ともだち
                 </a>
-                <a href="/account/view" id="sidebar-account-btn" class="nav-btn active">
+                <a href="/account/view" id="sidebar-account-btn" class="nav-btn">
                     <span class="icon">👤</span> プロフィール
                 </a>
                 <a href="/assist" class="nav-btn">
@@ -338,22 +338,22 @@
 
             <div class="form-page-container">
                 <div class="event-form-card">
-                    <form id="add-event-form">
+                    <form id="add-event-form" method="Post">
                         <button type="button" class="btn btn-outline-primary" style="margin-bottom:10px" onclick="location.href='/routine/create'">まとめて追加</button>
-
+                        {% csrf_token %}
                         <div class="form-group">
                             <label for="event-title">タイトル <span style="color:var(--danger-color);">*</span></label>
-                            <input type="text" id="event-title" required placeholder="予定の名称を入力">
+                            <input type="text" id="event-title" name="event-title" required placeholder="予定の名称を入力">
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="event-start">開始日時 <span style="color:var(--danger-color);">*</span></label>
-                                <input type="datetime-local" id="event-start" required>
+                                <input type="datetime-local" id="event-start" name="event-start" required>
                             </div>
                             <div class="form-group">
                                 <label for="event-end">終了日時 <span style="color:var(--danger-color);">*</span></label>
-                                <input type="datetime-local" id="event-end" required>
+                                <input type="datetime-local" id="event-end" name="event-end" required>
                             </div>
                         </div>
 
@@ -378,13 +378,13 @@
 
                         <div class="form-group">
                             <label for="event-memo">詳細/メモ</label>
-                            <textarea id="event-memo" rows="4" placeholder="場所、参加者、詳細などを入力"></textarea>
+                            <textarea id="event-memo" rows="4" name="event-memo" placeholder="場所、参加者、詳細などを入力"></textarea>
                         </div>
 
                         <div class="form-actions">
                             <button type="button" class="btn-secondary"
-                                onclick="window.location.href='index.html';">キャンセル</button>
-                            <button type="submit" class="btn-primary">予定を保存</button>
+                                onclick="window.location.href='/';">キャンセル</button>
+                            <button type="submit" class="btn-primary" >予定を保存</button>
                         </div>
                     </form>
                 </div>
@@ -419,34 +419,6 @@
         populateTimeSelect('assist-end-time', '18:00');
 
 
-        // --- フォーム送信処理 ---
-        eventForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-
-            const title = document.getElementById('event-title').value;
-            const start = eventStartInput.value;
-            const end = eventEndInput.value;
-            const category = document.getElementById('event-category').value;
-            const visibility = document.querySelector('input[name="visibility"]:checked').value;
-            const memo = document.getElementById('event-memo').value;
-
-            // バリデーションチェック (デモ用: 開始日時が終了日時より前か)
-            if (new Date(start) >= new Date(end)) {
-                alert('エラー: 終了日時は開始日時より後の時刻を設定してください。');
-                return;
-            }
-
-            const newEvent = { title, start, end, category, visibility, memo };
-            console.log('新規予定データ:', newEvent);
-
-            // --- データの保存処理（ダミー） ---
-            // 実際には、ここでサーバーへAPIリクエストを送信します。
-
-            alert(`予定「${title}」をカレンダーに保存しました。\nカレンダーに戻ります。`);
-
-            // 成功したらカレンダーページへリダイレクト
-            window.location.href = 'index.html';
-        });
 
         // --- ナビゲーションリンク設定 (index.html, account.htmlへの導線) ---
         const navButtons = document.querySelectorAll('.main-nav a');
@@ -478,6 +450,9 @@
             });
         }
     });
+
+
+    
 
 
 
@@ -512,8 +487,5 @@
             }
         }
     }
-
-
-
 </script>
 </html>

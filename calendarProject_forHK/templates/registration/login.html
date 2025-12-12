@@ -1,8 +1,217 @@
-<h2>ログイン</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">ログイン</button>
-    <a href="/account/create">新規作成</a>
+<!DOCTYPE html>
+<html lang="ja">
 
-</form>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>カレンダーアプリ - ログイン</title>
+
+    <link rel="stylesheet" href="styles.css">
+
+    <!DOCTYPE html>
+    <html lang="ja">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>カレンダーアプリ - ログイン</title>
+
+        <style>
+            /* -------------------------------------- */
+            /* 1. リセット & 基本設定 */
+            /* -------------------------------------- */
+            * {
+                /* 全ての要素でボックスモデルをborder-boxに設定し、レイアウト計算を容易にする */
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                /* ページの背景を深く、複雑なグラデーションに変更 */
+                background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%);
+                /* #1C2E5D: 深いネイビーブルー（夜空のような色） */
+                /* 中央配置の設定は維持 */
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+            }
+
+            /* -------------------------------------- */
+            /* 2. ログインコンテナ (カード形式のデザイン) */
+            /* -------------------------------------- */
+            .login-container {
+                background-color: #ffffff;
+                padding: 40px;
+                width: 100%;
+                max-width: 380px;
+                /* 幅を少し広げる */
+                border-radius: 12px;
+                /* 影を強くし、より浮遊感を出す */
+                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+                text-align: center;
+            }
+
+            /* -------------------------------------- */
+            /* 3. タイトル */
+            /* -------------------------------------- */
+            h2 {
+                color: #333333;
+                font-weight: 600;
+                /* 太すぎないウェイト */
+                margin-bottom: 30px;
+                font-size: 1.8em;
+            }
+            h2, .form-group label {
+                color: #333333;
+            }
+
+            /* -------------------------------------- */
+            /* 4. フォームグループ (ラベルと入力欄のセット) */
+            /* -------------------------------------- */
+            .form-group {
+                text-align: left;
+                /* ラベルを左揃えにする */
+                margin-bottom: 20px;
+            }
+
+            label {
+                display: block;
+                /* ラベルを独立したブロックにする */
+                margin-bottom: 8px;
+                font-size: 0.9em;
+                color: #555555;
+                font-weight: 500;
+            }
+
+            input[type="text"],
+            input[type="password"] {
+                width: 100%;
+                padding: 12px;
+                border: 1px solid #cccccc;
+                /* 控えめな枠線 */
+                border-radius: 6px;
+                font-size: 1em;
+                transition: border-color 0.3s, box-shadow 0.3s;
+            }
+
+            /* 入力時にフォーカスされたとき */
+            input[type="text"]:focus,
+            input[type="password"]:focus {
+                border-color: #aad1af9a;
+                box-shadow: 0 0 0 3px rgba(68, 228, 9, 0.755);
+                /* 控えめな影で強調 */
+                outline: none;
+                /* デフォルトの青い枠線を消す */
+            }
+
+            /* -------------------------------------- */
+            /* 5. ログインボタン */
+            /* -------------------------------------- */
+            .login-button {
+                width: 100%;
+                padding: 12px;
+                margin-top: 10px;
+
+                /* === グラデーションの定義 === */
+                /* 控えめな青から少し明るい青への緩やかなグラデーション */
+                background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+
+                color: white;
+                border: none;
+                border-radius: 6px;
+                font-size: 1.1em;
+                font-weight: bold;
+                cursor: pointer;
+
+                /* 影を追加して、ボタンを浮き上がらせる */
+                box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+
+                /* 変化を滑らかにするためのトランジション */
+                transition: all 0.3s ease;
+            }
+
+            /* ボタンにマウスオーバーしたとき (ホバーエフェクト) */
+            .login-button:hover {
+                /* グラデーションの色を少し強め、コントラストを上げる */
+                background: linear-gradient(135deg, #3A7CD6 0%, #5CB3F0 100%);
+                /* 影を大きくし、さらに浮き上がったように見せる */
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            }
+
+            /* ボタンをクリックしたとき（押している間） */
+            .login-button:active {
+                /* グラデーションを反転させるか、完全に単色にして「押し込まれた」感じを出す */
+                background-color: #3A7CD6;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                /* 影を小さくする */
+                transform: translateY(1px);
+                /* わずかに下に移動させる */
+            }
+
+            /* -------------------------------------- */
+            /* 6. その他のリンク */
+            /* -------------------------------------- */
+            .links {
+                margin-top: 30px;
+                display: flex;
+                justify-content: space-between;
+                /* リンクを左右に配置 */
+                font-size: 0.90em;
+            }
+
+            .links a {
+                color: #3B82F6;
+                /* メインカラーと同じ色 */
+                text-decoration: none;
+                font-weight: 500;
+                padding: 2px 5px;
+                border-bottom: 2px solid transparent;
+                /* 下線を消す */
+                transition: color 0.3s;
+            }
+
+            .links a:hover {
+                color: #3B82F6;
+                text-decoration: underline;
+                /* マウスオーバーで下線を出す */
+            }
+        </style>
+    </head>
+
+<body>
+
+    <div class="login-container">
+
+        <h2>D-SS ログイン</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_username">USER ID</label>
+                <input type="text" name="username" autofocus="" autocapitalize="none" autocomplete="username" required="" id="id_username" placeholder="userxxx">
+            </div>
+
+            <div class="form-group">
+                <label for="id_password">パスワード</label>
+                <input type="password" name="password" autocomplete="current-password" required="" id="id_password">
+            </div>
+
+            <button type="submit" class="login-button">Login</button>
+
+            <div class="links">
+                <!-- <a href="/forgot-password">パスワードを忘れた場合</a> -->
+                <a href="/account/create" style="margin: 0 auto;">新規登録はこちら</a>
+            </div>
+
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

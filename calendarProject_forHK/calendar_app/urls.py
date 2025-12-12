@@ -15,6 +15,6 @@ urlpatterns=[
   path("oauth2callback/", views.google_calendar_auth_callback, name="google_calendar_auth_callback"),
   path("todo",views.todo_view , name="todo_view"),
   path("todo/create",views.todo_create_view , name="todo_create_view"),
-  
+  path("friend",views.friend_view,name="friend_view"),
 
 ] 

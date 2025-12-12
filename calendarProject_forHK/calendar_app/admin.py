@@ -5,3 +5,4 @@ from .models import *
 admin.site.register(UserID)
 admin.site.register(Plan)
 admin.site.register(Routine)
+admin.site.register(Todo)

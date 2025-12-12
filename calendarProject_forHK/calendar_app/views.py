@@ -69,7 +69,6 @@ def google_calendar_auth_callback(request):
 
     return redirect("calendar_app:index")
 
-
 class IndexView(LoginRequiredMixin,View):
     def get(self,request):
 
@@ -78,7 +77,7 @@ class IndexView(LoginRequiredMixin,View):
         before_plan_queryset = Plan.objects.filter(start_datetime__lte=now, user=str(request.user)).order_by('-start_datetime')[:20]
         #print(next_plan_queryset[0])
         print(len(before_plan_queryset))
-        events = [[0 for j in range(3)] for i in range(50)]
+        #events = [[0 for j in range(3)] for i in range(50)]
         event_name=[0 for j in range(50)]
         event_start=[0 for j in range(50)]
         event_end=[0 for j in range(50)]
@@ -132,7 +131,7 @@ class IndexView(LoginRequiredMixin,View):
 
         return redirect("calendar_app:index")
 
-class AccountCreateView(View):
+class AccountCreateView(LoginRequiredMixin,View):
     def get(self,request):
         form=CreateAccountForm()
         return render(request,"calendar_app/account_create.html",{"form":form})
@@ -149,33 +148,31 @@ class AccountCreateView(View):
             return redirect("calendar_app:index")
         return render(request,"calendar_app/account_create.html",{"form":form})
         
-
-class PlanCreateView(View):
+class PlanCreateView(LoginRequiredMixin,View):
     def get(self,request):
-        form=CreatePlanForm()
-        return render(request,"calendar_app/create_plan.html",{"form":form})
+        return render(request,"calendar_app/create_plan.html",)
     def post(self,request):
-        form=CreatePlanForm(request.POST)
-        if form.is_valid():
-            cd = form.cleaned_data
-            start_dt = datetime(
-                cd['year'], cd['month'], cd['day'], cd['start_hour'], cd['start_minute'],
-            )
-            end_dt = datetime(
-                cd['year'], cd['month'], cd['day'], cd['end_hour'], cd['end_minute'],
-            )
-            Plan.objects.create(
-                user=str(request.user),
-                name=cd['name'],
-                memo=cd['memo'],
-                private=cd['private'],
-                start_datetime=start_dt,
-                end_datetime=end_dt,
-            )
-            return redirect("calendar_app:index")
-        return render(request,"calendar_app/create_plan.html",{"form":form})
+        name=request.POST['event-title']
+        datetime_start=request.POST['event-start']
+        datetime_end=request.POST['event-end']
+        private=request.POST['visibility']
+        event_memo=request.POST['event-memo']
+        if(private=="private"):
+            private=1
+        else:
+            private=0
+        Plan.objects.create(
+            user = str(request.user),
+            name = name,
+            start_datetime = datetime_start,
+            end_datetime = datetime_end,
+            private = private,
+            memo = event_memo,
+        )
+        
+        return redirect("calendar_app:index")
 
-class RoutineCreateView(View):
+class RoutineCreateView(LoginRequiredMixin,View):
     def get(self,request):
         return render(request,"calendar_app/create_routine.html",)
     def post(self,request):
@@ -199,7 +196,7 @@ class RoutineCreateView(View):
         )
         return redirect("calendar_app:index")
     
-class SearchView(View):
+class SearchView(LoginRequiredMixin,View):
     def get(self, request):
         #form = SearchSlotForm()
 
@@ -301,18 +298,29 @@ class SearchView(View):
 
             
             
-        
-class AccountViewView(View):
+class AccountViewView(LoginRequiredMixin,View):
     def get(self,request):
         user_name = str(request.user)
-        return render(request,"calendar_app/account.html",{"user_name": user_name})
- 
-class TodoView(View):
+        User=UserID.objects.get(id=str(request.user))
+        bio=User.introduce
+        now = timezone.now()
+        next_plan_queryset = Plan.objects.filter(start_datetime__gte=now, user=str(request.user)).order_by('start_datetime')[:2]
+        Plans=[0]*4
+        Plans[0]=next_plan_queryset[0].start_datetime
+        Plans[1]=next_plan_queryset[0].name
+        Plans[2]=next_plan_queryset[1].start_datetime
+        Plans[3]=next_plan_queryset[1].name
+
+        if(len(bio)==0):
+            bio="設定されていません"
+        return render(request,"calendar_app/account.html",{"user_name": user_name,"bio":bio,"Plans":Plans})
+
+class TodoView(LoginRequiredMixin,View):
     def get(self,request):
         user_name = str(request.user)
         return render(request,"calendar_app/todo.html")
 
-class TodoCreateView(View):
+class TodoCreateView(LoginRequiredMixin,View):
     def get(self,request):
         return render(request,"calendar_app/todo_create.html")
     def post(self,request):
@@ -323,15 +331,34 @@ class TodoCreateView(View):
             name=name,
             end_datetime=event_end,
             )
+        return redirect("calendar_app:todo_view")
 
-
-        return redirect("calendar_app:todo")
-
-class AccountEditView(View):
+class AccountEditView(LoginRequiredMixin,View):
     def get(self,request):
-        return render(request,"calendar_app/profile_edit.html")
+        User=UserID.objects.get(id=str(request.user))
+        User_data=[0]*5
+        User_data[0]=User.id
+        User_data[1]=User.name
+        User_data[2]=User.email
+        User_data[3]=User.introduce
+        return render(request,"calendar_app/profile_edit.html",{"User_data": User_data})
+    def post(self,request):
+        id=str(request.user)
+        display_name=request.POST['display-name']
+        email=request.POST['email']
+        bio=request.POST['bio']
+        User = get_object_or_404(UserID, id=id)
+        User.name=display_name
+        User.email=email
+        User.introduce=bio
+        User.save()
+        return redirect("calendar_app:account_view")
 
 
+
+class FriendView(LoginRequiredMixin,View):
+    def get(self,request):
+        return render(request,"calendar_app/friend.html")
 
 
 index=IndexView.as_view()
@@ -343,3 +370,6 @@ account_view=AccountViewView.as_view()
 todo_view=TodoView.as_view()
 todo_create_view=TodoCreateView.as_view()
 account_edit_view=AccountEditView.as_view()
+friend_view=FriendView.as_view()
+
+
