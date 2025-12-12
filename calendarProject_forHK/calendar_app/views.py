@@ -12,7 +12,8 @@ from .services.googleCalendar_interface import CalendarService
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 import os
-#import .services/friend
+from .services import friend
+
 
 # Create your views here.
 
