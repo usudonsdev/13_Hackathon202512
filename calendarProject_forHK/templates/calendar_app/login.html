@@ -156,22 +156,26 @@
             /* 6. その他のリンク */
             /* -------------------------------------- */
             .links {
-                margin-top: 25px;
+                margin-top: 30px;
                 display: flex;
                 justify-content: space-between;
                 /* リンクを左右に配置 */
-                font-size: 0.85em;
+                font-size: 0.90em;
             }
 
             .links a {
-                color: #4A90E2;
+                color: #3B82F6;
                 /* メインカラーと同じ色 */
                 text-decoration: none;
+                font-weight: 500;
+                padding: 2px 5px;
+                border-bottom: 2px solid transparent;
                 /* 下線を消す */
                 transition: color 0.3s;
             }
 
             .links a:hover {
+                color: #3B82F6;
                 text-decoration: underline;
                 /* マウスオーバーで下線を出す */
             }
@@ -182,7 +186,7 @@
 
     <div class="login-container">
 
-        <h2>カレンダーアプリ ログイン</h2>
+        <h2>D-SS ログイン</h2>
 
         <form action="/login" method="POST">
             <div class="form-group">
@@ -198,8 +202,8 @@
             <button type="submit" class="login-button">Login</button>
 
             <div class="links">
-                <a href="/forgot-password">パスワードを忘れた場合</a>
-                <a href="/register">新規登録はこちら</a>
+                <!-- <a href="/forgot-password">パスワードを忘れた場合</a> -->
+                <a href="/register" style="margin: 0 auto;">新規登録はこちら</a>
             </div>
 
         </form>
