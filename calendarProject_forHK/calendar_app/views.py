@@ -521,7 +521,7 @@ class FriendCalendarView(LoginRequiredMixin,View):
 
         return render(request,"calendar_app/index.html",{"event_name":event_name,"event_start":event_start,"event_end":event_end,"event_category":event_category})
 
-class PlanDeleteView(LoginRequiredMixin,View,id):
+class PlanDeleteView(LoginRequiredMixin,View):
     def get(self,request):
         return render(request,"calendar_app/compare.html")
 
