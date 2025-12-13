@@ -83,6 +83,8 @@ class IndexView(LoginRequiredMixin,View):
         event_name=[0 for j in range(50)]
         event_start=[0 for j in range(50)]
         event_end=[0 for j in range(50)]
+        event_category = 'meeting'
+        #print(event_category)
 
         for i in range(20):
             if(i<len(next_plan_queryset)):
@@ -108,7 +110,7 @@ class IndexView(LoginRequiredMixin,View):
                 event_end[i]="2015-12-12T23:30:00"
 
 
-        return render(request,"calendar_app/index.html",{"event_name":event_name,"event_start":event_start,"event_end":event_end})
+        return render(request,"calendar_app/index.html",{"event_name":event_name,"event_start":event_start,"event_end":event_end,"event_category":event_category})
 
     def post(self,request):
         name=request.POST['event-title']
@@ -155,11 +157,21 @@ class PlanCreateView(LoginRequiredMixin,View):
         title = request.GET.get("title")
         start = request.GET.get("start")
         end = request.GET.get("end")
-        start = datetime.strptime(start, "%Y年%m月%d日%H:%M")
-        end = datetime.strptime(end, "%Y年%m月%d日%H:%M")
-        change_start = start.strftime("%Y-%m-%dT%H:%M")
-        change_end = start.strftime("%Y-%m-%dT%H:%M")
-        return render(request,"calendar_app/create_plan.html",{"start_init":change_start, "end_init":change_end, "title_init":title})
+        if not title:
+            title = ""
+        if start:
+            start = datetime.strptime(start, "%Y年%m月%d日%H:%M")
+            start = start.strftime("%Y-%m-%dT%H:%M")
+        else:
+            start = None
+            
+        if end:
+            end = datetime.strptime(end, "%Y年%m月%d日%H:%M")
+            end = end.strftime("%Y-%m-%dT%H:%M")
+        else:
+            end = None
+            
+        return render(request,"calendar_app/create_plan.html",{"start_init":start, "end_init":end, "title_init":title})
     def post(self,request):
         name=request.POST['event-title']
         datetime_start=request.POST['event-start']
@@ -213,19 +225,25 @@ class SearchView(LoginRequiredMixin,View):
     def post(self, request):
         #form = SearchSlotForm(request.POST)
         #cd = form.cleaned_data
-        assist_name = request.POST['assist-title']
-        period_start = request.POST['assist-start-datetime']
-        period_start = datetime.strptime(period_start, "%Y-%m-%d").date()
-        period_end = request.POST['assist-end-datetime']
-        period_end = datetime.strptime(period_end, "%Y-%m-%d").date()
-        desired_start = request.POST['assist-start-time']
+        action = request.POST.get("action")
+        assist_name = request.POST.get("assist-title")
+        period_start = request.POST.get("assist-start-datetime")
+        period_end = request.POST.get("assist-end-datetime")
+        if action == "retry":
+            period_start = datetime.strptime(period_start, "%Y年%m月%d日").date()
+            period_end = datetime.strptime(period_end, "%Y年%m月%d日").date()
+        else:
+            period_start = datetime.strptime(period_start, "%Y-%m-%d").date()
+            period_end = datetime.strptime(period_end, "%Y-%m-%d").date()
+        desired_start = request.POST.get("assist-start-time")
         desired_start = datetime.strptime(desired_start, "%H:%M").time()
-        desired_end = request.POST['assist-end-time']
+        desired_end = request.POST.get("assist-end-time")
         desired_end = datetime.strptime(desired_end, "%H:%M").time()
         my_user = str(request.user)
         target_users = request.POST.getlist('users')
+        
         duration = timedelta(
-            hours = int(request.POST['assist-duration-h']), minutes = int(request.POST['assist-duration-m']),
+            hours = int(request.POST.get("assist-duration-h")), minutes = int(request.POST.get("assist-duration-m")),
         )
         
         results = []
@@ -264,7 +282,6 @@ class SearchView(LoginRequiredMixin,View):
                         start_datetime__lt = t + duration,
                         end_datetime__gt = t,
                         user__in = target_users,
-                        private = 0,
                     ).exists()
                     
                     routine_members = Routine.objects.filter(user__in=target_users)
@@ -288,20 +305,42 @@ class SearchView(LoginRequiredMixin,View):
                     results.append([t,t+duration])
                 t = t + timedelta(minutes=30)
             current_date = current_date + timedelta(days=1)
-        if not any(target_users):
-            results_size = len(results)
-            if results_size >= 5:
-                selected_results = []
-                index_medium = int((results_size-1)/2)
+        if action == "retry":
+            shown_slots = request.POST.getlist("shown_slots")
+            excluded = set(shown_slots)
+            filter = []
+            for start, end in results:
+                key = f"{start.strftime('%Y-%m-%dT%H:%M')}|{end.strftime('%Y-%m-%dT%H:%M')}"
+                if not key in excluded:
+                    filter.append([start, end])
+            filter_size = len(filter)
+            if filter_size >= 5:
+                selected_filter = []
+                index_medium = int((filter_size-1)/2)
                 index_fq = int(index_medium/2)
-                index_tq = int(((results_size-1)-index_medium)/2 + index_medium)
-                selected_results.append(results[0])
-                selected_results.append(results[index_fq])
-                selected_results.append(results[index_medium])
-                selected_results.append(results[index_tq])
-                selected_results.append(results[results_size-1])
-                results = selected_results
+                index_tq = int(((filter_size-1)-index_medium)/2 + index_medium)
+                selected_filter.append(results[0])
+                selected_filter.append(results[index_fq])
+                selected_filter.append(results[index_medium])
+                selected_filter.append(results[index_tq])
+                selected_filter.append(results[filter_size-1])
+                results = selected_filter
             return render(request, "calendar_app/Scheduling_Assist_System.html", {"results":results, "assist_name":assist_name})
+        else:
+            if not any(target_users):
+                results_size = len(results)
+                if results_size >= 5:
+                    selected_results = []
+                    index_medium = int((results_size-1)/2)
+                    index_fq = int(index_medium/2)
+                    index_tq = int(((results_size-1)-index_medium)/2 + index_medium)
+                    selected_results.append(results[0])
+                    selected_results.append(results[index_fq])
+                    selected_results.append(results[index_medium])
+                    selected_results.append(results[index_tq])
+                    selected_results.append(results[results_size-1])
+                    results = selected_results
+                return render(request, "calendar_app/Scheduling_Assist_System.html", {"results":results, "assist_name":assist_name, "assist_start_date":period_start, "assist_end_date":period_end, "assist_start_time":desired_start, "assist_end_time":desired_end, "assist_duration_h":request.POST.get("assist-duration-h"), "assist_duration_m":request.POST.get("assist-duration-m")})
         return redirect("calendar_app:index")
             
 
@@ -309,12 +348,19 @@ class SearchView(LoginRequiredMixin,View):
             
 class AccountViewView(LoginRequiredMixin,View):
     def get(self,request):
-        user_name = str(request.user)
         User=UserID.objects.get(id=str(request.user))
+        print("名前:"+str(User.name))
+        if(str(User.name)=="None"):
+            user_name=str(request.user)
+        else:
+            user_name=str(User.name)
+        user_id=str(request.user)
         bio=str(User.introduce)
+        icon=User.icon
         now = timezone.now()
         service = friend.friendService()
         friends=service.get_friend_list(str(request.user))
+        #print(str(len(friends)))
         next_plan_queryset = Plan.objects.filter(start_datetime__gte=now, user=str(request.user)).order_by('start_datetime')[:2]
         Plans=[0]*4
         if(len(next_plan_queryset)>=1):
@@ -334,7 +380,7 @@ class AccountViewView(LoginRequiredMixin,View):
 
         if(len(bio)==0):
             bio="設定されていません"
-        return render(request,"calendar_app/account.html",{"User":User,"user_name": user_name,"bio":bio,"Plans":Plans,"friends_len":str(len(friends))})
+        return render(request,"calendar_app/account.html",{"User":User,"user_name": user_name,"bio":bio,"Plans":Plans,"friends_len":str(len(friends)),"icon":icon,"user_id":user_id})
 
 class TodoView(LoginRequiredMixin,View):
     def get(self,request):
@@ -401,7 +447,16 @@ class FriendView(LoginRequiredMixin,View):
         service = friend.friendService()
         requests=service.get_request_list(str(request.user))
         friends=service.get_friend_list(str(request.user))
-        return render(request,"calendar_app/friend.html",{"requests":requests,"friends":friends,"requests_len":str(len(requests)),"friends_len":str(len(friends))})
+        friends_with_icons = []
+        requests_with_icons = []
+        for a_request in requests:
+            icon=UserID.objects.get(id=a_request).icon
+            requests_with_icons.append({"id": a_request,"icon": icon})
+        for a_friend in friends:
+            icon=UserID.objects.get(id=a_friend).icon
+            friends_with_icons.append({"id": a_friend,"icon": icon})
+
+        return render(request,"calendar_app/friend.html",{"requests_len":str(len(requests)),"friends_len":str(len(friends)),"requests_with_icons":requests_with_icons,"friends_with_icons":friends_with_icons})
     def post(self,request):
         request_id=request.POST['request-id']
         service = friend.friendService()
@@ -422,6 +477,56 @@ class FriendDeleteView(LoginRequiredMixin,View):
         service.delete_friend(id,str(request.user))
         return redirect("calendar_app:friend_view")
 
+class CompareView(LoginRequiredMixin,View):
+    def get(self,request):
+        return render(request,"calendar_app/compare.html")
+
+class FriendCalendarView(LoginRequiredMixin,View):
+    def get(self,request,id):
+        service = friend.friendService()
+        if(not(service.is_friend(str(request.user),id))):
+            return redirect("calendar_app:friend_view")
+        now = timezone.now()
+        next_plan_queryset = Plan.objects.filter(start_datetime__gte=now, user=id, private=0).order_by('start_datetime')[:20]
+        before_plan_queryset = Plan.objects.filter(start_datetime__lte=now, user=id, private=0).order_by('-start_datetime')[:20]
+        #print(next_plan_queryset[0])
+        print(len(before_plan_queryset))
+        #events = [[0 for j in range(3)] for i in range(50)]
+        event_name=[0 for j in range(50)]
+        event_start=[0 for j in range(50)]
+        event_end=[0 for j in range(50)]
+        event_category = "work"
+        for i in range(20):
+            if(i<len(next_plan_queryset)):
+                event_name[i]=next_plan_queryset[i].name
+                event_start[i]=str(next_plan_queryset[i].start_datetime+timedelta(hours=9)).replace(' ','T')[:-6]
+                event_end[i]=str(next_plan_queryset[i].end_datetime+timedelta(hours=9)).replace(' ','T')[:-6]
+                #print(next_plan_queryset[i].start_datetime)
+                #print(event_start[i])
+            else:
+                event_name[i]="null"
+                event_start[i]="2015-12-12T23:00:00"
+                event_end[i]="2015-12-12T23:30:00"
+
+        for i in range(20,40):
+            if(i<len(before_plan_queryset)+20):
+                event_name[i]=before_plan_queryset[i-20].name
+                event_start[i]=str(before_plan_queryset[i-20].start_datetime+timedelta(hours=9)).replace(' ','T')[:-6]
+                event_end[i]=str(before_plan_queryset[i-20].end_datetime+timedelta(hours=9)).replace(' ','T')[:-6]
+                #print(event_name[i])
+            else:
+                event_name[i]="null"
+                event_start[i]="2015-12-12T23:00:00"
+                event_end[i]="2015-12-12T23:30:00"
+
+        return render(request,"calendar_app/index.html",{"event_name":event_name,"event_start":event_start,"event_end":event_end,"event_category":event_category})
+
+class PlanDeleteView(LoginRequiredMixin,View,id):
+    def get(self,request):
+        return render(request,"calendar_app/compare.html")
+
+
+
 
 
 index=IndexView.as_view()
@@ -436,3 +541,5 @@ account_edit_view=AccountEditView.as_view()
 friend_view=FriendView.as_view()
 accept_request=AcceptRequestView.as_view()
 friend_delete=FriendDeleteView.as_view()
+compare_view=CompareView.as_view()
+friend_calendar=FriendCalendarView.as_view()

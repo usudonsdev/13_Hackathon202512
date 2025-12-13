@@ -336,10 +336,10 @@
                 <a href="account/view" id="sidebar-account-btn" class="nav-btn">
                     <span class="icon">👤</span> プロフィール
                 </a>
-                <a href="assist" class="nav-btn active">
+                <a href="assist" class="nav-btn">
                     <span class="icon">✨</span> アシスト
                 </a>
-                <a href="/compare" class="nav-btn">
+                <a href="/compare" class="nav-btn active">
                     <span class="icon">👣</span>比較
                 </a>
             </nav>
@@ -351,20 +351,32 @@
 
         <main class="main-content">
             <header class="top-bar">
-                <h2 class="page-title">Ask To Assistance</h2>
+                <h2 class="page-title">みんなの空き時間</h2>
             </header>
 
             <div class="form-page-container">
                 <div class="event-form-card">
                     <div class="form-section" id="llm-assist-block">
-                        <h3>Assist Boostを利用する</h3>
+                        <h3>誰かと比較する</h3>
                         <!-- <button id="toggle-llm-assist" class="btn btn-secondary">フォームを表示</button> -->
 
                         <form style="margin-top: 20px;"  method="Post">
                         {% csrf_token %}
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                                 <label for="assist-title">やりたい予定の概要</label>
                                 <input type="text" id="assist-title" name="assist-title" placeholder="例: 英語の論文執筆、ジムでの筋トレ" required>
+                            </div> -->
+
+                            <div class="form-group">
+                                <label>ユーザーIDを入力</label>
+                                <div id="users_list">
+                                    <input type="text" name="users" placeholder="ユーザーID">
+                                </div>
+                                <div class="btn-flex-group">
+                                    <button type="button" onclick="addUser()" class="btn btn-primary">
+                                        <span class="icon">＋</span> 追加
+                                    </button>
+                                </div>
                             </div>
 
                             <div class="form-group">
@@ -446,19 +458,8 @@
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <label>考慮する他のユーザーID</label>
-                                <div id="users_list">
-                                    <input type="text" name="users" placeholder="ユーザーID (オプション)">
-                                </div>
-                                <div class="btn-flex-group">
-                                    <button type="button" onclick="addUser()" class="btn btn-primary">
-                                        <span class="icon">＋</span> 追加
-                                    </button>
-                                </div>
-                            </div>
                             <button type="submit" style="width: 100%; margin-top: 15px;" class="btn btn-outline-primary">
-                                SEARCH
+                                COMPARE
                             </button>
                         </form>
 
@@ -466,7 +467,7 @@
                         <div id="results-box"
                             style="border:1px solid #ccc; padding:15px; margin-top:20px; border-radius:10px; background:#fafafa;">
 
-                            <h3>✨ 見つかった空き時間</h3>
+                            <h3>共通空き時間</h3>
 
                             {% for slot in results %}
                                 <div style="border:1px solid #aaa; padding:10px; margin:10px 0; border-radius:6px;">
@@ -484,12 +485,6 @@
                                 {% csrf_token %}
 
                                 <input type="hidden" name="assist-title" value="{{ assist_name }}">
-                                <input type="hidden" name="assist-start-datetime" value="{{ assist_start_date }}">
-                                <input type="hidden" name="assist-end-datetime" value="{{ assist_end_date }}">
-                                <input type="hidden" name="assist-start-time" value="{{ assist_start_time }}">
-                                <input type="hidden" name="assist-end-time" value="{{ assist_end_time }}">
-                                <input type="hidden" name="assist-duration-h" value="{{ assist_duration_h }}">
-                                <input type="hidden" name="assist-duration-m" value="{{ assist_duration_m }}">
 
                                 {% for slot in results %}
                                     <input type="hidden" name="shown_slots"
@@ -566,7 +561,7 @@
                             data['users'] = [];
                         }
                         if (value) { // 空の入力は無視
-                           data['users'].push(value);
+                            data['users'].push(value);
                         }
                     } else {
                         data[key] = value;

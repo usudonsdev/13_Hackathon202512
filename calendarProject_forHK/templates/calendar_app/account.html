@@ -242,6 +242,16 @@
         .setting-item:last-child {
             border-bottom: none;
         }
+
+
+        .circle-img {
+            width: 100px;           /* 表示サイズ */
+            height: 100px;          /* 正方形にする */
+            object-fit: cover;      /* 画像を枠いっぱいに切り抜き */
+            border-radius: 50%;     /* 丸くする */
+            border: 0px solid #ccc; /* 枠線（任意） */
+        }
+        
         /* End Account Specific Styles */
 
     </style>
@@ -269,6 +279,9 @@
                 <a href="/assist" class="nav-btn">
                     <span class="icon">✨</span> アシスト
                 </a>
+                <a href="/compare" class="nav-btn">
+                    <span class="icon">👣</span>比較
+                </a>
             </nav>
 
             <div class="settings-area">
@@ -282,13 +295,17 @@
 
             <div class="account-page-container">
                 <div class="profile-header">
-                    <div id="profile-avatar" class="profile-avatar">U</div>
+                    {% if icon %}
+                    <img alt="icon" src="{{ icon.url }}" class="circle-img">
+                    {% else %}
+                    <img alt="icon" src="https://knsoza1.com/wp-content/uploads/2025/02/4cbc0aab7c6d44a4559d83b2d733d166-300x300.png" class="circle-img">
+                    {% endif %}
                     <div class="profile-info">
                         <h2 id="profile-name"></h2>
-                        <p id="profile-id"></p>
+                        <p id="profile-id">@{{ user_id }}</p>
                         <div class="profile-stats">
                             <div class="stats-item">
-                                <span id="stat-friends-count"><strong>-</strong></span>
+                                <span id="stat-friends-count"><strong>{{ friends_len }}</strong></span>
                                 <span>友達</span>
                             </div>
                             <!-- <div class="stats-item">

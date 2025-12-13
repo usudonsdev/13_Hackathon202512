@@ -258,13 +258,21 @@
             border-radius: 6px;
         }
 
+        .circle-img {
+            width: 43px;           /* 表示サイズ */
+            height: 43px;          /* 正方形にする */
+            object-fit: cover;      /* 画像を枠いっぱいに切り抜き */
+            border-radius: 50%;     /* 丸くする */
+            border: 0px solid #ccc; /* 枠線（任意） */
+        }
+
     </style>
 </head>
 <body>
     <div class="app-container">
         <aside class="sidebar">
             <div class="logo-area">
-                <h1>Scheduler</h1>
+                <h1><a href="/" style="color: inherit; text-decoration: none;">Scheduler</a></h1>
             </div>
 
             <nav class="main-nav">
@@ -282,6 +290,9 @@
                 </a>
                 <a href="/assist" class="nav-btn">
                     <span class="icon">✨</span> アシスト
+                </a>
+                <a href="/compare" class="nav-btn">
+                    <span class="icon">👣</span>比較
                 </a>
             </nav>
 
@@ -311,17 +322,21 @@
                     <h3>友達リクエスト (<span id="request-count">{{ requests_len }}</span>)</h3>
                     <ul class="friend-list" id="friend-requests-list">
 
-                        {% for user in requests %}
+                        {% for user in requests_with_icons %}
                         <li class="friend-item">
                             <div class="friend-info">
-                                <div class="friend-avatar"> </div>
+                                {% if user.icon %}
+                                <img alt="icon" src="{{ user.icon.url }}" class="circle-img">
+                                {% else %}
+                                <img alt="icon" src="https://knsoza1.com/wp-content/uploads/2025/02/4cbc0aab7c6d44a4559d83b2d733d166-300x300.png" class="circle-img">
+                                {% endif %}
                                 <div>
-                                    <div class="friend-id">ID: {{ user }}</div>
+                                    <div class="friend-id">ID: {{ user.id }}</div>
                                 </div>
                             </div>
                             <div>
-                                <button class="btn-primary" onclick="location.href='/friend/accept/{{user}}'">承認</button>
-                                <button class="btn-secondary" onclick="location.href='/friend/delete/{{user}}'">拒否</button>
+                                <button class="btn-primary" onclick="location.href='/friend/accept/{{user.id}}'">承認</button>
+                                <button class="btn-secondary" onclick="location.href='/friend/delete/{{user.id}}'">拒否</button>
                             </div>
                         </li>
                         {% endfor %}
@@ -334,15 +349,19 @@
                 <div class="friends-section">
                     <h3>友達リスト (<span id="friends-count">{{ friends_len }}</span>)</h3>
                     <ul class="friend-list" id="my-friends-list">
-                        {% for user in friends %}
+                        {% for user in friends_with_icons %}
                         <li class="friend-item">
-                            <div class="friend-info" onclick="window.location.href='account.html?id=friend456'">
-                                <div class="friend-avatar"> </div>
+                            <div class="friend-info" onclick="window.location.href='/friend/calendar/{{ user.id }}'">
+                                {% if user.icon %}
+                                <img alt="icon" src="{{ user.icon.url }}" class="circle-img">
+                                {% else %}
+                                <img alt="icon" src="https://knsoza1.com/wp-content/uploads/2025/02/4cbc0aab7c6d44a4559d83b2d733d166-300x300.png" class="circle-img">
+                                {% endif %}
                                 <div>
-                                    <div class="friend-id">ID: {{ user }}</div>
+                                    <div class="friend-id">ID: {{ user.id }}</div>
                                 </div>
                             </div>
-                            <span class="icon"><a href="/friend/delete/{{user}}" style="  color: inherit; text-decoration: none;">×</a></span> </li>
+                            <span class="icon"><a href="/friend/delete/{{user.id}}" style="  color: inherit; text-decoration: none;">×</a></span> </li>
                         {% endfor %}
                     </ul>
                 </div>

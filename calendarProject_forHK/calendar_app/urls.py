@@ -18,5 +18,7 @@ urlpatterns=[
   path("friend",views.friend_view,name="friend_view"),
   path("friend/accept/<str:id>",views.accept_request,name="accept_request"),
   path("friend/delete/<str:id>",views.friend_delete,name="friend_delete"),
+  path("friend/calendar/<str:id>",views.friend_calendar,name="friend_calendar"),
+  path("compare",views.compare_view,name="compare_view"),
 
 ] 

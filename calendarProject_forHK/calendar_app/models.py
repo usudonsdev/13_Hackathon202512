@@ -45,7 +45,7 @@ class friend(models.Model):
     id=models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False,verbose_name="ID")
     user1=models.CharField(max_length=30,verbose_name="ユーザー1")
     user2=models.CharField(max_length=30,verbose_name="ユーザー2")
-    accept=models.IntegerField(verbose_name="承認状態")
+    accept=models.IntegerField(verbose_name="承認状態") #0=申請中, 1=承認済み
 
     def __str__(self):
         return self.user2
