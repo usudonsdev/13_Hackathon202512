@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Scheduler</title>
+    <title>Smart Scheduler - 予定非表示版</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,12 +23,15 @@
             --bg-secondary: #ffffff;
             --text-primary: #1a1a1a;
             --text-secondary: #6e7c87;
-            --accent-color: #3b82f6;
-            --accent-hover: #2563eb;
+            --accent-color: #10b981;
+            --accent-hover: #059669;
             --danger-color: #ef4444;
             --border-color: #e5e7eb;
             --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
             --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+
+            /* 新しい強調色 */
+            --highlight-color: #a7f3d0;
 
             /* Spacing */
             --spacing-xs: 0.25rem;
@@ -60,7 +63,7 @@
             height: 100%;
         }
 
-        /* Sidebar */
+        /* Sidebar (変更なし) */
         .sidebar {
             width: var(--sidebar-width);
             background-color: var(--bg-secondary);
@@ -123,7 +126,7 @@
             font-size: 0.9rem;
         }
 
-        /* Main Content */
+        /* Main Content (変更なし) */
         .main-content {
             flex: 1;
             display: flex;
@@ -148,106 +151,20 @@
             position: relative;
         }
 
-        #mini-calendar-container {
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 300px;
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            box-shadow: var(--shadow-md);
-            padding: var(--spacing-md);
-        }
-
-        .mini-cal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .mini-cal-header h4 {
-            font-size: 1.1rem;
+        #current-period-display {
+            font-size: 1.25rem;
             font-weight: 600;
-        }
-
-        .mini-cal-controls .control-btn {
-            width: 24px;
-            height: 24px;
-            font-size: 0.8rem;
-        }
-
-        .mini-cal-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 2px;
+            min-width: 150px;
             text-align: center;
-        }
-
-        .mini-cal-grid>.mini-cal-day-name:nth-child(6) {
-            color: #1e40af;
-        }
-
-        .mini-cal-grid>.mini-cal-date:nth-child(7n-1) {
-            color: #1e40af;
-        }
-
-        .mini-cal-grid>.mini-cal-day-name:nth-child(7) {
-            color: var(--danger-color);
-        }
-
-        .mini-cal-grid>.mini-cal-date:nth-child(7n) {
-            color: var(--danger-color);
-        }
-
-        .mini-cal-date.today.saturday {
-            color: white;
-        }
-
-        .mini-cal-date.today.sunday {
-            color: white;
-        }
-
-        .mini-cal-day-name {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            padding: 4px 0;
-        }
-
-        .mini-cal-date {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 30px;
-            height: 30px;
-            margin: 0 auto;
-            border-radius: 50%;
             cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
+            user-select: none;
+            padding: 0 5px;
+            border-radius: 4px;
             transition: background-color 0.1s;
         }
 
-        .mini-cal-date:hover {
-            background: var(--bg-primary);
-        }
-
-        .mini-cal-date.other-month {
-            color: var(--text-secondary);
-            opacity: 0.6;
-        }
-
-        .mini-cal-date.today {
-            background-color: var(--accent-color);
-            color: white;
-            font-weight: 700;
-        }
-
-        .mini-cal-date.selected-day {
-            border: 2px solid var(--accent-color);
-            background-color: #e0f2fe;
+        #current-period-display:hover {
+            background-color: var(--bg-primary);
         }
 
         .control-btn {
@@ -263,22 +180,6 @@
         }
 
         .control-btn:hover {
-            background-color: var(--bg-primary);
-        }
-
-        #current-period-display {
-            font-size: 1.25rem;
-            font-weight: 600;
-            min-width: 150px;
-            text-align: center;
-            cursor: pointer;
-            user-select: none;
-            padding: 0 5px;
-            border-radius: 4px;
-            transition: background-color 0.1s;
-        }
-
-        #current-period-display:hover {
             background-color: var(--bg-primary);
         }
 
@@ -298,7 +199,7 @@
             font-size: 0.9rem;
         }
 
-        /* Calendar Grid */
+        /* Calendar Grid (一部変更) */
         #calendar-grid {
             flex: 1;
             overflow: auto;
@@ -333,68 +234,80 @@
         .day-column {
             position: relative;
             border-right: 1px solid var(--border-color);
+            min-height: 1440px;
+            /* 24時間 * 60分/時間 = 1440px */
+            /* 各セルの区切りを強調するために、薄い背景を敷く */
+            background: repeating-linear-gradient(to bottom,
+                    transparent,
+                    transparent 59px,
+                    var(--border-color) 60px);
 
             &:last-child {
                 border-right: none;
             }
         }
 
+        /* ここを修正：パディングを減らし、文字表示がないことを前提とする */
         .event-block {
             position: absolute;
             width: calc(100% - 4px);
-            /* 親要素の幅いっぱいから少し内側に */
+            /* 左右の余白を少し減らす */
             margin: 0 2px;
-            padding: 2px 5px;
+            padding: 0;
+            /* 文字がないためパディングをゼロにする */
             border-radius: 4px;
+            /* 角を少し小さく */
             color: white;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             overflow: hidden;
             text-overflow: ellipsis;
-            white-space: nowrap;
-            z-index: 5;
+            z-index: 10;
             cursor: pointer;
-            box-shadow: var(--shadow-sm);
+            box-shadow: var(--shadow-md);
             box-sizing: border-box;
-            /* paddingを含めたサイズ計算 */
-            line-height: 1.2;
+            line-height: 1.3;
+
+            /* 共通の背景色 */
+            background-color: var(--accent-color);
+            /* Blue */
+
+            /* 強調のための枠線とアニメーション */
+            border: 2px solid var(--highlight-color);
+            animation: pulse-border 1.5s infinite alternate;
         }
 
-        .event-block.category-work {
-            background-color: #f59e0b;
+        /* 強調アニメーションの色を統一 */
+        @keyframes pulse-border {
+            from {
+                border-color: var(--highlight-color);
+                box-shadow: 0 0 5px 0px var(--highlight-color);
+            }
+
+            to {
+                border-color: var(--accent-hover);
+                box-shadow: 0 0 10px 1px var(--accent-hover);
+            }
         }
 
-        /* Amber */
-
-        .event-block.category-personal {
-            background-color: #10b981;
-        }
-
-        /* Emerald */
-
-        .event-block.category-meeting {
-            background-color: #3b82f6;
-        }
-
-        /* Blue */
-
-        .event-block.category-private {
-            background-color: #ef4444;
-        }
-
-        /* Red */
-
+        /* event-titleは使用されないが、残していても影響なし */
         .event-title {
             font-weight: 600;
+            display: none;
+            /* 念の為、タイトル要素を非表示にしておく */
         }
 
         .day-cell {
             height: 60px;
-            border-bottom: 1px solid var(--bg-secondary);
+        }
+
+        .time-column {
+            background-color: var(--bg-secondary);
+            z-index: 20;
         }
 
         .time-slot {
             height: 60px;
-            border-bottom: 1px solid var(--border-color);
+            /*border-bottom: 1px solid var(--border-color);*/
             font-size: 0.75rem;
             color: var(--text-secondary);
             text-align: right;
@@ -408,8 +321,7 @@
             display: contents;
         }
 
-
-        /* Modals */
+        /* Modals (省略) */
         .modal {
             position: fixed;
             top: 0;
@@ -533,15 +445,12 @@
     <div class="app-container">
         <aside class="sidebar">
             <div class="logo-area">
-                <h1><a href="/" style="color: inherit; text-decoration: none;">Coo-lendar</a></h1>
+                <h1><a href="/" style="color: inherit; text-decoration: none;">Scheduler</a></h1>
             </div>
 
             <nav class="main-nav">
                 <button class="nav-btn" onclick="location.href='/plan/create'">
                     <span class="icon">📅</span> 予定を追加
-                </button>
-                <button class="nav-btn" onclick="location.href='/plan/list'">
-                    <span class="icon">📋</span> 予定一覧
                 </button>
                 <button id="btn-today-todo" class="nav-btn" onclick="location.href='/todo'">
                     <span class="icon">📝</span> 今日やること
@@ -555,53 +464,32 @@
                 <button id="btn-llm" class="nav-btn" onclick="location.href='/assist'">
                     <span class="icon">✨</span> アシスト
                 </button>
-                <button id="btn-llm" onclick="location.href='/compare'" class="nav-btn"><!--ここにid必要かも-->
-                    <span class="icon">👣</span>比較
+                <button id="btn-llm" onclick="location.href='/compare'" class="nav-btn"><span class="icon">👣</span>比較
                 </button>
             </nav>
 
-            <!-- <div class="settings-area">
+            <div class="settings-area">
                 <button id="btn-settings" class="icon-btn" aria-label="Settings">⚙️ 設定</button>
-            </div> -->
+            </div>
         </aside>
 
         <main class="main-content">
             <header class="top-bar">
                 <div class="calendar-controls">
                     <button id="prev-period" class="control-btn">&lt;</button>
-                    <!-- <div>
-                        <div style="position: relative;"><h2 id="current-period-display">2023年 10月</h2>
-                        <div id="mini-calendar-container" class="hidden">
-                        </div>
-                            <div class="mini-cal-header">
-                                <button id="mini-cal-prev" class="control-btn">&lt;</button>
-                                <h4 id="mini-cal-month-display"></h4>
-                                <button id="mini-cal-next" class="control-btn">&gt;</button>
-                            </div>
-                            <div class="mini-cal-grid">
-                                <div class="mini-cal-day-name">月</div>
-                                <div class="mini-cal-day-name">火</div>
-                                <div class="mini-cal-day-name">水</div>
-                                <div class="mini-cal-day-name">木</div>
-                                <div class="mini-cal-day-name">金</div>
-                                <div class="mini-cal-day-name">土</div>
-                                <div class="mini-cal-day-name">日</div>
-                            </div>
-                        </div>
-                    </div> -->
                     <h2 id="current-period-display"></h2>
                     <button id="next-period" class="control-btn">&gt;</button>
                     <button id="btn-today" class="text-btn">今日</button>
                 </div>
 
-                <!-- <div class="view-switcher">
+                <div class="view-switcher">
                     <select id="view-select">
                         <option value="week">週</option>
                         <option value="month">月</option>
                         <option value="year">年</option>
                         <option value="custom">カスタム</option>
                     </select>
-                </div> -->
+                </div>
             </header>
 
             <div id="calendar-grid" class="calendar-view week-view">
@@ -644,8 +532,7 @@
                 </div>
 
                 <div class="days-container">
-                    <div class="day-column" id="day-0">
-                    </div>
+                    <div class="day-column" id="day-0"></div>
                     <div class="day-column" id="day-1"></div>
                     <div class="day-column" id="day-2"></div>
                     <div class="day-column" id="day-3"></div>
@@ -722,37 +609,25 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('Smart Scheduler initialized');
+            console.log('Smart Scheduler initialized - No Event Title Version');
 
             // --- DOM Elements ---
-            const btnTodayTodo = document.getElementById('btn-today-todo');
-            const btnFriends = document.getElementById('btn-friends');
-            const btnLlm = document.getElementById('btn-llm');
-            const eventModal = document.getElementById('event-modal');
-            const friendModal = document.getElementById('friend-modal');
             const dayHeaders = document.querySelectorAll('.day-header');
             const dayColumns = document.querySelectorAll('.day-column');
+            const eventModal = document.getElementById('event-modal');
 
-            // --- Mini Calendar DOM Elements ---
-            const miniCalendarContainer = document.getElementById('mini-calendar-container');
-            const miniCalMonthDisplay = document.getElementById('mini-cal-month-display');
-            const miniCalPrev = document.getElementById('mini-cal-prev');
-            const miniCalNext = document.getElementById('mini-cal-next');
-            const miniCalGrid = document.querySelector('.mini-cal-grid');
 
             // --- Current DispElement ---
             const currentPeriodDisplay = document.getElementById('current-period-display');
             const btnPrevPeriod = document.getElementById('prev-period');
             const btnNextPeriod = document.getElementById('next-period');
             const btnToday = document.getElementById('btn-today');
-            const calendarGrid = document.getElementById('calendar-grid');
 
             // --- State ---
             let currentDate = new Date();
-            let miniCalendarDate = new Date();
 
 
-            // --- data input ---
+            // --- data input (Provided data structure) ---
             const dummyEvents = [
             {  id: 1, title: '{{ event_name.0 }}', start: '{{ event_start.0 }}', end: '{{ event_end.0 }}', category: '{{ event_category }}'},
             {  id: 2, title: '{{ event_name.1 }}', start: '{{ event_start.1 }}', end: '{{ event_end.1 }}', category: '{{ event_category }}'},
@@ -794,116 +669,24 @@
             {  id: 38, title: '{{ event_name.37 }}', start: '{{ event_start.37 }}', end: '{{ event_end.37 }}', category: '{{ event_category }}'},
             {  id: 39, title: '{{ event_name.38 }}', start: '{{ event_start.38 }}', end: '{{ event_end.38 }}', category: '{{ event_category }}'},
             {  id: 40, title: '{{ event_name.39 }}', start: '{{ event_start.39 }}', end: '{{ event_end.39 }}', category: '{{ event_category }}'},            
-            ]
-            // --- data input ---
 
-
-            // --- Event Listeners ---
-
-            // Navigation interaction placeholders
-            //btnFriends.addEventListener('click', () => {
-            //    openModal(friendModal);
-            //});
-
-
-
-            // Calendar Interactions (Placeholder)
-            // In a real implementation, clicking a time slot would open the event modal
-            calendarGrid.addEventListener('click', () => {
-                // Only for demo purposes: if grid is clicked, show event modal
-                // In reality, check for specific cell target
-                // openModal(eventModal);
-            });
-
-            // デモ用に予定追加テストボタンが機能するように、renderCalendarから呼ばれる onclick を実行する関数を定義
-            window.openEventModal = function () {
-                openModal(eventModal);
-
-                // 予定開始/終了時刻を現在の時刻に設定 (デモ用)
-                const now = new Date();
-                const nowString = now.toISOString().substring(0, 16); // YYYY-MM-DDThh:mm
-                document.getElementById('event-start').value = nowString;
-
-                // 1時間後を終了時刻に設定 (デモ用)
-                now.setHours(now.getHours() + 1);
-                const endString = now.toISOString().substring(0, 16);
-                document.getElementById('event-end').value = endString;
-            }
-
-
-            // Modal Controls
-            const closeButtons = document.querySelectorAll('.close-modal');
-            closeButtons.forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const modal = e.target.closest('.modal');
-                    closeModal(modal);
-                });
-            });
-
-            // Quick Event Creation (Demo)
-            // To demonstrate input specs
-            /**
-            document.getElementById('event-form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const title = document.getElementById('event-title').value;
-                const start = document.getElementById('event-start').value;
-                const end = document.getElementById('event-end').value;
-                const visibility = document.querySelector('input[name="visibility"]:checked').value;
-                const memo = document.getElementById('event-memo').value;
-
-                console.log('New Event:', { title, start, end, visibility, memo });
-
-                // Save to localStorage logic would go here
-
-                closeModal(eventModal);
-                alert(`予定「${title}」を保存しました`);
-            });
-            **/
-
-            // // --- Event Listeners ---
-            // btnPrevPeriod.addEventListener('click', () => {
-            //     currentDate.setMonth(currentDate.getMonth() - 1);
-            //     updatePeriodDisplay();
-            //     renderCalendar();
-            // });
-
-            // btnNextPeriod.addEventListener('click', () => {
-            //     currentDate.setMonth(currentDate.getMonth() + 1);
-            //     updatePeriodDisplay();
-            //     renderCalendar();
-            // });
-
-            // btnToday.addEventListener('click', () => {
-            //     currentDate = new Date();
-            //     updatePeriodDisplay();
-            //     renderCalendar();
-            // });
+            ];
 
             // --- Functions ---
 
             function updatePeriodDisplay() {
-                // const year = currentDate.getFullYear();
-                // const month = currentDate.getMonth() + 1;
-                // currentPeriodDisplay.textContent = `${year}年 ${month}月`;
-
-                // miniCalendarDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-                // renderMiniCalendar();
                 const startOfWeek = getStartOfWeek(currentDate);
                 const endOfWeek = new Date(startOfWeek);
                 endOfWeek.setDate(startOfWeek.getDate() + 6);
 
+                // ヘッダーの表示テキストを生成
                 let displayText = `${startOfWeek.getFullYear()}年 ${startOfWeek.getMonth() + 1}月${startOfWeek.getDate()}日`;
-
                 if (startOfWeek.getMonth() !== endOfWeek.getMonth() || startOfWeek.getFullYear() !== endOfWeek.getFullYear()) {
                     displayText += ` - ${endOfWeek.getFullYear()}年 ${endOfWeek.getMonth() + 1}月${endOfWeek.getDate()}日`;
                 } else {
                     displayText += ` - ${endOfWeek.getDate()}日`;
                 }
-
                 currentPeriodDisplay.textContent = displayText;
-
-                // miniCalendarDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-                // renderMiniCalendar();
                 renderWeekView();
             }
 
@@ -919,189 +702,129 @@
                 }
             }
 
-            // function renderCalendar() {
-            //     // Placeholder for calendar rendering logic
-            //     calendarGrid.innerHTML = `
-            //         <div style="padding: 2rem; width: 100%; text-align: center;">
-            //             <h3>${currentDate.toLocaleDateString()} の週（仮表示）</h3>
-            //             <p>ここにカレンダーが描画されます</p>
-            //             <button onclick="openEventModal()">
-            //                 予定追加テスト
-            //             </button>
-            //         </div>
-            //     `;
-            //     console.log('Calendar rendered for:', currentDate.toDateString());
-            // }
+            window.openEventModal = function () {
+                openModal(eventModal);
+            }
 
             function renderWeekView() {
-                const today = new Date();
                 // 取得した日付(currentDate)が属する週の月曜日 (0:00) を計算
                 const startOfWeek = getStartOfWeek(currentDate);
+                const dayNames = ['月', '火', '水', '木', '金', '土', '日'];
+                const columnMap = [0, 1, 2, 3, 4, 5, 6];
 
-                // 既存のtime-columnはそのまま、曜日ヘッダーとday-columnに日付を表示/設定
                 for (let i = 0; i < 7; i++) {
                     const day = new Date(startOfWeek);
                     day.setDate(startOfWeek.getDate() + i);
 
                     const dateNum = day.getDate();
                     const dayHeader = dayHeaders[i];
-                    const dayName = ['月', '火', '水', '木', '金', '土', '日'][i];
+                    const dayName = dayNames[i];
 
-                    // 曜日ヘッダーの更新 (省略...)
+                    // 曜日ヘッダーの更新
                     if (i === 5) { dayHeader.style.color = '#1e40af'; }
                     else if (i === 6) { dayHeader.style.color = 'var(--danger-color)'; }
                     else { dayHeader.style.color = 'var(--text-secondary)'; }
                     dayHeader.innerHTML = `${dayName}<br><span>${dateNum}</span>`;
 
-                    const dayMapping = [6, 0, 1, 2, 3, 4, 5];
-                    const mappedIndex = dayMapping[i];
+                    const dayColumn = dayColumns[columnMap[i]];
+                    dayColumn.innerHTML = '';
 
-                    const dayColumn = dayColumns[mappedIndex];
-                    dayColumn.innerHTML = ''; // 既存のイベントとセルをクリア
+                    // --- 予定のフィルタリングと描画 ---
+                    // targetDate = day.toISOString().substring(0, 10);
+                    // --- 予定のフィルタリングと描画 ---
+                    // ローカルタイムに基づいた日付文字列 (YYYY-MM-DD) を作成
+                    const targetDate = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`;
 
-                    // // 24時間のセルを再描画（クリック可能にするため）
-                    // for (let hour = 0; hour < 24; hour++) {
-                    //     const cell = document.createElement('div');
-                    //     cell.className = 'day-cell';
-                    //     cell.setAttribute('data-date', day.toISOString().substring(0, 10));
-                    //     cell.setAttribute('data-hour', hour);
-                    //     cell.onclick = window.openEventModal;
-                    //     dayColumn.appendChild(cell);
-                    // }
-
-                    // --- Step 2B: 予定のフィルタリングと描画 ---
-                    // 描画対象の日付 (YYYY-MM-DD形式)
-                    const targetDate = day.toISOString().substring(0, 10);
-
-                    // 1. 該当日の予定のみをフィルタリング
-                    const dayEvents = dummyEvents.filter(event => {
+                    // 1. 該当日の予定のみをフィルタリング   const to let
+                    let dayEvents = dummyEvents.filter(event => {
                         return event.start.substring(0, 10) === targetDate;
                     });
 
-                    // 2. 予定の描画
+                    //1.5
+                    dayEvents.sort((a, b) => new Date(a.start) - new Date(b.start));
+
+                    /*// 2. 予定の描画
                     dayEvents.forEach(event => {
                         const eventBlock = document.createElement('div');
-                        eventBlock.className = `event-block category-${event.category}`;
-                        eventBlock.title = event.title; // ホバーでタイトル全体を表示
+                        eventBlock.className = `event-block`;
+                        // マウスオーバー時に表示されるタイトルは残す（削除しても良い）
+                        eventBlock.title = event.title;
 
                         const startTime = new Date(event.start);
                         const endTime = new Date(event.end);
 
-                        // --- Step 2B-3: 位置と高さの計算 ---
+                        // --- 位置と高さの計算 ---
                         const startHour = startTime.getHours();
                         const startMinute = startTime.getMinutes();
-                        const endHour = endTime.getHours();
-                        const endMinute = endTime.getMinutes();
 
-                        // 1時間あたり60pxの高さがあるため、1分あたり1pxと見なす
-
-                        // top: (時間 * 60) + 分
                         const topOffset = (startHour * 60) + startMinute;
-
-                        // height: 終了時刻と開始時刻の差を分で計算
                         const durationMinutes = (endTime.getTime() - startTime.getTime()) / (1000 * 60);
 
                         eventBlock.style.top = `${topOffset}px`;
                         eventBlock.style.height = `${durationMinutes}px`;
 
-                        // 予定ブロックの内容
-                        eventBlock.innerHTML = `<div class="event-title">${event.title}</div>`;
+                        // 修正点: 予定ブロックの内容を空にする (タイトル表示を完全に削除)
+                        eventBlock.innerHTML = ``;
 
-                        // イベントブロックをクリックしたときの動作を設定（詳細モーダル表示など）
                         eventBlock.addEventListener('click', (e) => {
-                            e.stopPropagation(); // セル全体へのクリックイベントを停止
-                            // ここで詳細モーダルを開く処理を実装できます
+                            e.stopPropagation();
+                            alert(`予定ID: ${event.id} - ${event.title}\n開始: ${event.start}\n終了: ${event.end}`);
+                        });*/
+                    const mergedEvents = [];
+                    if (dayEvents.length > 0) {
+                        let currentMerge = { ...dayEvents[0] };
+
+                        for (let i = 1; i < dayEvents.length; i++) {
+                            const nextEvent = dayEvents[i];
+
+                            const currentEnd = new Date(currentMerge.end).getTime();
+                            const nextStart = new Date(nextEvent.start).getTime();
+
+                            const timeDiff = Math.abs(nextStart - currentEnd);
+
+                            if (timeDiff < 60000 && currentMerge.category === nextEvent.category) {
+                                currentMerge.end = nextEvent.end;
+                                if (!currentMerge.title.includes(nextEvent.title)) {
+                                    currentMerge.title += `/ ${nextEvent.title}`;
+                                }
+                            } else {
+                                mergedEvents.push(currentMerge);
+                                currentMerge = { ...nextEvent };
+                            }
+                        }
+                        mergedEvents.push(currentMerge);
+                    }
+
+                    //2.5
+                    mergedEvents.forEach(event => {
+                        const eventBlock = document.createElement('div');
+                        eventBlock.className = `event-block event-category-${event.category}`;
+                        eventBlock.title = event.title;
+
+                        const startTime = new Date(event.start);
+                        const endTime = new Date(event.end);
+
+                        const startHour = startTime.getHours();
+                        const startMinute = startTime.getMinutes();
+
+                        const topOffset = (startHour * 60) + startMinute;
+                        const durationMinutes = (endTime.getTime() - startTime.getTime()) / (1000 * 60);
+
+                        eventBlock.style.top = `${topOffset}px`;
+                        eventBlock.style.height = `${durationMinutes}px`;
+
+                        eventBlock.innerHTML = ``;
+
+                        eventBlock.addEventListener('click', (e) => {
+                            e.stopPropagation();
                             alert(`予定ID: ${event.id} - ${event.title}\n開始: ${event.start}\n終了: ${event.end}`);
                         });
-
                         // 3. カラムに挿入
                         dayColumn.appendChild(eventBlock);
                     });
                 }
                 console.log('Week View rendered for:', startOfWeek.toDateString());
             }
-
-            // function renderMiniCalendar() {
-            //     miniCalGrid.innerHTML = `
-            //         <div class="mini-cal-day-name">月</div>
-            //         <div class="mini-cal-day-name">火</div>
-            //         <div class="mini-cal-day-name">水</div>
-            //         <div class="mini-cal-day-name">木</div>
-            //         <div class="mini-cal-day-name">金</div>
-            //         <div class="mini-cal-day-name">土</div>
-            //         <div class="mini-cal-day-name">日</div>
-            //     `;
-            //     const year = miniCalendarDate.getFullYear();
-            //     const month = miniCalendarDate.getMonth();
-            //     const today = new Date();
-
-            //     miniCalMonthDisplay.textContent = `${year}年 ${month + 1}月`;
-
-            //     const firstDayOfMonth = new Date(year, month, 1);
-
-            //     // 1. カレンダーの描画開始日を計算
-            //     // 月曜日を週の始まり(1)とするため、日曜日の場合(0)は6日戻す、それ以外は(day-1)日戻す
-            //     let startOffset = firstDayOfMonth.getDay() === 0 ? 6 : firstDayOfMonth.getDay() - 1;
-
-            //     // 2. 描画開始日 (前月の特定の日) を day 変数として初期化
-            //     let day = new Date(year, month, 1);
-            //     day.setDate(day.getDate() - startOffset);
-
-            //     // 描画ループ (最大6週分=42マス)
-            //     for (let i = 0; i < 42; i++) {
-            //         const dateCell = document.createElement('div');
-            //         dateCell.className = 'mini-cal-date';
-
-            //         const dayNumber = day.getDate();
-            //         const currentDisplayedMonth = day.getMonth();
-
-            //         // 3. 次月の日付が一定数を超えたら描画を終了（5週目以降、次月の10日を過ぎたらブレイク）
-            //         if (currentDisplayedMonth !== month && i >= 35 && dayNumber > 10) {
-            //             break;
-            //         }
-
-            //         dateCell.textContent = dayNumber;
-            //         dateCell.setAttribute('data-date', day.toISOString().substring(0, 10)); // 正しい日付をセット
-
-            //         // 4. 月の判定とスタイリング
-            //         if (currentDisplayedMonth !== month) {
-            //             dateCell.classList.add('other-month');
-            //         }
-
-            //         if (day.toDateString() === today.toDateString()) {
-            //             dateCell.classList.add('today');
-            //         }
-
-            //         // 5. メインカレンダーの表示週のハイライト
-            //         const mainCalStart = getStartOfWeek(currentDate);
-            //         const mainCalEnd = new Date(mainCalStart);
-            //         mainCalEnd.setDate(mainCalEnd.getDate() + 6);
-            //         // 時刻情報をクリアして比較 (day.setHours(0,0,0,0) を実行すると day が変わってしまうため、別の方法で比較)
-            //         const currentDayStr = day.toDateString();
-            //         const mainStartStr = mainCalStart.toDateString();
-            //         const mainEndStr = mainCalEnd.toDateString();
-
-            //         if (day >= mainCalStart && day <= mainCalEnd) {
-            //             dateCell.classList.add('selected-day');
-            //         }
-
-            //         // 6. クリックイベント（ジャンプ機能）の修正
-            //         dateCell.addEventListener('click', (e) => {
-            //             const selectedDateStr = e.target.getAttribute('data-date');
-            //             const selectedDate = new Date(selectedDateStr);
-
-            //             selectedDate.setHours(12, 0, 0, 0);
-
-            //             jumpToWeek(selectedDate);
-            //             miniCalendarContainer.classList.add('hidden'); // ★重要: クリック後カレンダーを閉じる
-            //         });
-
-            //         miniCalGrid.appendChild(dateCell);
-
-            //         // 7. 次の日に進める
-            //         day.setDate(day.getDate() + 1);
-            //     }
-            // }
 
             function getStartOfWeek(date) {
                 const d = new Date(date);
@@ -1112,56 +835,34 @@
                 return d;
             }
 
-            function jumpToWeek(date) {
-                currentDate = date;
-                updatePeriodDisplay();
-                renderWeekView();
-            }
-
-            function toggleMiniCalendar() {
-                miniCalendarContainer.classList.toggle('hidden');
-                if (!miniCalendarContainer.classList.contains('hidden')) {
-                    miniCalendarDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-                    renderMiniCalendar();
-                }
-            }
-
-            // --- Event Listeners ---
-            // document.getElementById('btn-friends').addEventListener('click', () => {
-            //     openModal(friendModal);
-            // })
-
+            // --- Event Listeners for Navigation ---
             btnPrevPeriod.addEventListener('click', () => {
                 currentDate.setDate(currentDate.getDate() - 7);
                 updatePeriodDisplay();
-                renderWeekView();
             });
 
             btnNextPeriod.addEventListener('click', () => {
                 currentDate.setDate(currentDate.getDate() + 7);
                 updatePeriodDisplay();
-                renderWeekView();
             });
 
             btnToday.addEventListener('click', () => {
                 currentDate = new Date();
                 updatePeriodDisplay();
-                renderWeekView();
             });
 
-            // currentPeriodDisplay.addEventListener('click', toggleMiniCalendar);
+            // Modal Controls
+            const closeButtons = document.querySelectorAll('.close-modal');
+            closeButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const modal = e.target.closest('.modal');
+                    closeModal(modal);
+                });
+            });
 
-            // miniCalPrev.addEventListener('click', () => {
-            //     miniCalendarDate.setMonth(miniCalendarDate.getMonth() - 1);
-            //     renderMiniCalendar();
-            // });
-            // miniCalNext.addEventListener('click', () => {
-            //     miniCalendarDate.setMonth(miniCalendarDate.getMonth() + 1);
-            //     renderMiniCalendar();
-            // });
             // Initialize
+            currentDate = new Date('2025-12-15T12:00:00');
             updatePeriodDisplay();
-            renderWeekView();
         });
     </script>
 </body>

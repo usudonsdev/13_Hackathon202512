@@ -20,5 +20,8 @@ urlpatterns=[
   path("friend/delete/<str:id>",views.friend_delete,name="friend_delete"),
   path("friend/calendar/<str:id>",views.friend_calendar,name="friend_calendar"),
   path("compare",views.compare_view,name="compare_view"),
+  path("plan/delete/<str:uuid>",views.plan_delete,name="plan_delete"),
+  path("plan/list",views.plan_list,name="plan_list"),
+  path("todo/check/<str:check_name>",views.todo_check,name="todo_check"),
 
 ] 

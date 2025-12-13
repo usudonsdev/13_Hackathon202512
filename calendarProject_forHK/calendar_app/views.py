@@ -229,12 +229,8 @@ class SearchView(LoginRequiredMixin,View):
         assist_name = request.POST.get("assist-title")
         period_start = request.POST.get("assist-start-datetime")
         period_end = request.POST.get("assist-end-datetime")
-        if action == "retry":
-            period_start = datetime.strptime(period_start, "%Y年%m月%d日").date()
-            period_end = datetime.strptime(period_end, "%Y年%m月%d日").date()
-        else:
-            period_start = datetime.strptime(period_start, "%Y-%m-%d").date()
-            period_end = datetime.strptime(period_end, "%Y-%m-%d").date()
+        period_start = datetime.strptime(period_start, "%Y-%m-%d").date()
+        period_end = datetime.strptime(period_end, "%Y-%m-%d").date()
         desired_start = request.POST.get("assist-start-time")
         desired_start = datetime.strptime(desired_start, "%H:%M").time()
         desired_end = request.POST.get("assist-end-time")
@@ -306,26 +302,29 @@ class SearchView(LoginRequiredMixin,View):
                 t = t + timedelta(minutes=30)
             current_date = current_date + timedelta(days=1)
         if action == "retry":
-            shown_slots = request.POST.getlist("shown_slots")
-            excluded = set(shown_slots)
-            filter = []
+            shown_slots = set(request.POST.getlist("shown_slots"))
+            excluded = shown_slots
+            shown_slots = set(shown_slots)
+            filtered_results = []
             for start, end in results:
                 key = f"{start.strftime('%Y-%m-%dT%H:%M')}|{end.strftime('%Y-%m-%dT%H:%M')}"
                 if not key in excluded:
-                    filter.append([start, end])
-            filter_size = len(filter)
+                    filtered_results.append([start, end])
+            filter_size = len(filtered_results)
             if filter_size >= 5:
                 selected_filter = []
                 index_medium = int((filter_size-1)/2)
                 index_fq = int(index_medium/2)
                 index_tq = int(((filter_size-1)-index_medium)/2 + index_medium)
-                selected_filter.append(results[0])
-                selected_filter.append(results[index_fq])
-                selected_filter.append(results[index_medium])
-                selected_filter.append(results[index_tq])
-                selected_filter.append(results[filter_size-1])
+                selected_filter.append(filtered_results[0])
+                selected_filter.append(filtered_results[index_fq])
+                selected_filter.append(filtered_results[index_medium])
+                selected_filter.append(filtered_results[index_tq])
+                selected_filter.append(filtered_results[filter_size-1])
                 results = selected_filter
-            return render(request, "calendar_app/Scheduling_Assist_System.html", {"results":results, "assist_name":assist_name})
+            else:
+                results = filtered_results
+            return render(request, "calendar_app/Scheduling_Assist_System.html", {"results":results, "assist_name":assist_name, "shown_slots": shown_slots, "assist_start_date":period_start, "assist_end_date":period_end, "assist_start_time":desired_start, "assist_end_time":desired_end, "assist_duration_h":request.POST.get("assist-duration-h"), "assist_duration_m":request.POST.get("assist-duration-m")})
         else:
             if not any(target_users):
                 results_size = len(results)
@@ -341,7 +340,25 @@ class SearchView(LoginRequiredMixin,View):
                     selected_results.append(results[results_size-1])
                     results = selected_results
                 return render(request, "calendar_app/Scheduling_Assist_System.html", {"results":results, "assist_name":assist_name, "assist_start_date":period_start, "assist_end_date":period_end, "assist_start_time":desired_start, "assist_end_time":desired_end, "assist_duration_h":request.POST.get("assist-duration-h"), "assist_duration_m":request.POST.get("assist-duration-m")})
-        return redirect("calendar_app:index")
+        
+        #print(results)
+        event_name=[]
+        event_start=[]
+        event_end=[]
+        event_category = 'meeting'            
+
+        for i in range(40):
+            if(i<len(results)):
+                event_name.append("候補")
+                event_start.append(str(results[i][0]).replace(' ','T'))
+                #print("debug:"+str(event_start[i]))
+                event_end.append(str(results[i][1]).replace(' ','T'))
+            else:
+                event_name.append("null")
+                event_start.append("2015-12-12T23:00:00")
+                event_end.append("2015-12-12T23:30:00")
+
+        return render(request,"calendar_app/index.html",{"event_name":event_name,"event_start":event_start,"event_end":event_end,"event_category":event_category})
             
 
             
@@ -349,7 +366,7 @@ class SearchView(LoginRequiredMixin,View):
 class AccountViewView(LoginRequiredMixin,View):
     def get(self,request):
         User=UserID.objects.get(id=str(request.user))
-        print("名前:"+str(User.name))
+        #print("名前:"+str(User.name))
         if(str(User.name)=="None"):
             user_name=str(request.user)
         else:
@@ -431,12 +448,12 @@ class AccountEditView(LoginRequiredMixin,View):
         email=request.POST['email']
         bio=request.POST['bio']
         avatar_upload=request.FILES.get('avatar-upload')
-        #print("画像:"+str(avatar_upload))
         User = get_object_or_404(UserID, id=id)
         User.name=display_name
         User.email=email
         User.introduce=bio
-        User.icon=avatar_upload
+        if(str(avatar_upload)!="None"):
+            User.icon=avatar_upload
         User.save()
         return redirect("calendar_app:account_view")
 
@@ -451,10 +468,19 @@ class FriendView(LoginRequiredMixin,View):
         requests_with_icons = []
         for a_request in requests:
             icon=UserID.objects.get(id=a_request).icon
-            requests_with_icons.append({"id": a_request,"icon": icon})
+            if(str(UserID.objects.get(id=a_request).name)!="None"):
+                name=str(UserID.objects.get(id=a_request).name)
+            else:
+                name=""
+
+            requests_with_icons.append({"id": a_request,"icon": icon,"name":name})
         for a_friend in friends:
             icon=UserID.objects.get(id=a_friend).icon
-            friends_with_icons.append({"id": a_friend,"icon": icon})
+            if(str(UserID.objects.get(id=a_friend).name)!="None"):
+                name=str(UserID.objects.get(id=a_friend).name)
+            else:
+                name=""
+            friends_with_icons.append({"id": a_friend,"icon": icon,"name":name})
 
         return render(request,"calendar_app/friend.html",{"requests_len":str(len(requests)),"friends_len":str(len(friends)),"requests_with_icons":requests_with_icons,"friends_with_icons":friends_with_icons})
     def post(self,request):
@@ -476,10 +502,150 @@ class FriendDeleteView(LoginRequiredMixin,View):
         service = friend.friendService()
         service.delete_friend(id,str(request.user))
         return redirect("calendar_app:friend_view")
-
+    
 class CompareView(LoginRequiredMixin,View):
-    def get(self,request):
-        return render(request,"calendar_app/compare.html")
+    def get(self, request):
+        #form = SearchSlotForm()
+
+        return render(request, "calendar_app/compare.html")
+    def post(self, request):
+        #form = SearchSlotForm(request.POST)
+        #cd = form.cleaned_data
+        action = request.POST.get("action")
+        assist_name = request.POST.get("assist-title")
+        period_start = request.POST.get("assist-start-datetime")
+        period_end = request.POST.get("assist-end-datetime")
+        period_start = datetime.strptime(period_start, "%Y-%m-%d").date()
+        period_end = datetime.strptime(period_end, "%Y-%m-%d").date()
+        desired_start = request.POST.get("assist-start-time")
+        desired_start = datetime.strptime(desired_start, "%H:%M").time()
+        desired_end = request.POST.get("assist-end-time")
+        desired_end = datetime.strptime(desired_end, "%H:%M").time()
+        my_user = str(request.user)
+        target_users = request.POST.getlist('users')
+        
+        duration = timedelta(
+            hours = int(request.POST.get("assist-duration-h")), minutes = int(request.POST.get("assist-duration-m")),
+        )
+        
+        results = []
+        current_date = period_start
+        while current_date <= period_end:
+            day_start = datetime.combine(current_date, desired_start)
+            day_end = datetime.combine(current_date, desired_end)
+            t = day_start
+            while t + duration <= day_end:
+                conflict_self_plan = Plan.objects.filter(
+                    start_datetime__lt = t + duration,
+                    end_datetime__gt = t,
+                    user = my_user,
+                ).exists()
+                
+                routine_self = Routine.objects.filter(user = my_user)
+                
+                conflict_self_routine = False
+                
+                for r in routine_self:
+                    if current_date.weekday() != ((r.day_of_week + 6) % 7):
+                        continue
+                    routine_start_self = datetime.combine(current_date, r.start_time)
+                    routine_end_self = datetime.combine(current_date, r.end_time)
+                    
+                    if not ((routine_start_self < t + duration) and (routine_end_self > t)):
+                        conflict_self_routine = False
+                    else:
+                        conflict_self_routine = True
+                        break
+                    
+                conflict_members_routine = False
+                    
+                if any(target_users):
+                    conflict_members_plan = Plan.objects.filter(
+                        start_datetime__lt = t + duration,
+                        end_datetime__gt = t,
+                        user__in = target_users,
+                    ).exists()
+                    
+                    routine_members = Routine.objects.filter(user__in=target_users)
+                    
+                    for others in routine_members:
+                        if current_date.weekday() != ((others.day_of_week + 6) % 7):
+                            continue
+                        routine_start_members = datetime.combine(current_date, others.start_time)
+                        routine_end_members = datetime.combine(current_date, others.end_time)
+                        
+                        if not ((routine_start_members < t + duration) and (routine_end_members > t)):
+                            conflict_members_routine = False
+                        else:
+                            conflict_members_routine = True
+                            break
+                        
+                else:
+                    conflict_members_plan = False
+                
+                if not ((conflict_self_plan) or (conflict_members_plan) or (conflict_self_routine) or (conflict_members_routine)):
+                    results.append([t,t+duration])
+                t = t + timedelta(minutes=30)
+            current_date = current_date + timedelta(days=1)
+        if action == "retry":
+            shown_slots = set(request.POST.getlist("shown_slots"))
+            excluded = shown_slots
+            shown_slots = set(shown_slots)
+            filtered_results = []
+            for start, end in results:
+                key = f"{start.strftime('%Y-%m-%dT%H:%M')}|{end.strftime('%Y-%m-%dT%H:%M')}"
+                if not key in excluded:
+                    filtered_results.append([start, end])
+            filter_size = len(filtered_results)
+            if filter_size >= 5:
+                selected_filter = []
+                index_medium = int((filter_size-1)/2)
+                index_fq = int(index_medium/2)
+                index_tq = int(((filter_size-1)-index_medium)/2 + index_medium)
+                selected_filter.append(filtered_results[0])
+                selected_filter.append(filtered_results[index_fq])
+                selected_filter.append(filtered_results[index_medium])
+                selected_filter.append(filtered_results[index_tq])
+                selected_filter.append(filtered_results[filter_size-1])
+                results = selected_filter
+            else:
+                results = filtered_results
+            return render(request, "calendar_app/Scheduling_Assist_System.html", {"results":results, "assist_name":assist_name, "shown_slots": shown_slots, "assist_start_date":period_start, "assist_end_date":period_end, "assist_start_time":desired_start, "assist_end_time":desired_end, "assist_duration_h":request.POST.get("assist-duration-h"), "assist_duration_m":request.POST.get("assist-duration-m")})
+        else:
+            if not any(target_users):
+                results_size = len(results)
+                if results_size >= 5:
+                    selected_results = []
+                    index_medium = int((results_size-1)/2)
+                    index_fq = int(index_medium/2)
+                    index_tq = int(((results_size-1)-index_medium)/2 + index_medium)
+                    selected_results.append(results[0])
+                    selected_results.append(results[index_fq])
+                    selected_results.append(results[index_medium])
+                    selected_results.append(results[index_tq])
+                    selected_results.append(results[results_size-1])
+                    results = selected_results
+                return render(request, "calendar_app/Scheduling_Assist_System.html", {"results":results, "assist_name":assist_name, "assist_start_date":period_start, "assist_end_date":period_end, "assist_start_time":desired_start, "assist_end_time":desired_end, "assist_duration_h":request.POST.get("assist-duration-h"), "assist_duration_m":request.POST.get("assist-duration-m")})
+        
+        #print(results)
+        event_name=[]
+        event_start=[]
+        event_end=[]
+        event_category = 'meeting'            
+
+        for i in range(40):
+            if(i<len(results)):
+                event_name.append("候補")
+                event_start.append(str(results[i][0]).replace(' ','T'))
+                #print("debug:"+str(event_start[i]))
+                event_end.append(str(results[i][1]).replace(' ','T'))
+            else:
+                event_name.append("null")
+                event_start.append("2015-12-12T23:00:00")
+                event_end.append("2015-12-12T23:30:00")
+
+        return render(request,"calendar_app/compare_cal.html",{"event_name":event_name,"event_start":event_start,"event_end":event_end,"event_category":event_category})
+
 
 class FriendCalendarView(LoginRequiredMixin,View):
     def get(self,request,id):
@@ -521,12 +687,28 @@ class FriendCalendarView(LoginRequiredMixin,View):
 
         return render(request,"calendar_app/index.html",{"event_name":event_name,"event_start":event_start,"event_end":event_end,"event_category":event_category})
 
-class PlanDeleteView(LoginRequiredMixin,View,id):
+
+class PlanDeleteView(LoginRequiredMixin,View):
+    def get(self,request,uuid):
+        plan=Plan.objects.get(id=uuid)
+        plan.delete()
+        return redirect("calendar_app:plan_list")
+
+class PlanListView(LoginRequiredMixin,View):
     def get(self,request):
-        return render(request,"calendar_app/compare.html")
+        plans = Plan.objects.filter(user=str(request.user)).order_by('start_datetime')
+        return render(request,"calendar_app/plan_list.html",{"plans":plans})
 
-
-
+class TodoCheckView(LoginRequiredMixin,View):
+    def get(self,request,check_name):
+        now = timezone.now()
+        task=Todo.objects.get(name=check_name,end_datetime__gte=now,user=str(request.user))
+        if(task.complete==0):
+            task.complete=1
+        else:
+            task.complete=0
+        task.save()
+        return redirect("calendar_app:todo_view")
 
 
 index=IndexView.as_view()
@@ -543,3 +725,6 @@ accept_request=AcceptRequestView.as_view()
 friend_delete=FriendDeleteView.as_view()
 compare_view=CompareView.as_view()
 friend_calendar=FriendCalendarView.as_view()
+plan_delete=PlanDeleteView.as_view()
+plan_list=PlanListView.as_view()
+todo_check=TodoCheckView.as_view()
