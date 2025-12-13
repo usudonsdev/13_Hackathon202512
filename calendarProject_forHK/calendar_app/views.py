@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect,get_object_or_404
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 from .models import *
 from .forms import *
 from datetime import datetime, timedelta, timezone
@@ -13,6 +14,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 import os
 from calendar_app.services import friend
+from .services.weather import WeatherService
+
 
 
 # Create your views here.
@@ -152,6 +155,8 @@ class AccountCreateView(View):
             record=UserID.objects.get(id=id)
             record.password="password"
             record.save()
+            user = authenticate(request,username=id, password=password)
+            login(request, user)
             return redirect("calendar_app:index")
         return render(request,"calendar_app/account_create.html",{"form":form})
         
@@ -240,6 +245,7 @@ class SearchView(LoginRequiredMixin,View):
         desired_start = datetime.strptime(desired_start, "%H:%M").time()
         desired_end = request.POST.get("assist-end-time")
         desired_end = datetime.strptime(desired_end, "%H:%M").time()
+        climate = request.POST.get("climate")
         my_user = str(request.user)
         target_users = request.POST.getlist('users')
         
@@ -306,6 +312,9 @@ class SearchView(LoginRequiredMixin,View):
                     results.append([t,t+duration])
                 t = t + timedelta(minutes=30)
             current_date = current_date + timedelta(days=1)
+        if climate == "rain_removal":
+            weather_service = WeatherService()
+            results = weather_service.filter_by_precipitation_30(results)
         if action == "retry":
             shown_slots = set(request.POST.getlist("shown_slots"))
             excluded = shown_slots
@@ -351,7 +360,7 @@ class SearchView(LoginRequiredMixin,View):
         event_end=[]
         event_category = []            
 
-        for i in range(40):
+        for i in range(200):
             if(i<len(results)):
                 event_name.append("候補")
                 event_start.append(str(results[i][0]).replace(' ','T'))
@@ -638,7 +647,7 @@ class CompareView(LoginRequiredMixin,View):
         event_end=[]
         event_category = []            
 
-        for i in range(40):
+        for i in range(200):
             if(i<len(results)):
                 event_name.append("候補")
                 event_start.append(str(results[i][0]).replace(' ','T'))
@@ -710,6 +719,18 @@ class PlanListView(LoginRequiredMixin,View):
         plans = Plan.objects.filter(user=str(request.user)).order_by('start_datetime')
         return render(request,"calendar_app/plan_list.html",{"plans":plans})
 
+
+class RoutineDeleteView(LoginRequiredMixin,View):
+    def get(self,request,uuid):
+        routine=Routine.objects.get(id=uuid)
+        routine.delete()
+        return redirect("calendar_app:routine_list")
+
+class RoutineListView(LoginRequiredMixin,View):
+    def get(self,request):
+        routines = Routine.objects.filter(user=str(request.user))
+        return render(request,"calendar_app/routine_list.html",{"routines":routines})
+
 class TodoCheckView(LoginRequiredMixin,View):
     def get(self,request,check_name):
         now = timezone.now()
@@ -738,4 +759,6 @@ compare_view=CompareView.as_view()
 friend_calendar=FriendCalendarView.as_view()
 plan_delete=PlanDeleteView.as_view()
 plan_list=PlanListView.as_view()
+routine_delete=RoutineDeleteView.as_view()
+routine_list=RoutineListView.as_view()
 todo_check=TodoCheckView.as_view()

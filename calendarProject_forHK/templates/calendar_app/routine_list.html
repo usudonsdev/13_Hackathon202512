@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="page-title">アカウントページ - Coo-lendar</title>
+    <title id="page-title">ルーティン一覧 - Coo-lendar</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+
+
 
     <style>
         :root {
@@ -268,7 +270,7 @@
                 <a href="/plan/create" class="nav-btn">
                     <span class="icon">📅</span> 予定を追加
                 </a>
-                <a href='/plan/list' class="nav-btn">
+                <a href='/plan/list' class="nav-btn special-btn">
                     <span class="icon">📋</span> 予定一覧
                 </a>
                 <a href="/todo" class="nav-btn">
@@ -277,7 +279,7 @@
                 <a href="/friend" class="nav-btn">
                     <span class="icon">👥</span> ともだち
                 </a>
-                <a href="/account/view" id="sidebar-account-btn" class="nav-btn special-btn">
+                <a href="/account/view" class="nav-btn">
                     <span class="icon">👤</span> プロフィール
                 </a>
                 <a href="/assist" class="nav-btn">
@@ -294,52 +296,47 @@
         </aside>
         <main class="main-content">
             <header class="top-bar">
-                <h2 class="page-title">アカウントプロフィール</h2>
+                <h2 class="page-title">ルーティン一覧</h2>
+                <button onclick="location.href='/plan/list'" class="btn btn-secondary btn-sm">予定一覧へ</a>
             </header>
 
-            <div class="account-page-container">
-                <div class="profile-header">
-                    {% if icon %}
-                    <img alt="icon" src="{{ icon.url }}" class="circle-img">
-                    {% else %}
-                    <img alt="icon" src="https://knsoza1.com/wp-content/uploads/2025/02/4cbc0aab7c6d44a4559d83b2d733d166-300x300.png" class="circle-img">
-                    {% endif %}
-                    <div class="profile-info">
-                        <h2 id="profile-name"></h2>
-                        <p id="profile-id">@{{ user_id }}</p>
-                        <div class="profile-stats">
-                            <div class="stats-item">
-                                <span id="stat-friends-count"><strong>{{ friends_len }}</strong></span>
-                                <span>友達</span>
-                            </div>
-                            <!-- <div class="stats-item">
-                                <span id="stat-events-count"><strong>-</strong></span>
-                                <span>公開予定</span>
-                            </div> -->
-                        </div>
-                    </div>
-                </div>
+        <table class="table" style="margin:20px">
+        <thead>
+            <tr>
+            <th scope="col">曜日</th>
+            <th scope="col">開始日時</th>
+            <th scope="col">終了日時</th>
+            <th scope="col">削除</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for routine in routines %}
+            <tr>
+            {% if routine.day_of_week == 0 %}
+            <td>日曜</td>
+            {% elif routine.day_of_week == 1 %}
+            <td>月曜</td>
+            {% elif routine.day_of_week == 2 %}
+            <td>火曜</td>
+            {% elif routine.day_of_week == 3 %}
+            <td>水曜</td>
+            {% elif routine.day_of_week == 4 %}
+            <td>木曜</td>
+            {% elif routine.day_of_week == 5 %}
+            <td>金曜</td>
+            {% elif routine.day_of_week == 6 %}
+            <td>土曜</td>
+            {% endif %}
 
-                <div class="profile-section">
-                    <h3>📢 ステータス</h3>
-                    <p id="profile-status">...ロード中...</p>
-                </div>
+            <td>{{ routine.start_time }}</td>
+            <td>{{ routine.end_time }}</td>
+            <td><button class="btn btn-danger btn-sm" onclick="location.href='/routine/delete/{{ routine.id }}'">削除</button></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        </table>
 
-                <div class="profile-section">
-                    <h3>公開スケジュール</h3>
-                    <div id="public-schedule-list">
-                        <p class="text-secondary">公開されている予定はありません。</p>
-                        </div>
-                </div>
-
-                <div id="action-area" style="text-align: center;">
-                <button onclick="location.href='/account/edit'" class="btn btn-primary" style="margin-right:10px">プロフィール編集</a>    
-                <form action="{% url 'accounts:logout' %}" method="post"> 
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-primary">ログアウト</button>
-                </form>
-                </div>
-            </div>
+            
         </main>
         </div>
     
@@ -418,7 +415,7 @@
                 const userData = fetchUserData(targetId);
 
                 if (!userData) {
-                    pageTitleEl.textContent = 'エラー - Smart Scheduler';
+                    pageTitleEl.textContent = 'エラー - Coo-lendar';
                     profileNameEl.textContent = 'ユーザーが見つかりません';
                     profileIdEl.textContent = 'ID: ' + targetId;
                     profileStatusEl.textContent = '指定されたアカウントは存在しないか、非公開です。';

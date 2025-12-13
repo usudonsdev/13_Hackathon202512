@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>プロフィール編集 - Smart Scheduler</title>
+    <title>プロフィール編集 - Coo-lendar</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -105,6 +105,12 @@
         .nav-btn.active {
             background-color: var(--bg-primary);
             color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .nav-btn.special-btn {
+            background-color: #eff6ff;
+            color: var(--accent-color);
             font-weight: 500;
         }
 
@@ -319,19 +325,19 @@
             </div>
 
             <nav class="main-nav">
-                <a href="/plan/create" class="nav-btn active">
+                <a href="/plan/create" class="nav-btn">
                     <span class="icon">📅</span> 予定を追加
                 </a>
                 <a href='/plan/list' class="nav-btn">
                     <span class="icon">📋</span> 予定一覧
                 </a>
                 <a href="/todo" class="nav-btn">
-                    <span class="icon">📝</span> 今日やること
+                    <span class="icon">📝</span> タスク
                 </a>
                 <a href="/friend" class="nav-btn">
                     <span class="icon">👥</span> ともだち
                 </a>
-                <a href="/account/view" class="nav-btn active">
+                <a href="/account/view" class="nav-btn special-btn">
                     <span class="icon">👤</span> プロフィール
                 </a>
                 <a href="/assist" class="nav-btn">

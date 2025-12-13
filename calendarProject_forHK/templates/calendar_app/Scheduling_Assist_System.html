@@ -113,6 +113,12 @@
             font-weight: 500;
         }
 
+        .nav-btn.special-btn {
+            background-color: #eff6ff;
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
         .icon-btn {
             border: none;
             background: none;
@@ -331,7 +337,7 @@
                     <span class="icon">📋</span> 予定一覧
                 </a>
                 <a href="todo" class="nav-btn">
-                    <span class="icon">📝</span> 今日やること
+                    <span class="icon">📝</span> タスク
                 </a>
                 <a href="friend" class="nav-btn">
                     <span class="icon">👥</span> ともだち
@@ -339,7 +345,7 @@
                 <a href="account/view" id="sidebar-account-btn" class="nav-btn">
                     <span class="icon">👤</span> プロフィール
                 </a>
-                <a href="assist" class="nav-btn active">
+                <a href="assist" class="nav-btn special-btn">
                     <span class="icon">✨</span> アシスト
                 </a>
                 <a href="/compare" class="nav-btn">
@@ -446,6 +452,14 @@
                                     <span class="unit">時間</span>
                                     <input type="number" id="assist-duration-m" name="assist-duration-m" min="0" max="59" value="0" required step="10">
                                     <span class="unit">分</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>天候</label>
+                                <div class="radio-group">
+                                    <label><input type="radio" name="climate" value="rain_removal"> 雨天日を除去</label>
+                                    <label><input type="radio" name="climate" value="not_designated" checked> 指定なし</label>
                                 </div>
                             </div>
 

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Scheduler</title>
+    <title>Coo-lendar</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -544,7 +544,7 @@
                     <span class="icon">📋</span> 予定一覧
                 </button>
                 <button id="btn-today-todo" class="nav-btn" onclick="location.href='/todo'">
-                    <span class="icon">📝</span> 今日やること
+                    <span class="icon">📝</span> タスク
                 </button>
                 <button id="btn-friends" class="nav-btn" onclick="location.href='/friend'">
                     <span class="icon">👥</span> ともだち
@@ -722,7 +722,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('Smart Scheduler initialized');
+            console.log('Coo-lendar initialized');
 
             // --- DOM Elements ---
             const btnTodayTodo = document.getElementById('btn-today-todo');
@@ -1011,7 +1011,7 @@
                         eventBlock.addEventListener('click', (e) => {
                             e.stopPropagation(); // セル全体へのクリックイベントを停止
                             // ここで詳細モーダルを開く処理を実装できます
-                            alert(`予定ID: ${event.id} - ${event.title}\n開始: ${event.start}\n終了: ${event.end}`);
+                            alert(` ${event.title}\n開始: ${event.start}\n終了: ${event.end}`);
                         });
 
                         // 3. カラムに挿入
