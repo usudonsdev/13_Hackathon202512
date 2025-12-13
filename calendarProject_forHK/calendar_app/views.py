@@ -687,7 +687,6 @@ class FriendCalendarView(LoginRequiredMixin,View):
 
         return render(request,"calendar_app/index.html",{"event_name":event_name,"event_start":event_start,"event_end":event_end,"event_category":event_category})
 
-<<<<<<< HEAD
 
 class PlanDeleteView(LoginRequiredMixin,View):
     def get(self,request,uuid):
@@ -696,9 +695,6 @@ class PlanDeleteView(LoginRequiredMixin,View):
         return redirect("calendar_app:plan_list")
 
 class PlanListView(LoginRequiredMixin,View):
-=======
-class PlanDeleteView(LoginRequiredMixin,View):
->>>>>>> e2f2e3fcd0bf1f88d3dad1ed10e685f9c6686d8f
     def get(self,request):
         plans = Plan.objects.filter(user=str(request.user)).order_by('start_datetime')
         return render(request,"calendar_app/plan_list.html",{"plans":plans})
