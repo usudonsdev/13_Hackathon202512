@@ -83,7 +83,7 @@ class IndexView(LoginRequiredMixin,View):
         event_name=[0 for j in range(50)]
         event_start=[0 for j in range(50)]
         event_end=[0 for j in range(50)]
-        event_category = 'meeting'
+        event_category = [0 for j in range(50)]
         #print(event_category)
 
         for i in range(20):
@@ -91,24 +91,27 @@ class IndexView(LoginRequiredMixin,View):
                 event_name[i]=next_plan_queryset[i].name
                 event_start[i]=str(next_plan_queryset[i].start_datetime+timedelta(hours=9)).replace(' ','T')[:-6]
                 event_end[i]=str(next_plan_queryset[i].end_datetime+timedelta(hours=9)).replace(' ','T')[:-6]
+                event_category[i]=next_plan_queryset[i].category
                 #print(next_plan_queryset[i].start_datetime)
                 #print(event_start[i])
             else:
                 event_name[i]="null"
                 event_start[i]="2015-12-12T23:00:00"
                 event_end[i]="2015-12-12T23:30:00"
+                event_category[i]="meeting"
 
         for i in range(20,40):
             if(i<len(before_plan_queryset)+20):
                 event_name[i]=before_plan_queryset[i-20].name
                 event_start[i]=str(before_plan_queryset[i-20].start_datetime+timedelta(hours=9)).replace(' ','T')[:-6]
                 event_end[i]=str(before_plan_queryset[i-20].end_datetime+timedelta(hours=9)).replace(' ','T')[:-6]
+                event_category[i]=before_plan_queryset[i-20].category
                 #print(event_name[i])
             else:
                 event_name[i]="null"
                 event_start[i]="2015-12-12T23:00:00"
                 event_end[i]="2015-12-12T23:30:00"
-
+                event_category[i]="meeting"
 
         return render(request,"calendar_app/index.html",{"event_name":event_name,"event_start":event_start,"event_end":event_end,"event_category":event_category})
 
@@ -178,6 +181,7 @@ class PlanCreateView(LoginRequiredMixin,View):
         datetime_end=request.POST['event-end']
         private=request.POST['visibility']
         event_memo=request.POST['event-memo']
+        category=request.POST['event-category']
         if(private=="private"):
             private=1
         else:
@@ -189,6 +193,7 @@ class PlanCreateView(LoginRequiredMixin,View):
             end_datetime = datetime_end,
             private = private,
             memo = event_memo,
+            category=category,
         )
         
         return redirect("calendar_app:index")
@@ -341,11 +346,10 @@ class SearchView(LoginRequiredMixin,View):
                     results = selected_results
                 return render(request, "calendar_app/Scheduling_Assist_System.html", {"results":results, "assist_name":assist_name, "assist_start_date":period_start, "assist_end_date":period_end, "assist_start_time":desired_start, "assist_end_time":desired_end, "assist_duration_h":request.POST.get("assist-duration-h"), "assist_duration_m":request.POST.get("assist-duration-m")})
         
-        #print(results)
         event_name=[]
         event_start=[]
         event_end=[]
-        event_category = 'meeting'            
+        event_category = []            
 
         for i in range(40):
             if(i<len(results)):
@@ -353,10 +357,12 @@ class SearchView(LoginRequiredMixin,View):
                 event_start.append(str(results[i][0]).replace(' ','T'))
                 #print("debug:"+str(event_start[i]))
                 event_end.append(str(results[i][1]).replace(' ','T'))
+                event_category.append("meeting")
             else:
                 event_name.append("null")
                 event_start.append("2015-12-12T23:00:00")
                 event_end.append("2015-12-12T23:30:00")
+                event_category.append("meeting")
 
         return render(request,"calendar_app/index.html",{"event_name":event_name,"event_start":event_start,"event_end":event_end,"event_category":event_category})
             
@@ -627,11 +633,10 @@ class CompareView(LoginRequiredMixin,View):
                     results = selected_results
                 return render(request, "calendar_app/Scheduling_Assist_System.html", {"results":results, "assist_name":assist_name, "assist_start_date":period_start, "assist_end_date":period_end, "assist_start_time":desired_start, "assist_end_time":desired_end, "assist_duration_h":request.POST.get("assist-duration-h"), "assist_duration_m":request.POST.get("assist-duration-m")})
         
-        #print(results)
         event_name=[]
         event_start=[]
         event_end=[]
-        event_category = 'meeting'            
+        event_category = []            
 
         for i in range(40):
             if(i<len(results)):
@@ -639,10 +644,12 @@ class CompareView(LoginRequiredMixin,View):
                 event_start.append(str(results[i][0]).replace(' ','T'))
                 #print("debug:"+str(event_start[i]))
                 event_end.append(str(results[i][1]).replace(' ','T'))
+                event_category.append("meeting")
             else:
                 event_name.append("null")
                 event_start.append("2015-12-12T23:00:00")
                 event_end.append("2015-12-12T23:30:00")
+                event_category.append("meeting")
 
         return render(request,"calendar_app/compare_cal.html",{"event_name":event_name,"event_start":event_start,"event_end":event_end,"event_category":event_category})
 
@@ -661,29 +668,33 @@ class FriendCalendarView(LoginRequiredMixin,View):
         event_name=[0 for j in range(50)]
         event_start=[0 for j in range(50)]
         event_end=[0 for j in range(50)]
-        event_category = "work"
+        event_category = [0 for j in range(50)]
         for i in range(20):
             if(i<len(next_plan_queryset)):
                 event_name[i]=next_plan_queryset[i].name
                 event_start[i]=str(next_plan_queryset[i].start_datetime+timedelta(hours=9)).replace(' ','T')[:-6]
                 event_end[i]=str(next_plan_queryset[i].end_datetime+timedelta(hours=9)).replace(' ','T')[:-6]
+                event_category[i]=next_plan_queryset[i].category
                 #print(next_plan_queryset[i].start_datetime)
                 #print(event_start[i])
             else:
                 event_name[i]="null"
                 event_start[i]="2015-12-12T23:00:00"
                 event_end[i]="2015-12-12T23:30:00"
+                event_end[i]="meeting"
 
         for i in range(20,40):
             if(i<len(before_plan_queryset)+20):
                 event_name[i]=before_plan_queryset[i-20].name
                 event_start[i]=str(before_plan_queryset[i-20].start_datetime+timedelta(hours=9)).replace(' ','T')[:-6]
                 event_end[i]=str(before_plan_queryset[i-20].end_datetime+timedelta(hours=9)).replace(' ','T')[:-6]
+                event_category[i]=before_plan_queryset[i-20].category
                 #print(event_name[i])
             else:
                 event_name[i]="null"
                 event_start[i]="2015-12-12T23:00:00"
                 event_end[i]="2015-12-12T23:30:00"
+                event_end[i]="meeting"
 
         return render(request,"calendar_app/index.html",{"event_name":event_name,"event_start":event_start,"event_end":event_end,"event_category":event_category})
 

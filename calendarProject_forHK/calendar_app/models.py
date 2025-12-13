@@ -21,6 +21,7 @@ class Plan(models.Model):
     name=models.CharField(max_length=100,verbose_name="予定名")
     memo=models.TextField(max_length=1000,verbose_name="メモ",null=True,blank=True)
     private=models.IntegerField(verbose_name="プライバシー設定",choices=[(0,"公開"),(1,"非公開")])
+    category=models.CharField(max_length=30,verbose_name="色設定",default="meeting",choices=[("meeting","青"),("private","赤"),("personal","緑"),("work","オレンジ")])
     start_datetime = models.DateTimeField(verbose_name="期間の始まり")
     end_datetime = models.DateTimeField(verbose_name="期間の終わり")
     updated_time=models.DateTimeField(auto_now=True,verbose_name="更新日時")

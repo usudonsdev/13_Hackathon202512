@@ -445,7 +445,7 @@
     <div class="app-container">
         <aside class="sidebar">
             <div class="logo-area">
-                <h1><a href="/" style="color: inherit; text-decoration: none;">Scheduler</a></h1>
+                <h1><a href="/" style="color: inherit; text-decoration: none;">Coo-lendar</a></h1>
             </div>
 
             <nav class="main-nav">
@@ -777,12 +777,14 @@
                         for (let i = 1; i < dayEvents.length; i++) {
                             const nextEvent = dayEvents[i];
 
+                            const currentStart = new Date(currentMerge.start).getTime();
                             const currentEnd = new Date(currentMerge.end).getTime();
                             const nextStart = new Date(nextEvent.start).getTime();
+                            const nextEnd = new Date(nextEvent.end).getTime();
 
                             const timeDiff = Math.abs(nextStart - currentEnd);
 
-                            if (timeDiff < 60000 && currentMerge.category === nextEvent.category) {
+                            if (currentStart < nextEnd && nextStart < currentEnd && currentMerge.category === nextEvent.category) {
                                 currentMerge.end = nextEvent.end;
                                 if (!currentMerge.title.includes(nextEvent.title)) {
                                     currentMerge.title += `/ ${nextEvent.title}`;
