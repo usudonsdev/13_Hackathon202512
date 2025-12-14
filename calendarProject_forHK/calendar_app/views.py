@@ -315,6 +315,9 @@ class SearchView(LoginRequiredMixin,View):
         if climate == "rain_removal":
             weather_service = WeatherService()
             results = weather_service.filter_by_precipitation_30(results)
+        no_result = False
+        if len(results) == 0:
+            no_result = True
         if action == "retry":
             shown_slots = set(request.POST.getlist("shown_slots"))
             excluded = shown_slots
@@ -338,9 +341,6 @@ class SearchView(LoginRequiredMixin,View):
                 results = selected_filter
             else:
                 results = filtered_results
-            no_result = False
-            if len(results) == 0:
-                no_result = True
             return render(request, "calendar_app/Scheduling_Assist_System.html", {"results":results, "no_result":no_result, "assist_name":assist_name, "shown_slots": shown_slots, "assist_start_date":period_start, "assist_end_date":period_end, "assist_start_time":desired_start, "assist_end_time":desired_end, "assist_duration_h":request.POST.get("assist-duration-h"), "assist_duration_m":request.POST.get("assist-duration-m")})
         else:
             if not any(target_users):
@@ -356,7 +356,7 @@ class SearchView(LoginRequiredMixin,View):
                     selected_results.append(results[index_tq])
                     selected_results.append(results[results_size-1])
                     results = selected_results
-                return render(request, "calendar_app/Scheduling_Assist_System.html", {"results":results, "assist_name":assist_name, "assist_start_date":period_start, "assist_end_date":period_end, "assist_start_time":desired_start, "assist_end_time":desired_end, "assist_duration_h":request.POST.get("assist-duration-h"), "assist_duration_m":request.POST.get("assist-duration-m")})
+                return render(request, "calendar_app/Scheduling_Assist_System.html", {"results":results, "no_result":no_result, "assist_name":assist_name, "assist_start_date":period_start, "assist_end_date":period_end, "assist_start_time":desired_start, "assist_end_time":desired_end, "assist_duration_h":request.POST.get("assist-duration-h"), "assist_duration_m":request.POST.get("assist-duration-m")})
         
         event_name=[]
         event_start=[]
