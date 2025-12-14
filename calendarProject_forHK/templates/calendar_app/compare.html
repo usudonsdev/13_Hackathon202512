@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>アシスト | Scheduler</title>
+    <title>比較 | Coo-lendar</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -110,6 +110,12 @@
         .nav-btn.active {
             background-color: var(--bg-primary);
             color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .nav-btn.special-btn {
+            background-color: #eff6ff;
+            color: var(--accent-color);
             font-weight: 500;
         }
 
@@ -331,7 +337,7 @@
                     <span class="icon">📋</span> 予定一覧
                 </a>
                 <a href="todo" class="nav-btn">
-                    <span class="icon">📝</span> 今日やること
+                    <span class="icon">📝</span> タスク
                 </a>
                 <a href="friend" class="nav-btn">
                     <span class="icon">👥</span> ともだち
@@ -342,7 +348,7 @@
                 <a href="assist" class="nav-btn">
                     <span class="icon">✨</span> アシスト
                 </a>
-                <a href="/compare" class="nav-btn active">
+                <a href="/compare" class="nav-btn special-btn">
                     <span class="icon">👣</span>比較
                 </a>
             </nav>

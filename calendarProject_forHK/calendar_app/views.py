@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect,get_object_or_404
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 from .models import *
 from .forms import *
 from datetime import datetime, timedelta, timezone
@@ -13,6 +14,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 import os
 from calendar_app.services import friend
+from .services.weather import WeatherService
+
 
 
 # Create your views here.
@@ -56,8 +59,8 @@ def google_calendar_auth_callback(request):
         if not all([summary, start, end]):
             continue  # Skip events without a summary, start or end time
 
-        start_datetime = datetime.fromisoformat(start)
-        end_datetime = datetime.fromisoformat(end)
+        start_datetime = timezone.make_aware(datetime.fromisoformat(start))
+        end_datetime = timezone.make_aware(datetime.fromisoformat(end))
 
         # Create a new Plan object
         Plan.objects.create(
@@ -152,6 +155,8 @@ class AccountCreateView(View):
             record=UserID.objects.get(id=id)
             record.password="password"
             record.save()
+            user = authenticate(request,username=id, password=password)
+            login(request, user)
             return redirect("calendar_app:index")
         return render(request,"calendar_app/account_create.html",{"form":form})
         
@@ -240,6 +245,7 @@ class SearchView(LoginRequiredMixin,View):
         desired_start = datetime.strptime(desired_start, "%H:%M").time()
         desired_end = request.POST.get("assist-end-time")
         desired_end = datetime.strptime(desired_end, "%H:%M").time()
+        climate = request.POST.get("climate")
         my_user = str(request.user)
         target_users = request.POST.getlist('users')
         
@@ -304,8 +310,11 @@ class SearchView(LoginRequiredMixin,View):
                 
                 if not ((conflict_self_plan) or (conflict_members_plan) or (conflict_self_routine) or (conflict_members_routine)):
                     results.append([t,t+duration])
-                t = t + timedelta(minutes=30)
+                t = t + timedelta(minutes=15)
             current_date = current_date + timedelta(days=1)
+        if climate == "rain_removal":
+            weather_service = WeatherService()
+            results = weather_service.filter_by_precipitation_30(results)
         if action == "retry":
             shown_slots = set(request.POST.getlist("shown_slots"))
             excluded = shown_slots
@@ -329,7 +338,10 @@ class SearchView(LoginRequiredMixin,View):
                 results = selected_filter
             else:
                 results = filtered_results
-            return render(request, "calendar_app/Scheduling_Assist_System.html", {"results":results, "assist_name":assist_name, "shown_slots": shown_slots, "assist_start_date":period_start, "assist_end_date":period_end, "assist_start_time":desired_start, "assist_end_time":desired_end, "assist_duration_h":request.POST.get("assist-duration-h"), "assist_duration_m":request.POST.get("assist-duration-m")})
+            no_result = False
+            if len(results) == 0:
+                no_result = True
+            return render(request, "calendar_app/Scheduling_Assist_System.html", {"results":results, "no_result":no_result, "assist_name":assist_name, "shown_slots": shown_slots, "assist_start_date":period_start, "assist_end_date":period_end, "assist_start_time":desired_start, "assist_end_time":desired_end, "assist_duration_h":request.POST.get("assist-duration-h"), "assist_duration_m":request.POST.get("assist-duration-m")})
         else:
             if not any(target_users):
                 results_size = len(results)
@@ -351,7 +363,7 @@ class SearchView(LoginRequiredMixin,View):
         event_end=[]
         event_category = []            
 
-        for i in range(40):
+        for i in range(200):
             if(i<len(results)):
                 event_name.append("候補")
                 event_start.append(str(results[i][0]).replace(' ','T'))
@@ -591,7 +603,7 @@ class CompareView(LoginRequiredMixin,View):
                 
                 if not ((conflict_self_plan) or (conflict_members_plan) or (conflict_self_routine) or (conflict_members_routine)):
                     results.append([t,t+duration])
-                t = t + timedelta(minutes=30)
+                t = t + timedelta(minutes=15)
             current_date = current_date + timedelta(days=1)
         if action == "retry":
             shown_slots = set(request.POST.getlist("shown_slots"))
@@ -638,7 +650,7 @@ class CompareView(LoginRequiredMixin,View):
         event_end=[]
         event_category = []            
 
-        for i in range(40):
+        for i in range(200):
             if(i<len(results)):
                 event_name.append("候補")
                 event_start.append(str(results[i][0]).replace(' ','T'))
@@ -710,6 +722,18 @@ class PlanListView(LoginRequiredMixin,View):
         plans = Plan.objects.filter(user=str(request.user)).order_by('start_datetime')
         return render(request,"calendar_app/plan_list.html",{"plans":plans})
 
+
+class RoutineDeleteView(LoginRequiredMixin,View):
+    def get(self,request,uuid):
+        routine=Routine.objects.get(id=uuid)
+        routine.delete()
+        return redirect("calendar_app:routine_list")
+
+class RoutineListView(LoginRequiredMixin,View):
+    def get(self,request):
+        routines = Routine.objects.filter(user=str(request.user))
+        return render(request,"calendar_app/routine_list.html",{"routines":routines})
+
 class TodoCheckView(LoginRequiredMixin,View):
     def get(self,request,check_name):
         now = timezone.now()
@@ -738,4 +762,6 @@ compare_view=CompareView.as_view()
 friend_calendar=FriendCalendarView.as_view()
 plan_delete=PlanDeleteView.as_view()
 plan_list=PlanListView.as_view()
+routine_delete=RoutineDeleteView.as_view()
+routine_list=RoutineListView.as_view()
 todo_check=TodoCheckView.as_view()

@@ -22,6 +22,8 @@ urlpatterns=[
   path("compare",views.compare_view,name="compare_view"),
   path("plan/delete/<str:uuid>",views.plan_delete,name="plan_delete"),
   path("plan/list",views.plan_list,name="plan_list"),
+  path("routine/delete/<str:uuid>",views.routine_delete,name="routine_delete"),
+  path("routine/list",views.routine_list,name="routine_list"),
   path("todo/check/<str:check_name>",views.todo_check,name="todo_check"),
 
 ] 

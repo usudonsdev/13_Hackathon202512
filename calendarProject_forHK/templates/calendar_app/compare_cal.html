@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Scheduler - 予定非表示版</title>
+    <title>Coo-lendar - 予定非表示版</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -110,7 +110,7 @@
         .nav-btn.special-btn {
             background-color: #eff6ff;
             /* light blue */
-            color: var(--accent-color);
+            color: #3b82f6;
             font-weight: 500;
         }
 
@@ -453,7 +453,7 @@
                     <span class="icon">📅</span> 予定を追加
                 </button>
                 <button id="btn-today-todo" class="nav-btn" onclick="location.href='/todo'">
-                    <span class="icon">📝</span> 今日やること
+                    <span class="icon">📝</span> タスク
                 </button>
                 <button id="btn-friends" class="nav-btn" onclick="location.href='/friend'">
                     <span class="icon">👥</span> ともだち
@@ -464,13 +464,13 @@
                 <button id="btn-llm" class="nav-btn" onclick="location.href='/assist'">
                     <span class="icon">✨</span> アシスト
                 </button>
-                <button id="btn-llm" onclick="location.href='/compare'" class="nav-btn"><span class="icon">👣</span>比較
+                <button id="btn-llm" onclick="location.href='/compare'" class="nav-btn special-btn"><span class="icon">👣</span>比較
                 </button>
             </nav>
 
-            <div class="settings-area">
+            <!-- <div class="settings-area">
                 <button id="btn-settings" class="icon-btn" aria-label="Settings">⚙️ 設定</button>
-            </div>
+            </div> -->
         </aside>
 
         <main class="main-content">
@@ -482,14 +482,6 @@
                     <button id="btn-today" class="text-btn">今日</button>
                 </div>
 
-                <div class="view-switcher">
-                    <select id="view-select">
-                        <option value="week">週</option>
-                        <option value="month">月</option>
-                        <option value="year">年</option>
-                        <option value="custom">カスタム</option>
-                    </select>
-                </div>
             </header>
 
             <div id="calendar-grid" class="calendar-view week-view">
@@ -609,7 +601,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('Smart Scheduler initialized - No Event Title Version');
+            console.log('Coo-lendar initialized - No Event Title Version');
 
             // --- DOM Elements ---
             const dayHeaders = document.querySelectorAll('.day-header');
@@ -629,48 +621,207 @@
 
             // --- data input (Provided data structure) ---
             const dummyEvents = [
-            {  id: 1, title: '{{ event_name.0 }}', start: '{{ event_start.0 }}', end: '{{ event_end.0 }}', category: '{{ event_category }}'},
-            {  id: 2, title: '{{ event_name.1 }}', start: '{{ event_start.1 }}', end: '{{ event_end.1 }}', category: '{{ event_category }}'},
-            {  id: 3, title: '{{ event_name.2 }}', start: '{{ event_start.2 }}', end: '{{ event_end.2 }}', category: '{{ event_category }}'},
-            {  id: 4, title: '{{ event_name.3 }}', start: '{{ event_start.3 }}', end: '{{ event_end.3 }}', category: '{{ event_category }}'},
-            {  id: 5, title: '{{ event_name.4 }}', start: '{{ event_start.4 }}', end: '{{ event_end.4 }}', category: '{{ event_category }}'},
-            {  id: 6, title: '{{ event_name.5 }}', start: '{{ event_start.5 }}', end: '{{ event_end.5 }}', category: '{{ event_category }}'},
-            {  id: 7, title: '{{ event_name.6 }}', start: '{{ event_start.6 }}', end: '{{ event_end.6 }}', category: '{{ event_category }}'},
-            {  id: 8, title: '{{ event_name.7 }}', start: '{{ event_start.7 }}', end: '{{ event_end.7 }}', category: '{{ event_category }}'},
-            {  id: 9, title: '{{ event_name.8 }}', start: '{{ event_start.8 }}', end: '{{ event_end.8 }}', category: '{{ event_category }}'},
-            {  id: 10, title: '{{ event_name.9 }}', start: '{{ event_start.9 }}', end: '{{ event_end.9 }}', category: '{{ event_category }}'},
-            {  id: 11, title: '{{ event_name.10 }}', start: '{{ event_start.10 }}', end: '{{ event_end.10 }}', category: '{{ event_category }}'},
-            {  id: 12, title: '{{ event_name.11 }}', start: '{{ event_start.11 }}', end: '{{ event_end.11 }}', category: '{{ event_category }}'},
-            {  id: 13, title: '{{ event_name.12 }}', start: '{{ event_start.12 }}', end: '{{ event_end.12 }}', category: '{{ event_category }}'},
-            {  id: 14, title: '{{ event_name.13 }}', start: '{{ event_start.13 }}', end: '{{ event_end.13 }}', category: '{{ event_category }}'},
-            {  id: 15, title: '{{ event_name.14 }}', start: '{{ event_start.14 }}', end: '{{ event_end.14 }}', category: '{{ event_category }}'},
-            {  id: 16, title: '{{ event_name.15 }}', start: '{{ event_start.15 }}', end: '{{ event_end.15 }}', category: '{{ event_category }}'},
-            {  id: 17, title: '{{ event_name.16 }}', start: '{{ event_start.16 }}', end: '{{ event_end.16 }}', category: '{{ event_category }}'},
-            {  id: 18, title: '{{ event_name.17 }}', start: '{{ event_start.17 }}', end: '{{ event_end.17 }}', category: '{{ event_category }}'},
-            {  id: 19, title: '{{ event_name.18 }}', start: '{{ event_start.18 }}', end: '{{ event_end.18 }}', category: '{{ event_category }}'},
-            {  id: 20, title: '{{ event_name.19 }}', start: '{{ event_start.19 }}', end: '{{ event_end.19 }}', category: '{{ event_category }}'},
-            {  id: 21, title: '{{ event_name.20 }}', start: '{{ event_start.20 }}', end: '{{ event_end.20 }}', category: '{{ event_category }}'},
-            {  id: 22, title: '{{ event_name.21 }}', start: '{{ event_start.21 }}', end: '{{ event_end.21 }}', category: '{{ event_category }}'},
-            {  id: 23, title: '{{ event_name.22 }}', start: '{{ event_start.22 }}', end: '{{ event_end.22 }}', category: '{{ event_category }}'},
-            {  id: 24, title: '{{ event_name.23 }}', start: '{{ event_start.23 }}', end: '{{ event_end.23 }}', category: '{{ event_category }}'},
-            {  id: 25, title: '{{ event_name.24 }}', start: '{{ event_start.24 }}', end: '{{ event_end.24 }}', category: '{{ event_category }}'},
-            {  id: 26, title: '{{ event_name.25 }}', start: '{{ event_start.25 }}', end: '{{ event_end.25 }}', category: '{{ event_category }}'},
-            {  id: 27, title: '{{ event_name.26 }}', start: '{{ event_start.26 }}', end: '{{ event_end.26 }}', category: '{{ event_category }}'},
-            {  id: 28, title: '{{ event_name.27 }}', start: '{{ event_start.27 }}', end: '{{ event_end.27 }}', category: '{{ event_category }}'},
-            {  id: 29, title: '{{ event_name.28 }}', start: '{{ event_start.28 }}', end: '{{ event_end.28 }}', category: '{{ event_category }}'},
-            {  id: 30, title: '{{ event_name.29 }}', start: '{{ event_start.29 }}', end: '{{ event_end.29 }}', category: '{{ event_category }}'},
-            {  id: 31, title: '{{ event_name.30 }}', start: '{{ event_start.30 }}', end: '{{ event_end.30 }}', category: '{{ event_category }}'},
-            {  id: 32, title: '{{ event_name.31 }}', start: '{{ event_start.31 }}', end: '{{ event_end.31 }}', category: '{{ event_category }}'},
-            {  id: 33, title: '{{ event_name.32 }}', start: '{{ event_start.32 }}', end: '{{ event_end.32 }}', category: '{{ event_category }}'},
-            {  id: 34, title: '{{ event_name.33 }}', start: '{{ event_start.33 }}', end: '{{ event_end.33 }}', category: '{{ event_category }}'},
-            {  id: 35, title: '{{ event_name.34 }}', start: '{{ event_start.34 }}', end: '{{ event_end.34 }}', category: '{{ event_category }}'},
-            {  id: 36, title: '{{ event_name.35 }}', start: '{{ event_start.35 }}', end: '{{ event_end.35 }}', category: '{{ event_category }}'},
-            {  id: 37, title: '{{ event_name.36 }}', start: '{{ event_start.36 }}', end: '{{ event_end.36 }}', category: '{{ event_category }}'},
-            {  id: 38, title: '{{ event_name.37 }}', start: '{{ event_start.37 }}', end: '{{ event_end.37 }}', category: '{{ event_category }}'},
-            {  id: 39, title: '{{ event_name.38 }}', start: '{{ event_start.38 }}', end: '{{ event_end.38 }}', category: '{{ event_category }}'},
-            {  id: 40, title: '{{ event_name.39 }}', start: '{{ event_start.39 }}', end: '{{ event_end.39 }}', category: '{{ event_category }}'},            
-
-            ];
+            { id: 1, title: '{{ event_name.0 }}', start: '{{ event_start.0 }}', end: '{{ event_end.0 }}', category: '{{ event_category }}'},
+            { id: 2, title: '{{ event_name.1 }}', start: '{{ event_start.1 }}', end: '{{ event_end.1 }}', category: '{{ event_category }}'},
+            { id: 3, title: '{{ event_name.2 }}', start: '{{ event_start.2 }}', end: '{{ event_end.2 }}', category: '{{ event_category }}'},
+            { id: 4, title: '{{ event_name.3 }}', start: '{{ event_start.3 }}', end: '{{ event_end.3 }}', category: '{{ event_category }}'},
+            { id: 5, title: '{{ event_name.4 }}', start: '{{ event_start.4 }}', end: '{{ event_end.4 }}', category: '{{ event_category }}'},
+            { id: 6, title: '{{ event_name.5 }}', start: '{{ event_start.5 }}', end: '{{ event_end.5 }}', category: '{{ event_category }}'},
+            { id: 7, title: '{{ event_name.6 }}', start: '{{ event_start.6 }}', end: '{{ event_end.6 }}', category: '{{ event_category }}'},
+            { id: 8, title: '{{ event_name.7 }}', start: '{{ event_start.7 }}', end: '{{ event_end.7 }}', category: '{{ event_category }}'},
+            { id: 9, title: '{{ event_name.8 }}', start: '{{ event_start.8 }}', end: '{{ event_end.8 }}', category: '{{ event_category }}'},
+            { id: 10, title: '{{ event_name.9 }}', start: '{{ event_start.9 }}', end: '{{ event_end.9 }}', category: '{{ event_category }}'},
+            { id: 11, title: '{{ event_name.10 }}', start: '{{ event_start.10 }}', end: '{{ event_end.10 }}', category: '{{ event_category }}'},
+            { id: 12, title: '{{ event_name.11 }}', start: '{{ event_start.11 }}', end: '{{ event_end.11 }}', category: '{{ event_category }}'},
+            { id: 13, title: '{{ event_name.12 }}', start: '{{ event_start.12 }}', end: '{{ event_end.12 }}', category: '{{ event_category }}'},
+            { id: 14, title: '{{ event_name.13 }}', start: '{{ event_start.13 }}', end: '{{ event_end.13 }}', category: '{{ event_category }}'},
+            { id: 15, title: '{{ event_name.14 }}', start: '{{ event_start.14 }}', end: '{{ event_end.14 }}', category: '{{ event_category }}'},
+            { id: 16, title: '{{ event_name.15 }}', start: '{{ event_start.15 }}', end: '{{ event_end.15 }}', category: '{{ event_category }}'},
+            { id: 17, title: '{{ event_name.16 }}', start: '{{ event_start.16 }}', end: '{{ event_end.16 }}', category: '{{ event_category }}'},
+            { id: 18, title: '{{ event_name.17 }}', start: '{{ event_start.17 }}', end: '{{ event_end.17 }}', category: '{{ event_category }}'},
+            { id: 19, title: '{{ event_name.18 }}', start: '{{ event_start.18 }}', end: '{{ event_end.18 }}', category: '{{ event_category }}'},
+            { id: 20, title: '{{ event_name.19 }}', start: '{{ event_start.19 }}', end: '{{ event_end.19 }}', category: '{{ event_category }}'},
+            { id: 21, title: '{{ event_name.20 }}', start: '{{ event_start.20 }}', end: '{{ event_end.20 }}', category: '{{ event_category }}'},
+            { id: 22, title: '{{ event_name.21 }}', start: '{{ event_start.21 }}', end: '{{ event_end.21 }}', category: '{{ event_category }}'},
+            { id: 23, title: '{{ event_name.22 }}', start: '{{ event_start.22 }}', end: '{{ event_end.22 }}', category: '{{ event_category }}'},
+            { id: 24, title: '{{ event_name.23 }}', start: '{{ event_start.23 }}', end: '{{ event_end.23 }}', category: '{{ event_category }}'},
+            { id: 25, title: '{{ event_name.24 }}', start: '{{ event_start.24 }}', end: '{{ event_end.24 }}', category: '{{ event_category }}'},
+            { id: 26, title: '{{ event_name.25 }}', start: '{{ event_start.25 }}', end: '{{ event_end.25 }}', category: '{{ event_category }}'},
+            { id: 27, title: '{{ event_name.26 }}', start: '{{ event_start.26 }}', end: '{{ event_end.26 }}', category: '{{ event_category }}'},
+            { id: 28, title: '{{ event_name.27 }}', start: '{{ event_start.27 }}', end: '{{ event_end.27 }}', category: '{{ event_category }}'},
+            { id: 29, title: '{{ event_name.28 }}', start: '{{ event_start.28 }}', end: '{{ event_end.28 }}', category: '{{ event_category }}'},
+            { id: 30, title: '{{ event_name.29 }}', start: '{{ event_start.29 }}', end: '{{ event_end.29 }}', category: '{{ event_category }}'},
+            { id: 31, title: '{{ event_name.30 }}', start: '{{ event_start.30 }}', end: '{{ event_end.30 }}', category: '{{ event_category }}'},
+            { id: 32, title: '{{ event_name.31 }}', start: '{{ event_start.31 }}', end: '{{ event_end.31 }}', category: '{{ event_category }}'},
+            { id: 33, title: '{{ event_name.32 }}', start: '{{ event_start.32 }}', end: '{{ event_end.32 }}', category: '{{ event_category }}'},
+            { id: 34, title: '{{ event_name.33 }}', start: '{{ event_start.33 }}', end: '{{ event_end.33 }}', category: '{{ event_category }}'},
+            { id: 35, title: '{{ event_name.34 }}', start: '{{ event_start.34 }}', end: '{{ event_end.34 }}', category: '{{ event_category }}'},
+            { id: 36, title: '{{ event_name.35 }}', start: '{{ event_start.35 }}', end: '{{ event_end.35 }}', category: '{{ event_category }}'},
+            { id: 37, title: '{{ event_name.36 }}', start: '{{ event_start.36 }}', end: '{{ event_end.36 }}', category: '{{ event_category }}'},
+            { id: 38, title: '{{ event_name.37 }}', start: '{{ event_start.37 }}', end: '{{ event_end.37 }}', category: '{{ event_category }}'},
+            { id: 39, title: '{{ event_name.38 }}', start: '{{ event_start.38 }}', end: '{{ event_end.38 }}', category: '{{ event_category }}'},
+            { id: 40, title: '{{ event_name.39 }}', start: '{{ event_start.39 }}', end: '{{ event_end.39 }}', category: '{{ event_category }}'},
+            { id: 41, title: '{{ event_name.40 }}', start: '{{ event_start.40 }}', end: '{{ event_end.40 }}', category: '{{ event_category }}'},
+            { id: 42, title: '{{ event_name.41 }}', start: '{{ event_start.41 }}', end: '{{ event_end.41 }}', category: '{{ event_category }}'},
+            { id: 43, title: '{{ event_name.42 }}', start: '{{ event_start.42 }}', end: '{{ event_end.42 }}', category: '{{ event_category }}'},
+            { id: 44, title: '{{ event_name.43 }}', start: '{{ event_start.43 }}', end: '{{ event_end.43 }}', category: '{{ event_category }}'},
+            { id: 45, title: '{{ event_name.44 }}', start: '{{ event_start.44 }}', end: '{{ event_end.44 }}', category: '{{ event_category }}'},
+            { id: 46, title: '{{ event_name.45 }}', start: '{{ event_start.45 }}', end: '{{ event_end.45 }}', category: '{{ event_category }}'},
+            { id: 47, title: '{{ event_name.46 }}', start: '{{ event_start.46 }}', end: '{{ event_end.46 }}', category: '{{ event_category }}'},
+            { id: 48, title: '{{ event_name.47 }}', start: '{{ event_start.47 }}', end: '{{ event_end.47 }}', category: '{{ event_category }}'},
+            { id: 49, title: '{{ event_name.48 }}', start: '{{ event_start.48 }}', end: '{{ event_end.48 }}', category: '{{ event_category }}'},
+            { id: 50, title: '{{ event_name.49 }}', start: '{{ event_start.49 }}', end: '{{ event_end.49 }}', category: '{{ event_category }}'},
+            { id: 51, title: '{{ event_name.50 }}', start: '{{ event_start.50 }}', end: '{{ event_end.50 }}', category: '{{ event_category }}'},
+            { id: 52, title: '{{ event_name.51 }}', start: '{{ event_start.51 }}', end: '{{ event_end.51 }}', category: '{{ event_category }}'},
+            { id: 53, title: '{{ event_name.52 }}', start: '{{ event_start.52 }}', end: '{{ event_end.52 }}', category: '{{ event_category }}'},
+            { id: 54, title: '{{ event_name.53 }}', start: '{{ event_start.53 }}', end: '{{ event_end.53 }}', category: '{{ event_category }}'},
+            { id: 55, title: '{{ event_name.54 }}', start: '{{ event_start.54 }}', end: '{{ event_end.54 }}', category: '{{ event_category }}'},
+            { id: 56, title: '{{ event_name.55 }}', start: '{{ event_start.55 }}', end: '{{ event_end.55 }}', category: '{{ event_category }}'},
+            { id: 57, title: '{{ event_name.56 }}', start: '{{ event_start.56 }}', end: '{{ event_end.56 }}', category: '{{ event_category }}'},
+            { id: 58, title: '{{ event_name.57 }}', start: '{{ event_start.57 }}', end: '{{ event_end.57 }}', category: '{{ event_category }}'},
+            { id: 59, title: '{{ event_name.58 }}', start: '{{ event_start.58 }}', end: '{{ event_end.58 }}', category: '{{ event_category }}'},
+            { id: 60, title: '{{ event_name.59 }}', start: '{{ event_start.59 }}', end: '{{ event_end.59 }}', category: '{{ event_category }}'},
+            { id: 61, title: '{{ event_name.60 }}', start: '{{ event_start.60 }}', end: '{{ event_end.60 }}', category: '{{ event_category }}'},
+            { id: 62, title: '{{ event_name.61 }}', start: '{{ event_start.61 }}', end: '{{ event_end.61 }}', category: '{{ event_category }}'},
+            { id: 63, title: '{{ event_name.62 }}', start: '{{ event_start.62 }}', end: '{{ event_end.62 }}', category: '{{ event_category }}'},
+            { id: 64, title: '{{ event_name.63 }}', start: '{{ event_start.63 }}', end: '{{ event_end.63 }}', category: '{{ event_category }}'},
+            { id: 65, title: '{{ event_name.64 }}', start: '{{ event_start.64 }}', end: '{{ event_end.64 }}', category: '{{ event_category }}'},
+            { id: 66, title: '{{ event_name.65 }}', start: '{{ event_start.65 }}', end: '{{ event_end.65 }}', category: '{{ event_category }}'},
+            { id: 67, title: '{{ event_name.66 }}', start: '{{ event_start.66 }}', end: '{{ event_end.66 }}', category: '{{ event_category }}'},
+            { id: 68, title: '{{ event_name.67 }}', start: '{{ event_start.67 }}', end: '{{ event_end.67 }}', category: '{{ event_category }}'},
+            { id: 69, title: '{{ event_name.68 }}', start: '{{ event_start.68 }}', end: '{{ event_end.68 }}', category: '{{ event_category }}'},
+            { id: 70, title: '{{ event_name.69 }}', start: '{{ event_start.69 }}', end: '{{ event_end.69 }}', category: '{{ event_category }}'},
+            { id: 71, title: '{{ event_name.70 }}', start: '{{ event_start.70 }}', end: '{{ event_end.70 }}', category: '{{ event_category }}'},
+            { id: 72, title: '{{ event_name.71 }}', start: '{{ event_start.71 }}', end: '{{ event_end.71 }}', category: '{{ event_category }}'},
+            { id: 73, title: '{{ event_name.72 }}', start: '{{ event_start.72 }}', end: '{{ event_end.72 }}', category: '{{ event_category }}'},
+            { id: 74, title: '{{ event_name.73 }}', start: '{{ event_start.73 }}', end: '{{ event_end.73 }}', category: '{{ event_category }}'},
+            { id: 75, title: '{{ event_name.74 }}', start: '{{ event_start.74 }}', end: '{{ event_end.74 }}', category: '{{ event_category }}'},
+            { id: 76, title: '{{ event_name.75 }}', start: '{{ event_start.75 }}', end: '{{ event_end.75 }}', category: '{{ event_category }}'},
+            { id: 77, title: '{{ event_name.76 }}', start: '{{ event_start.76 }}', end: '{{ event_end.76 }}', category: '{{ event_category }}'},
+            { id: 78, title: '{{ event_name.77 }}', start: '{{ event_start.77 }}', end: '{{ event_end.77 }}', category: '{{ event_category }}'},
+            { id: 79, title: '{{ event_name.78 }}', start: '{{ event_start.78 }}', end: '{{ event_end.78 }}', category: '{{ event_category }}'},
+            { id: 80, title: '{{ event_name.79 }}', start: '{{ event_start.79 }}', end: '{{ event_end.79 }}', category: '{{ event_category }}'},
+            { id: 81, title: '{{ event_name.80 }}', start: '{{ event_start.80 }}', end: '{{ event_end.80 }}', category: '{{ event_category }}'},
+            { id: 82, title: '{{ event_name.81 }}', start: '{{ event_start.81 }}', end: '{{ event_end.81 }}', category: '{{ event_category }}'},
+            { id: 83, title: '{{ event_name.82 }}', start: '{{ event_start.82 }}', end: '{{ event_end.82 }}', category: '{{ event_category }}'},
+            { id: 84, title: '{{ event_name.83 }}', start: '{{ event_start.83 }}', end: '{{ event_end.83 }}', category: '{{ event_category }}'},
+            { id: 85, title: '{{ event_name.84 }}', start: '{{ event_start.84 }}', end: '{{ event_end.84 }}', category: '{{ event_category }}'},
+            { id: 86, title: '{{ event_name.85 }}', start: '{{ event_start.85 }}', end: '{{ event_end.85 }}', category: '{{ event_category }}'},
+            { id: 87, title: '{{ event_name.86 }}', start: '{{ event_start.86 }}', end: '{{ event_end.86 }}', category: '{{ event_category }}'},
+            { id: 88, title: '{{ event_name.87 }}', start: '{{ event_start.87 }}', end: '{{ event_end.87 }}', category: '{{ event_category }}'},
+            { id: 89, title: '{{ event_name.88 }}', start: '{{ event_start.88 }}', end: '{{ event_end.88 }}', category: '{{ event_category }}'},
+            { id: 90, title: '{{ event_name.89 }}', start: '{{ event_start.89 }}', end: '{{ event_end.89 }}', category: '{{ event_category }}'},
+            { id: 91, title: '{{ event_name.90 }}', start: '{{ event_start.90 }}', end: '{{ event_end.90 }}', category: '{{ event_category }}'},
+            { id: 92, title: '{{ event_name.91 }}', start: '{{ event_start.91 }}', end: '{{ event_end.91 }}', category: '{{ event_category }}'},
+            { id: 93, title: '{{ event_name.92 }}', start: '{{ event_start.92 }}', end: '{{ event_end.92 }}', category: '{{ event_category }}'},
+            { id: 94, title: '{{ event_name.93 }}', start: '{{ event_start.93 }}', end: '{{ event_end.93 }}', category: '{{ event_category }}'},
+            { id: 95, title: '{{ event_name.94 }}', start: '{{ event_start.94 }}', end: '{{ event_end.94 }}', category: '{{ event_category }}'},
+            { id: 96, title: '{{ event_name.95 }}', start: '{{ event_start.95 }}', end: '{{ event_end.95 }}', category: '{{ event_category }}'},
+            { id: 97, title: '{{ event_name.96 }}', start: '{{ event_start.96 }}', end: '{{ event_end.96 }}', category: '{{ event_category }}'},
+            { id: 98, title: '{{ event_name.97 }}', start: '{{ event_start.97 }}', end: '{{ event_end.97 }}', category: '{{ event_category }}'},
+            { id: 99, title: '{{ event_name.98 }}', start: '{{ event_start.98 }}', end: '{{ event_end.98 }}', category: '{{ event_category }}'},
+            { id: 100, title: '{{ event_name.99 }}', start: '{{ event_start.99 }}', end: '{{ event_end.99 }}', category: '{{ event_category }}'},
+            { id: 101, title: '{{ event_name.100 }}', start: '{{ event_start.100 }}', end: '{{ event_end.100 }}', category: '{{ event_category }}'},
+            { id: 102, title: '{{ event_name.101 }}', start: '{{ event_start.101 }}', end: '{{ event_end.101 }}', category: '{{ event_category }}'},
+            { id: 103, title: '{{ event_name.102 }}', start: '{{ event_start.102 }}', end: '{{ event_end.102 }}', category: '{{ event_category }}'},
+            { id: 104, title: '{{ event_name.103 }}', start: '{{ event_start.103 }}', end: '{{ event_end.103 }}', category: '{{ event_category }}'},
+            { id: 105, title: '{{ event_name.104 }}', start: '{{ event_start.104 }}', end: '{{ event_end.104 }}', category: '{{ event_category }}'},
+            { id: 106, title: '{{ event_name.105 }}', start: '{{ event_start.105 }}', end: '{{ event_end.105 }}', category: '{{ event_category }}'},
+            { id: 107, title: '{{ event_name.106 }}', start: '{{ event_start.106 }}', end: '{{ event_end.106 }}', category: '{{ event_category }}'},
+            { id: 108, title: '{{ event_name.107 }}', start: '{{ event_start.107 }}', end: '{{ event_end.107 }}', category: '{{ event_category }}'},
+            { id: 109, title: '{{ event_name.108 }}', start: '{{ event_start.108 }}', end: '{{ event_end.108 }}', category: '{{ event_category }}'},
+            { id: 110, title: '{{ event_name.109 }}', start: '{{ event_start.109 }}', end: '{{ event_end.109 }}', category: '{{ event_category }}'},
+            { id: 111, title: '{{ event_name.110 }}', start: '{{ event_start.110 }}', end: '{{ event_end.110 }}', category: '{{ event_category }}'},
+            { id: 112, title: '{{ event_name.111 }}', start: '{{ event_start.111 }}', end: '{{ event_end.111 }}', category: '{{ event_category }}'},
+            { id: 113, title: '{{ event_name.112 }}', start: '{{ event_start.112 }}', end: '{{ event_end.112 }}', category: '{{ event_category }}'},
+            { id: 114, title: '{{ event_name.113 }}', start: '{{ event_start.113 }}', end: '{{ event_end.113 }}', category: '{{ event_category }}'},
+            { id: 115, title: '{{ event_name.114 }}', start: '{{ event_start.114 }}', end: '{{ event_end.114 }}', category: '{{ event_category }}'},
+            { id: 116, title: '{{ event_name.115 }}', start: '{{ event_start.115 }}', end: '{{ event_end.115 }}', category: '{{ event_category }}'},
+            { id: 117, title: '{{ event_name.116 }}', start: '{{ event_start.116 }}', end: '{{ event_end.116 }}', category: '{{ event_category }}'},
+            { id: 118, title: '{{ event_name.117 }}', start: '{{ event_start.117 }}', end: '{{ event_end.117 }}', category: '{{ event_category }}'},
+            { id: 119, title: '{{ event_name.118 }}', start: '{{ event_start.118 }}', end: '{{ event_end.118 }}', category: '{{ event_category }}'},
+            { id: 120, title: '{{ event_name.119 }}', start: '{{ event_start.119 }}', end: '{{ event_end.119 }}', category: '{{ event_category }}'},
+            { id: 121, title: '{{ event_name.120 }}', start: '{{ event_start.120 }}', end: '{{ event_end.120 }}', category: '{{ event_category }}'},
+            { id: 122, title: '{{ event_name.121 }}', start: '{{ event_start.121 }}', end: '{{ event_end.121 }}', category: '{{ event_category }}'},
+            { id: 123, title: '{{ event_name.122 }}', start: '{{ event_start.122 }}', end: '{{ event_end.122 }}', category: '{{ event_category }}'},
+            { id: 124, title: '{{ event_name.123 }}', start: '{{ event_start.123 }}', end: '{{ event_end.123 }}', category: '{{ event_category }}'},
+            { id: 125, title: '{{ event_name.124 }}', start: '{{ event_start.124 }}', end: '{{ event_end.124 }}', category: '{{ event_category }}'},
+            { id: 126, title: '{{ event_name.125 }}', start: '{{ event_start.125 }}', end: '{{ event_end.125 }}', category: '{{ event_category }}'},
+            { id: 127, title: '{{ event_name.126 }}', start: '{{ event_start.126 }}', end: '{{ event_end.126 }}', category: '{{ event_category }}'},
+            { id: 128, title: '{{ event_name.127 }}', start: '{{ event_start.127 }}', end: '{{ event_end.127 }}', category: '{{ event_category }}'},
+            { id: 129, title: '{{ event_name.128 }}', start: '{{ event_start.128 }}', end: '{{ event_end.128 }}', category: '{{ event_category }}'},
+            { id: 130, title: '{{ event_name.129 }}', start: '{{ event_start.129 }}', end: '{{ event_end.129 }}', category: '{{ event_category }}'},
+            { id: 131, title: '{{ event_name.130 }}', start: '{{ event_start.130 }}', end: '{{ event_end.130 }}', category: '{{ event_category }}'},
+            { id: 132, title: '{{ event_name.131 }}', start: '{{ event_start.131 }}', end: '{{ event_end.131 }}', category: '{{ event_category }}'},
+            { id: 133, title: '{{ event_name.132 }}', start: '{{ event_start.132 }}', end: '{{ event_end.132 }}', category: '{{ event_category }}'},
+            { id: 134, title: '{{ event_name.133 }}', start: '{{ event_start.133 }}', end: '{{ event_end.133 }}', category: '{{ event_category }}'},
+            { id: 135, title: '{{ event_name.134 }}', start: '{{ event_start.134 }}', end: '{{ event_end.134 }}', category: '{{ event_category }}'},
+            { id: 136, title: '{{ event_name.135 }}', start: '{{ event_start.135 }}', end: '{{ event_end.135 }}', category: '{{ event_category }}'},
+            { id: 137, title: '{{ event_name.136 }}', start: '{{ event_start.136 }}', end: '{{ event_end.136 }}', category: '{{ event_category }}'},
+            { id: 138, title: '{{ event_name.137 }}', start: '{{ event_start.137 }}', end: '{{ event_end.137 }}', category: '{{ event_category }}'},
+            { id: 139, title: '{{ event_name.138 }}', start: '{{ event_start.138 }}', end: '{{ event_end.138 }}', category: '{{ event_category }}'},
+            { id: 140, title: '{{ event_name.139 }}', start: '{{ event_start.139 }}', end: '{{ event_end.139 }}', category: '{{ event_category }}'},
+            { id: 141, title: '{{ event_name.140 }}', start: '{{ event_start.140 }}', end: '{{ event_end.140 }}', category: '{{ event_category }}'},
+            { id: 142, title: '{{ event_name.141 }}', start: '{{ event_start.141 }}', end: '{{ event_end.141 }}', category: '{{ event_category }}'},
+            { id: 143, title: '{{ event_name.142 }}', start: '{{ event_start.142 }}', end: '{{ event_end.142 }}', category: '{{ event_category }}'},
+            { id: 144, title: '{{ event_name.143 }}', start: '{{ event_start.143 }}', end: '{{ event_end.143 }}', category: '{{ event_category }}'},
+            { id: 145, title: '{{ event_name.144 }}', start: '{{ event_start.144 }}', end: '{{ event_end.144 }}', category: '{{ event_category }}'},
+            { id: 146, title: '{{ event_name.145 }}', start: '{{ event_start.145 }}', end: '{{ event_end.145 }}', category: '{{ event_category }}'},
+            { id: 147, title: '{{ event_name.146 }}', start: '{{ event_start.146 }}', end: '{{ event_end.146 }}', category: '{{ event_category }}'},
+            { id: 148, title: '{{ event_name.147 }}', start: '{{ event_start.147 }}', end: '{{ event_end.147 }}', category: '{{ event_category }}'},
+            { id: 149, title: '{{ event_name.148 }}', start: '{{ event_start.148 }}', end: '{{ event_end.148 }}', category: '{{ event_category }}'},
+            { id: 150, title: '{{ event_name.149 }}', start: '{{ event_start.149 }}', end: '{{ event_end.149 }}', category: '{{ event_category }}'},
+            { id: 151, title: '{{ event_name.150 }}', start: '{{ event_start.150 }}', end: '{{ event_end.150 }}', category: '{{ event_category }}'},
+            { id: 152, title: '{{ event_name.151 }}', start: '{{ event_start.151 }}', end: '{{ event_end.151 }}', category: '{{ event_category }}'},
+            { id: 153, title: '{{ event_name.152 }}', start: '{{ event_start.152 }}', end: '{{ event_end.152 }}', category: '{{ event_category }}'},
+            { id: 154, title: '{{ event_name.153 }}', start: '{{ event_start.153 }}', end: '{{ event_end.153 }}', category: '{{ event_category }}'},
+            { id: 155, title: '{{ event_name.154 }}', start: '{{ event_start.154 }}', end: '{{ event_end.154 }}', category: '{{ event_category }}'},
+            { id: 156, title: '{{ event_name.155 }}', start: '{{ event_start.155 }}', end: '{{ event_end.155 }}', category: '{{ event_category }}'},
+            { id: 157, title: '{{ event_name.156 }}', start: '{{ event_start.156 }}', end: '{{ event_end.156 }}', category: '{{ event_category }}'},
+            { id: 158, title: '{{ event_name.157 }}', start: '{{ event_start.157 }}', end: '{{ event_end.157 }}', category: '{{ event_category }}'},
+            { id: 159, title: '{{ event_name.158 }}', start: '{{ event_start.158 }}', end: '{{ event_end.158 }}', category: '{{ event_category }}'},
+            { id: 160, title: '{{ event_name.159 }}', start: '{{ event_start.159 }}', end: '{{ event_end.159 }}', category: '{{ event_category }}'},
+            { id: 161, title: '{{ event_name.160 }}', start: '{{ event_start.160 }}', end: '{{ event_end.160 }}', category: '{{ event_category }}'},
+            { id: 162, title: '{{ event_name.161 }}', start: '{{ event_start.161 }}', end: '{{ event_end.161 }}', category: '{{ event_category }}'},
+            { id: 163, title: '{{ event_name.162 }}', start: '{{ event_start.162 }}', end: '{{ event_end.162 }}', category: '{{ event_category }}'},
+            { id: 164, title: '{{ event_name.163 }}', start: '{{ event_start.163 }}', end: '{{ event_end.163 }}', category: '{{ event_category }}'},
+            { id: 165, title: '{{ event_name.164 }}', start: '{{ event_start.164 }}', end: '{{ event_end.164 }}', category: '{{ event_category }}'},
+            { id: 166, title: '{{ event_name.165 }}', start: '{{ event_start.165 }}', end: '{{ event_end.165 }}', category: '{{ event_category }}'},
+            { id: 167, title: '{{ event_name.166 }}', start: '{{ event_start.166 }}', end: '{{ event_end.166 }}', category: '{{ event_category }}'},
+            { id: 168, title: '{{ event_name.167 }}', start: '{{ event_start.167 }}', end: '{{ event_end.167 }}', category: '{{ event_category }}'},
+            { id: 169, title: '{{ event_name.168 }}', start: '{{ event_start.168 }}', end: '{{ event_end.168 }}', category: '{{ event_category }}'},
+            { id: 170, title: '{{ event_name.169 }}', start: '{{ event_start.169 }}', end: '{{ event_end.169 }}', category: '{{ event_category }}'},
+            { id: 171, title: '{{ event_name.170 }}', start: '{{ event_start.170 }}', end: '{{ event_end.170 }}', category: '{{ event_category }}'},
+            { id: 172, title: '{{ event_name.171 }}', start: '{{ event_start.171 }}', end: '{{ event_end.171 }}', category: '{{ event_category }}'},
+            { id: 173, title: '{{ event_name.172 }}', start: '{{ event_start.172 }}', end: '{{ event_end.172 }}', category: '{{ event_category }}'},
+            { id: 174, title: '{{ event_name.173 }}', start: '{{ event_start.173 }}', end: '{{ event_end.173 }}', category: '{{ event_category }}'},
+            { id: 175, title: '{{ event_name.174 }}', start: '{{ event_start.174 }}', end: '{{ event_end.174 }}', category: '{{ event_category }}'},
+            { id: 176, title: '{{ event_name.175 }}', start: '{{ event_start.175 }}', end: '{{ event_end.175 }}', category: '{{ event_category }}'},
+            { id: 177, title: '{{ event_name.176 }}', start: '{{ event_start.176 }}', end: '{{ event_end.176 }}', category: '{{ event_category }}'},
+            { id: 178, title: '{{ event_name.177 }}', start: '{{ event_start.177 }}', end: '{{ event_end.177 }}', category: '{{ event_category }}'},
+            { id: 179, title: '{{ event_name.178 }}', start: '{{ event_start.178 }}', end: '{{ event_end.178 }}', category: '{{ event_category }}'},
+            { id: 180, title: '{{ event_name.179 }}', start: '{{ event_start.179 }}', end: '{{ event_end.179 }}', category: '{{ event_category }}'},
+            { id: 181, title: '{{ event_name.180 }}', start: '{{ event_start.180 }}', end: '{{ event_end.180 }}', category: '{{ event_category }}'},
+            { id: 182, title: '{{ event_name.181 }}', start: '{{ event_start.181 }}', end: '{{ event_end.181 }}', category: '{{ event_category }}'},
+            { id: 183, title: '{{ event_name.182 }}', start: '{{ event_start.182 }}', end: '{{ event_end.182 }}', category: '{{ event_category }}'},
+            { id: 184, title: '{{ event_name.183 }}', start: '{{ event_start.183 }}', end: '{{ event_end.183 }}', category: '{{ event_category }}'},
+            { id: 185, title: '{{ event_name.184 }}', start: '{{ event_start.184 }}', end: '{{ event_end.184 }}', category: '{{ event_category }}'},
+            { id: 186, title: '{{ event_name.185 }}', start: '{{ event_start.185 }}', end: '{{ event_end.185 }}', category: '{{ event_category }}'},
+            { id: 187, title: '{{ event_name.186 }}', start: '{{ event_start.186 }}', end: '{{ event_end.186 }}', category: '{{ event_category }}'},
+            { id: 188, title: '{{ event_name.187 }}', start: '{{ event_start.187 }}', end: '{{ event_end.187 }}', category: '{{ event_category }}'},
+            { id: 189, title: '{{ event_name.188 }}', start: '{{ event_start.188 }}', end: '{{ event_end.188 }}', category: '{{ event_category }}'},
+            { id: 190, title: '{{ event_name.189 }}', start: '{{ event_start.189 }}', end: '{{ event_end.189 }}', category: '{{ event_category }}'},
+            { id: 191, title: '{{ event_name.190 }}', start: '{{ event_start.190 }}', end: '{{ event_end.190 }}', category: '{{ event_category }}'},
+            { id: 192, title: '{{ event_name.191 }}', start: '{{ event_start.191 }}', end: '{{ event_end.191 }}', category: '{{ event_category }}'},
+            { id: 193, title: '{{ event_name.192 }}', start: '{{ event_start.192 }}', end: '{{ event_end.192 }}', category: '{{ event_category }}'},
+            { id: 194, title: '{{ event_name.193 }}', start: '{{ event_start.193 }}', end: '{{ event_end.193 }}', category: '{{ event_category }}'},
+            { id: 195, title: '{{ event_name.194 }}', start: '{{ event_start.194 }}', end: '{{ event_end.194 }}', category: '{{ event_category }}'},
+            { id: 196, title: '{{ event_name.195 }}', start: '{{ event_start.195 }}', end: '{{ event_end.195 }}', category: '{{ event_category }}'},
+            { id: 197, title: '{{ event_name.196 }}', start: '{{ event_start.196 }}', end: '{{ event_end.196 }}', category: '{{ event_category }}'},
+            { id: 198, title: '{{ event_name.197 }}', start: '{{ event_start.197 }}', end: '{{ event_end.197 }}', category: '{{ event_category }}'},
+            { id: 199, title: '{{ event_name.198 }}', start: '{{ event_start.198 }}', end: '{{ event_end.198 }}', category: '{{ event_category }}'},
+            { id: 200, title: '{{ event_name.199 }}', start: '{{ event_start.199 }}', end: '{{ event_end.199 }}', category: '{{ event_category }}'}
+        ];
 
             // --- Functions ---
 
@@ -784,7 +935,7 @@
 
                             const timeDiff = Math.abs(nextStart - currentEnd);
 
-                            if (currentStart < nextEnd && nextStart < currentEnd && currentMerge.category === nextEvent.category) {
+                            if (currentStart <= nextEnd && nextStart <= currentEnd && currentMerge.category === nextEvent.category) {
                                 currentMerge.end = nextEvent.end;
                                 if (!currentMerge.title.includes(nextEvent.title)) {
                                     currentMerge.title += `/ ${nextEvent.title}`;
@@ -819,7 +970,7 @@
 
                         eventBlock.addEventListener('click', (e) => {
                             e.stopPropagation();
-                            alert(`予定ID: ${event.id} - ${event.title}\n開始: ${event.start}\n終了: ${event.end}`);
+                            alert(`${event.title}\n開始: ${event.start}\n終了: ${event.end}`);
                         });
                         // 3. カラムに挿入
                         dayColumn.appendChild(eventBlock);

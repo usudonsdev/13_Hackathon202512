@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Scheduler</title>
+    <title>Coo-lendar</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -544,7 +544,7 @@
                     <span class="icon">📋</span> 予定一覧
                 </button>
                 <button id="btn-today-todo" class="nav-btn" onclick="location.href='/todo'">
-                    <span class="icon">📝</span> 今日やること
+                    <span class="icon">📝</span> タスク
                 </button>
                 <button id="btn-friends" class="nav-btn" onclick="location.href='/friend'">
                     <span class="icon">👥</span> ともだち
@@ -722,7 +722,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('Smart Scheduler initialized');
+            console.log('Coo-lendar initialized');
 
             // --- DOM Elements ---
             const btnTodayTodo = document.getElementById('btn-today-todo');
@@ -937,6 +937,8 @@
                 const today = new Date();
                 // 取得した日付(currentDate)が属する週の月曜日 (0:00) を計算
                 const startOfWeek = getStartOfWeek(currentDate);
+                const dayNames = ['月', '火', '水', '木', '金', '土', '日'];
+                const columnMap = [0, 1, 2, 3, 4, 5, 6];
 
                 // 既存のtime-columnはそのまま、曜日ヘッダーとday-columnに日付を表示/設定
                 for (let i = 0; i < 7; i++) {
@@ -945,7 +947,7 @@
 
                     const dateNum = day.getDate();
                     const dayHeader = dayHeaders[i];
-                    const dayName = ['月', '火', '水', '木', '金', '土', '日'][i];
+                    const dayName = dayNames[i];
 
                     // 曜日ヘッダーの更新 (省略...)
                     if (i === 5) { dayHeader.style.color = '#1e40af'; }
@@ -953,10 +955,10 @@
                     else { dayHeader.style.color = 'var(--text-secondary)'; }
                     dayHeader.innerHTML = `${dayName}<br><span>${dateNum}</span>`;
 
-                    const dayMapping = [6, 0, 1, 2, 3, 4, 5];
-                    const mappedIndex = dayMapping[i];
+                    // const dayMapping = [6, 0, 1, 2, 3, 4, 5];
+                    // const mappedIndex = dayMapping[i];///////
 
-                    const dayColumn = dayColumns[mappedIndex];
+                    const dayColumn = dayColumns[columnMap[i]];
                     dayColumn.innerHTML = ''; // 既存のイベントとセルをクリア
 
                     // // 24時間のセルを再描画（クリック可能にするため）
@@ -971,7 +973,8 @@
 
                     // --- Step 2B: 予定のフィルタリングと描画 ---
                     // 描画対象の日付 (YYYY-MM-DD形式)
-                    const targetDate = day.toISOString().substring(0, 10);
+                    //const targetDate = day.toISOString().substring(0, 10);
+                    const targetDate = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`;
 
                     // 1. 該当日の予定のみをフィルタリング
                     const dayEvents = dummyEvents.filter(event => {
@@ -1011,7 +1014,7 @@
                         eventBlock.addEventListener('click', (e) => {
                             e.stopPropagation(); // セル全体へのクリックイベントを停止
                             // ここで詳細モーダルを開く処理を実装できます
-                            alert(`予定ID: ${event.id} - ${event.title}\n開始: ${event.start}\n終了: ${event.end}`);
+                            alert(` ${event.title}\n開始: ${event.start}\n終了: ${event.end}`);
                         });
 
                         // 3. カラムに挿入

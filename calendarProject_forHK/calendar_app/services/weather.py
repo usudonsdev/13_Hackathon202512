@@ -1,7 +1,7 @@
 import requests
 import datetime
 import os
-from typing import List, Dict, Optional, Any
+from typing import List, Dict, Optional
 from dotenv import load_dotenv
 
 # 定義したインターフェースとデータ型をインポート
@@ -18,24 +18,28 @@ CITY_NAME = "Tokyo,JP"
 # キーがない場合は自動的にTrueになります
 USE_MOCK_DATA = True if not OPENWEATHER_API_KEY else False
 
-class WeatherService(IWeatherService):
+class WeatherService:
     """
     OpenWeatherMapを使用した天気予報サービスの実装クラス
     IWeatherServiceインターフェースを継承しています
     """
 
-    def filter_by_precipitation(self, candidate_batch: CandidateBatch, allowed_pop_percent: int) -> List[Dict[str, datetime.datetime]]:
+    def filter_by_precipitation_30(self, datetime_ranges: List[List[datetime.datetime]]) -> List[List[datetime.datetime]]:
+
         """
         インターフェースの実装メソッド
         """
         # 1. APIから天気予報を取得 (またはモックデータ)
+        ALLOWED_POP_PERCENT = 30
+        
         forecast_list = self._fetch_forecast()
         
-        valid_candidates = []
+        valid_ranges: List[List[datetime.datetime]] = []
 
         # 2. 各候補日時について判定
-        for candidate in candidate_batch.candidates:
-            start_time = candidate['start']
+        for time_range in datetime_ranges:
+            start_time = time_range[0]
+            end_time = time_range[1]
             
             # 最も近い予報データを探す
             target_forecast = self._find_closest_forecast(start_time, forecast_list)
@@ -47,14 +51,15 @@ class WeatherService(IWeatherService):
                 # デバッグ用: 必要に応じてコメントアウトを外してください
                 # print(f"日時: {start_time} | 降水確率: {pop_percent}% (許容: {allowed_pop_percent}%)")
 
-                if pop_percent <= allowed_pop_percent:
-                    valid_candidates.append(candidate)
+                if pop_percent <= ALLOWED_POP_PERCENT:
+                    valid_ranges.append([start_time, end_time])
             else:
                 # 予報データが見つからない場合（日付が遠すぎる、APIエラー等）は
                 # 判定不能として、とりあえず候補に残す（安全側に倒す）
-                valid_candidates.append(candidate)
+                valid_ranges.append([start_time, end_time])
 
-        return valid_candidates
+
+        return valid_ranges
 
     def _fetch_forecast(self) -> List[Dict]:
         """
@@ -62,10 +67,10 @@ class WeatherService(IWeatherService):
         """
         if USE_MOCK_DATA:
             # 開発中はログを出しておくと親切です
-            # print("WeatherService: APIキーがないためモックデータを使用します")
+            print("WeatherService: APIキーがないためモックデータを使用します")
             return self._get_mock_data()
 
-        url = f"http://api.openweathermap.org/data/2.5/forecast?q={CITY_NAME}&appid={OPENWEATHER_API_KEY}"
+        url = ("http://api.openweathermap.org/data/2.5/forecast"f"?q={CITY_NAME}&appid={OPENWEATHER_API_KEY}")
         try:
             response = requests.get(url, timeout=5)
             response.raise_for_status()
