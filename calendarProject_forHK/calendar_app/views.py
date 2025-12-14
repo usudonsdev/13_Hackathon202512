@@ -310,7 +310,7 @@ class SearchView(LoginRequiredMixin,View):
                 
                 if not ((conflict_self_plan) or (conflict_members_plan) or (conflict_self_routine) or (conflict_members_routine)):
                     results.append([t,t+duration])
-                t = t + timedelta(minutes=30)
+                t = t + timedelta(minutes=15)
             current_date = current_date + timedelta(days=1)
         if climate == "rain_removal":
             weather_service = WeatherService()
@@ -338,7 +338,10 @@ class SearchView(LoginRequiredMixin,View):
                 results = selected_filter
             else:
                 results = filtered_results
-            return render(request, "calendar_app/Scheduling_Assist_System.html", {"results":results, "assist_name":assist_name, "shown_slots": shown_slots, "assist_start_date":period_start, "assist_end_date":period_end, "assist_start_time":desired_start, "assist_end_time":desired_end, "assist_duration_h":request.POST.get("assist-duration-h"), "assist_duration_m":request.POST.get("assist-duration-m")})
+            no_result = False
+            if len(results) == 0:
+                no_result = True
+            return render(request, "calendar_app/Scheduling_Assist_System.html", {"results":results, "no_result":no_result, "assist_name":assist_name, "shown_slots": shown_slots, "assist_start_date":period_start, "assist_end_date":period_end, "assist_start_time":desired_start, "assist_end_time":desired_end, "assist_duration_h":request.POST.get("assist-duration-h"), "assist_duration_m":request.POST.get("assist-duration-m")})
         else:
             if not any(target_users):
                 results_size = len(results)
@@ -600,7 +603,7 @@ class CompareView(LoginRequiredMixin,View):
                 
                 if not ((conflict_self_plan) or (conflict_members_plan) or (conflict_self_routine) or (conflict_members_routine)):
                     results.append([t,t+duration])
-                t = t + timedelta(minutes=30)
+                t = t + timedelta(minutes=15)
             current_date = current_date + timedelta(days=1)
         if action == "retry":
             shown_slots = set(request.POST.getlist("shown_slots"))

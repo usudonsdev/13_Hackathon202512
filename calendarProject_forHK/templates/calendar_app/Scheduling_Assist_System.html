@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>アシスト | Scheduler</title>
+    <title>アシスト | Coo-lendar</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -461,6 +461,10 @@
                                     <label><input type="radio" name="climate" value="rain_removal"> 雨天日を除去</label>
                                     <label><input type="radio" name="climate" value="not_designated" checked> 指定なし</label>
                                 </div>
+                                <p class="form-note">
+                                    ※ 天候情報はおおよそ5日先までの予報に基づいています。
+                                    それ以降の期間については、正確な天候判定ができない場合があります。
+                                </p>
                             </div>
 
                             <!-- <div class="form-group">
@@ -523,6 +527,11 @@
                                 </button>
                             </form>
                         </div>
+                        {% elif no_result %}
+                            <div class="alert alert-warning" style="margin-top:20px;">
+                                😢 該当する候補日時がありません。<br>
+                                条件を変更して再度検索してください。
+                            </div>
                         {% endif %}
                     </div>
                 </div>

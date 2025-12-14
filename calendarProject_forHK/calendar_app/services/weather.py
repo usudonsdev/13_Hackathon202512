@@ -67,7 +67,7 @@ class WeatherService:
         """
         if USE_MOCK_DATA:
             # 開発中はログを出しておくと親切です
-            # print("WeatherService: APIキーがないためモックデータを使用します")
+            print("WeatherService: APIキーがないためモックデータを使用します")
             return self._get_mock_data()
 
         url = ("http://api.openweathermap.org/data/2.5/forecast"f"?q={CITY_NAME}&appid={OPENWEATHER_API_KEY}")
