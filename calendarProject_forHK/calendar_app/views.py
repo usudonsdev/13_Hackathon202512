@@ -59,8 +59,8 @@ def google_calendar_auth_callback(request):
         if not all([summary, start, end]):
             continue  # Skip events without a summary, start or end time
 
-        start_datetime = datetime.fromisoformat(start)
-        end_datetime = datetime.fromisoformat(end)
+        start_datetime = timezone.make_aware(datetime.fromisoformat(start))
+        end_datetime = timezone.make_aware(datetime.fromisoformat(end))
 
         # Create a new Plan object
         Plan.objects.create(
